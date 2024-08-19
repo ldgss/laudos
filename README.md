@@ -29,6 +29,14 @@ sistema de laudos para mercaderia y hojalata
 
         git config --global color.ui auto
 
+6. antes de empezar a hacer cambios, crear un rama para no trabajar en la principal; ejemplos de nombre podrian incluir:
+
+        desarrollo
+        prueba_de_caracteristica
+        rutas
+        login
+        etc...
+
 ## comandos y uso de git
 
 - listar ramas
