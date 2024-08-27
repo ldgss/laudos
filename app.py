@@ -11,12 +11,18 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("index.html", body="index content", title="index title")
+    title = "Laudos Solvencia S.A"
+    body = "Bienvenidos!"
+    return render_template("index.html", title=title, body=body)
 
 @app.route("/login")
 def login():
-    return render_template("login/index.html", body="login content", title="login title")
+    title = "Ingresar"
+    body = "Ingresar"
+    return render_template("login/index.html", title=title, body=body)
 
 @app.route("/mercaderia")
 def mercaderia():
-    return render_template("mercaderia/index.html", body="mercaderia content", title="mercaderia title")
+    title = "Mercaderia"
+    body = "Mercaderia"
+    return render_template("mercaderia/index.html", title=title, body=body)

@@ -5,7 +5,7 @@
 -- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.3
 
--- Started on 2024-08-26 01:30:42
+-- Started on 2024-08-27 10:06:56
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -54,7 +54,7 @@ CREATE TABLE public.arballon_productos (
 ALTER TABLE public.arballon_productos OWNER TO postgres;
 
 --
--- TOC entry 4889 (class 0 OID 0)
+-- TOC entry 4912 (class 0 OID 0)
 -- Dependencies: 216
 -- Name: TABLE arballon_productos; Type: COMMENT; Schema: public; Owner: postgres
 --
@@ -105,7 +105,8 @@ CREATE TABLE public.bloqueados (
     responsable integer NOT NULL,
     mercaderia_hojalata integer,
     observaciones text,
-    motivo integer NOT NULL
+    motivo integer NOT NULL,
+    extracto integer
 );
 
 
@@ -122,11 +123,33 @@ CREATE TABLE public.despachos (
     orden_de_entrega integer NOT NULL,
     mercaderia_hojalata integer,
     fecha timestamp with time zone NOT NULL,
-    responsable integer NOT NULL
+    responsable integer NOT NULL,
+    extracto integer
 );
 
 
 ALTER TABLE public.despachos OWNER TO postgres;
+
+--
+-- TOC entry 229 (class 1259 OID 16627)
+-- Name: extracto; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.extracto (
+    id integer NOT NULL,
+    producto integer NOT NULL,
+    fecha_elaboracion timestamp with time zone NOT NULL,
+    lote text NOT NULL,
+    recipiente text NOT NULL,
+    numero_recipiente integer NOT NULL,
+    numero_unico text NOT NULL,
+    responsable integer NOT NULL,
+    observaciones text,
+    vencimiento integer NOT NULL
+);
+
+
+ALTER TABLE public.extracto OWNER TO postgres;
 
 --
 -- TOC entry 225 (class 1259 OID 16533)
@@ -155,13 +178,13 @@ CREATE TABLE public.mercaderia_hojalata (
     producto integer NOT NULL,
     observacion text,
     fecha_elaboracion timestamp with time zone NOT NULL,
-    vencimiento timestamp with time zone,
     lote text NOT NULL,
     lote_cuerpo text,
     lote_tapa text,
     cantidad integer NOT NULL,
     numero_unico text NOT NULL,
-    responsable integer NOT NULL
+    responsable integer NOT NULL,
+    vencimiento integer NOT NULL
 );
 
 
@@ -176,14 +199,14 @@ CREATE TABLE public.mercaderias (
     id integer NOT NULL,
     producto integer NOT NULL,
     unidades integer NOT NULL,
-    vencimiento timestamp with time zone NOT NULL,
     fecha_elaboracion timestamp with time zone NOT NULL,
     fecha_etiquedato timestamp with time zone NOT NULL,
     lote text NOT NULL,
     responsable integer NOT NULL,
     observacion text,
     numero_unico text NOT NULL,
-    insumo integer NOT NULL
+    insumo integer NOT NULL,
+    vencimiento integer NOT NULL
 );
 
 
@@ -216,7 +239,9 @@ CREATE TABLE public.permisos (
     bloqueo boolean NOT NULL,
     usuario integer NOT NULL,
     despacho boolean NOT NULL,
-    fecha timestamp with time zone NOT NULL
+    fecha timestamp with time zone NOT NULL,
+    insumos boolean NOT NULL,
+    extracto boolean NOT NULL
 );
 
 
@@ -233,7 +258,8 @@ CREATE TABLE public.ubicaciones (
     ubicacion integer NOT NULL,
     responsable integer NOT NULL,
     mercaderia_hojalata integer,
-    fecha timestamp with time zone NOT NULL
+    fecha timestamp with time zone NOT NULL,
+    extracto integer
 );
 
 
@@ -257,7 +283,7 @@ CREATE TABLE public.usuarios (
 ALTER TABLE public.usuarios OWNER TO postgres;
 
 --
--- TOC entry 4890 (class 0 OID 0)
+-- TOC entry 4913 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: TABLE usuarios; Type: COMMENT; Schema: public; Owner: postgres
 --
@@ -266,7 +292,21 @@ COMMENT ON TABLE public.usuarios IS 'informacion de los usuarios';
 
 
 --
--- TOC entry 4875 (class 0 OID 16425)
+-- TOC entry 228 (class 1259 OID 16617)
+-- Name: vencimientos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.vencimientos (
+    id integer NOT NULL,
+    producto integer NOT NULL,
+    meses integer NOT NULL
+);
+
+
+ALTER TABLE public.vencimientos OWNER TO postgres;
+
+--
+-- TOC entry 4896 (class 0 OID 16425)
 -- Dependencies: 219
 -- Data for Name: accesos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -276,7 +316,7 @@ COPY public.accesos (id, fecha_acceso, ip, dispotivo, usuario) FROM stdin;
 
 
 --
--- TOC entry 4872 (class 0 OID 16406)
+-- TOC entry 4893 (class 0 OID 16406)
 -- Dependencies: 216
 -- Data for Name: arballon_productos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -286,7 +326,7 @@ COPY public.arballon_productos (id, codigo, denominacion, clase) FROM stdin;
 
 
 --
--- TOC entry 4873 (class 0 OID 16413)
+-- TOC entry 4894 (class 0 OID 16413)
 -- Dependencies: 217
 -- Data for Name: arballon_remitos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -296,7 +336,7 @@ COPY public.arballon_remitos (id, orden_de_entrega) FROM stdin;
 
 
 --
--- TOC entry 4874 (class 0 OID 16418)
+-- TOC entry 4895 (class 0 OID 16418)
 -- Dependencies: 218
 -- Data for Name: arballon_ubicaciones; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -306,27 +346,37 @@ COPY public.arballon_ubicaciones (id, coordenada_1, coordenada_2, coordenada_3, 
 
 
 --
--- TOC entry 4877 (class 0 OID 16449)
+-- TOC entry 4898 (class 0 OID 16449)
 -- Dependencies: 221
 -- Data for Name: bloqueados; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.bloqueados (id, estado, fecha, numero_planilla, mercaderia, responsable, mercaderia_hojalata, observaciones, motivo) FROM stdin;
+COPY public.bloqueados (id, estado, fecha, numero_planilla, mercaderia, responsable, mercaderia_hojalata, observaciones, motivo, extracto) FROM stdin;
 \.
 
 
 --
--- TOC entry 4879 (class 0 OID 16486)
+-- TOC entry 4900 (class 0 OID 16486)
 -- Dependencies: 223
 -- Data for Name: despachos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.despachos (id, mercaderia, orden_de_entrega, mercaderia_hojalata, fecha, responsable) FROM stdin;
+COPY public.despachos (id, mercaderia, orden_de_entrega, mercaderia_hojalata, fecha, responsable, extracto) FROM stdin;
 \.
 
 
 --
--- TOC entry 4881 (class 0 OID 16533)
+-- TOC entry 4906 (class 0 OID 16627)
+-- Dependencies: 229
+-- Data for Name: extracto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.extracto (id, producto, fecha_elaboracion, lote, recipiente, numero_recipiente, numero_unico, responsable, observaciones, vencimiento) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4902 (class 0 OID 16533)
 -- Dependencies: 225
 -- Data for Name: insumos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -336,27 +386,27 @@ COPY public.insumos (id, fecha_consumo, producto, fecha, responsable, numero_uni
 
 
 --
--- TOC entry 4882 (class 0 OID 16555)
+-- TOC entry 4903 (class 0 OID 16555)
 -- Dependencies: 226
 -- Data for Name: mercaderia_hojalata; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.mercaderia_hojalata (id, producto, observacion, fecha_elaboracion, vencimiento, lote, lote_cuerpo, lote_tapa, cantidad, numero_unico, responsable) FROM stdin;
+COPY public.mercaderia_hojalata (id, producto, observacion, fecha_elaboracion, lote, lote_cuerpo, lote_tapa, cantidad, numero_unico, responsable, vencimiento) FROM stdin;
 \.
 
 
 --
--- TOC entry 4876 (class 0 OID 16437)
+-- TOC entry 4897 (class 0 OID 16437)
 -- Dependencies: 220
 -- Data for Name: mercaderias; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.mercaderias (id, producto, unidades, vencimiento, fecha_elaboracion, fecha_etiquedato, lote, responsable, observacion, numero_unico, insumo) FROM stdin;
+COPY public.mercaderias (id, producto, unidades, fecha_elaboracion, fecha_etiquedato, lote, responsable, observacion, numero_unico, insumo, vencimiento) FROM stdin;
 \.
 
 
 --
--- TOC entry 4883 (class 0 OID 16597)
+-- TOC entry 4904 (class 0 OID 16597)
 -- Dependencies: 227
 -- Data for Name: motivos_bloqueados; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -366,27 +416,27 @@ COPY public.motivos_bloqueados (id, motivo, producto) FROM stdin;
 
 
 --
--- TOC entry 4878 (class 0 OID 16466)
+-- TOC entry 4899 (class 0 OID 16466)
 -- Dependencies: 222
 -- Data for Name: permisos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.permisos (id, mercaderia, mercaderia_hojalata, ubicacion, bloqueo, usuario, despacho, fecha) FROM stdin;
+COPY public.permisos (id, mercaderia, mercaderia_hojalata, ubicacion, bloqueo, usuario, despacho, fecha, insumos, extracto) FROM stdin;
 \.
 
 
 --
--- TOC entry 4880 (class 0 OID 16501)
+-- TOC entry 4901 (class 0 OID 16501)
 -- Dependencies: 224
 -- Data for Name: ubicaciones; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ubicaciones (id, mercaderia, ubicacion, responsable, mercaderia_hojalata, fecha) FROM stdin;
+COPY public.ubicaciones (id, mercaderia, ubicacion, responsable, mercaderia_hojalata, fecha, extracto) FROM stdin;
 \.
 
 
 --
--- TOC entry 4871 (class 0 OID 16399)
+-- TOC entry 4892 (class 0 OID 16399)
 -- Dependencies: 215
 -- Data for Name: usuarios; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -396,7 +446,17 @@ COPY public.usuarios (id, nombre, contrasena, fecha_creacion, fecha_modificacion
 
 
 --
--- TOC entry 4690 (class 2606 OID 16431)
+-- TOC entry 4905 (class 0 OID 16617)
+-- Dependencies: 228
+-- Data for Name: vencimientos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.vencimientos (id, producto, meses) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4698 (class 2606 OID 16431)
 -- Name: accesos accesos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -405,7 +465,7 @@ ALTER TABLE ONLY public.accesos
 
 
 --
--- TOC entry 4684 (class 2606 OID 16412)
+-- TOC entry 4692 (class 2606 OID 16412)
 -- Name: arballon_productos arballon_producto_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -414,7 +474,7 @@ ALTER TABLE ONLY public.arballon_productos
 
 
 --
--- TOC entry 4686 (class 2606 OID 16417)
+-- TOC entry 4694 (class 2606 OID 16417)
 -- Name: arballon_remitos arballon_remitos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -423,7 +483,7 @@ ALTER TABLE ONLY public.arballon_remitos
 
 
 --
--- TOC entry 4688 (class 2606 OID 16424)
+-- TOC entry 4696 (class 2606 OID 16424)
 -- Name: arballon_ubicaciones arballon_ubicaciones_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -432,7 +492,7 @@ ALTER TABLE ONLY public.arballon_ubicaciones
 
 
 --
--- TOC entry 4694 (class 2606 OID 16455)
+-- TOC entry 4702 (class 2606 OID 16455)
 -- Name: bloqueados bloqueados_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -441,7 +501,7 @@ ALTER TABLE ONLY public.bloqueados
 
 
 --
--- TOC entry 4698 (class 2606 OID 16490)
+-- TOC entry 4706 (class 2606 OID 16490)
 -- Name: despachos despachos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -450,7 +510,16 @@ ALTER TABLE ONLY public.despachos
 
 
 --
--- TOC entry 4702 (class 2606 OID 16537)
+-- TOC entry 4718 (class 2606 OID 16633)
+-- Name: extracto extracto_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.extracto
+    ADD CONSTRAINT extracto_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4710 (class 2606 OID 16537)
 -- Name: insumos insumos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -459,7 +528,7 @@ ALTER TABLE ONLY public.insumos
 
 
 --
--- TOC entry 4704 (class 2606 OID 16561)
+-- TOC entry 4712 (class 2606 OID 16561)
 -- Name: mercaderia_hojalata mercaderia_hojalata_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -468,7 +537,7 @@ ALTER TABLE ONLY public.mercaderia_hojalata
 
 
 --
--- TOC entry 4692 (class 2606 OID 16443)
+-- TOC entry 4700 (class 2606 OID 16443)
 -- Name: mercaderias mercaderias_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -477,7 +546,7 @@ ALTER TABLE ONLY public.mercaderias
 
 
 --
--- TOC entry 4706 (class 2606 OID 16603)
+-- TOC entry 4714 (class 2606 OID 16603)
 -- Name: motivos_bloqueados motivos_bloqueados_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -486,7 +555,7 @@ ALTER TABLE ONLY public.motivos_bloqueados
 
 
 --
--- TOC entry 4696 (class 2606 OID 16470)
+-- TOC entry 4704 (class 2606 OID 16470)
 -- Name: permisos permisos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -495,7 +564,7 @@ ALTER TABLE ONLY public.permisos
 
 
 --
--- TOC entry 4700 (class 2606 OID 16505)
+-- TOC entry 4708 (class 2606 OID 16505)
 -- Name: ubicaciones ubicaciones_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -504,7 +573,7 @@ ALTER TABLE ONLY public.ubicaciones
 
 
 --
--- TOC entry 4682 (class 2606 OID 16405)
+-- TOC entry 4690 (class 2606 OID 16405)
 -- Name: usuarios usuarios_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -513,7 +582,16 @@ ALTER TABLE ONLY public.usuarios
 
 
 --
--- TOC entry 4707 (class 2606 OID 16432)
+-- TOC entry 4716 (class 2606 OID 16621)
+-- Name: vencimientos vencimientos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vencimientos
+    ADD CONSTRAINT vencimientos_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4719 (class 2606 OID 16432)
 -- Name: accesos accesos - usuarios; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -522,7 +600,16 @@ ALTER TABLE ONLY public.accesos
 
 
 --
--- TOC entry 4711 (class 2606 OID 16572)
+-- TOC entry 4724 (class 2606 OID 16644)
+-- Name: bloqueados bloqueados - extracto; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bloqueados
+    ADD CONSTRAINT "bloqueados - extracto" FOREIGN KEY (extracto) REFERENCES public.extracto(id) NOT VALID;
+
+
+--
+-- TOC entry 4725 (class 2606 OID 16572)
 -- Name: bloqueados bloqueados - merc_hoj; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -531,7 +618,7 @@ ALTER TABLE ONLY public.bloqueados
 
 
 --
--- TOC entry 4712 (class 2606 OID 16456)
+-- TOC entry 4726 (class 2606 OID 16456)
 -- Name: bloqueados bloqueados - mercaderias; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -540,7 +627,7 @@ ALTER TABLE ONLY public.bloqueados
 
 
 --
--- TOC entry 4713 (class 2606 OID 16604)
+-- TOC entry 4727 (class 2606 OID 16604)
 -- Name: bloqueados bloqueados - motivos_bloq; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -549,7 +636,7 @@ ALTER TABLE ONLY public.bloqueados
 
 
 --
--- TOC entry 4714 (class 2606 OID 16461)
+-- TOC entry 4728 (class 2606 OID 16461)
 -- Name: bloqueados bloqueados - usuarios; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -558,7 +645,7 @@ ALTER TABLE ONLY public.bloqueados
 
 
 --
--- TOC entry 4716 (class 2606 OID 16587)
+-- TOC entry 4730 (class 2606 OID 16587)
 -- Name: despachos despacho - usuarios; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -567,7 +654,16 @@ ALTER TABLE ONLY public.despachos
 
 
 --
--- TOC entry 4717 (class 2606 OID 16577)
+-- TOC entry 4731 (class 2606 OID 16659)
+-- Name: despachos despachos - extracto; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.despachos
+    ADD CONSTRAINT "despachos - extracto" FOREIGN KEY (extracto) REFERENCES public.extracto(id) NOT VALID;
+
+
+--
+-- TOC entry 4732 (class 2606 OID 16577)
 -- Name: despachos despachos - merc_hoj; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -576,7 +672,7 @@ ALTER TABLE ONLY public.despachos
 
 
 --
--- TOC entry 4718 (class 2606 OID 16491)
+-- TOC entry 4733 (class 2606 OID 16491)
 -- Name: despachos despachos - mercaderias; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -585,7 +681,7 @@ ALTER TABLE ONLY public.despachos
 
 
 --
--- TOC entry 4719 (class 2606 OID 16496)
+-- TOC entry 4734 (class 2606 OID 16496)
 -- Name: despachos despachos - remitos; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -594,7 +690,34 @@ ALTER TABLE ONLY public.despachos
 
 
 --
--- TOC entry 4724 (class 2606 OID 16538)
+-- TOC entry 4746 (class 2606 OID 16634)
+-- Name: extracto extracto - producto; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.extracto
+    ADD CONSTRAINT "extracto - producto" FOREIGN KEY (producto) REFERENCES public.arballon_productos(id) NOT VALID;
+
+
+--
+-- TOC entry 4747 (class 2606 OID 16639)
+-- Name: extracto extracto - usuarios; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.extracto
+    ADD CONSTRAINT "extracto - usuarios" FOREIGN KEY (responsable) REFERENCES public.usuarios(id) NOT VALID;
+
+
+--
+-- TOC entry 4748 (class 2606 OID 16679)
+-- Name: extracto extracto - vencimientos; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.extracto
+    ADD CONSTRAINT "extracto - vencimientos" FOREIGN KEY (vencimiento) REFERENCES public.vencimientos(id) NOT VALID;
+
+
+--
+-- TOC entry 4740 (class 2606 OID 16538)
 -- Name: insumos insumos - productos; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -603,7 +726,7 @@ ALTER TABLE ONLY public.insumos
 
 
 --
--- TOC entry 4725 (class 2606 OID 16592)
+-- TOC entry 4741 (class 2606 OID 16592)
 -- Name: insumos insumos - usuarios; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -612,7 +735,16 @@ ALTER TABLE ONLY public.insumos
 
 
 --
--- TOC entry 4726 (class 2606 OID 16562)
+-- TOC entry 4742 (class 2606 OID 16674)
+-- Name: mercaderia_hojalata mer_hoj - vencimientos; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.mercaderia_hojalata
+    ADD CONSTRAINT "mer_hoj - vencimientos" FOREIGN KEY (vencimiento) REFERENCES public.vencimientos(id) NOT VALID;
+
+
+--
+-- TOC entry 4743 (class 2606 OID 16562)
 -- Name: mercaderia_hojalata merc_hoj - producto; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -621,7 +753,7 @@ ALTER TABLE ONLY public.mercaderia_hojalata
 
 
 --
--- TOC entry 4727 (class 2606 OID 16567)
+-- TOC entry 4744 (class 2606 OID 16567)
 -- Name: mercaderia_hojalata merc_hoj - usuarios; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -630,7 +762,7 @@ ALTER TABLE ONLY public.mercaderia_hojalata
 
 
 --
--- TOC entry 4708 (class 2606 OID 16612)
+-- TOC entry 4720 (class 2606 OID 16612)
 -- Name: mercaderias mercaderias - insumos; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -639,7 +771,7 @@ ALTER TABLE ONLY public.mercaderias
 
 
 --
--- TOC entry 4709 (class 2606 OID 16476)
+-- TOC entry 4721 (class 2606 OID 16476)
 -- Name: mercaderias mercaderias - productos; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -648,7 +780,7 @@ ALTER TABLE ONLY public.mercaderias
 
 
 --
--- TOC entry 4710 (class 2606 OID 16481)
+-- TOC entry 4722 (class 2606 OID 16481)
 -- Name: mercaderias mercaderias - usuarios; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -657,7 +789,16 @@ ALTER TABLE ONLY public.mercaderias
 
 
 --
--- TOC entry 4715 (class 2606 OID 16471)
+-- TOC entry 4723 (class 2606 OID 16684)
+-- Name: mercaderias mercaderias - vencimientos; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.mercaderias
+    ADD CONSTRAINT "mercaderias - vencimientos" FOREIGN KEY (vencimiento) REFERENCES public.vencimientos(id) NOT VALID;
+
+
+--
+-- TOC entry 4729 (class 2606 OID 16471)
 -- Name: permisos permisos - usuarios; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -666,7 +807,25 @@ ALTER TABLE ONLY public.permisos
 
 
 --
--- TOC entry 4720 (class 2606 OID 16582)
+-- TOC entry 4735 (class 2606 OID 16664)
+-- Name: ubicaciones ubicaciones - arb_ubi; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ubicaciones
+    ADD CONSTRAINT "ubicaciones - arb_ubi" FOREIGN KEY (ubicacion) REFERENCES public.arballon_ubicaciones(id) NOT VALID;
+
+
+--
+-- TOC entry 4736 (class 2606 OID 16669)
+-- Name: ubicaciones ubicaciones - extracto; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ubicaciones
+    ADD CONSTRAINT "ubicaciones - extracto" FOREIGN KEY (extracto) REFERENCES public.extracto(id) NOT VALID;
+
+
+--
+-- TOC entry 4737 (class 2606 OID 16582)
 -- Name: ubicaciones ubicaciones - merc_hoj; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -675,7 +834,7 @@ ALTER TABLE ONLY public.ubicaciones
 
 
 --
--- TOC entry 4721 (class 2606 OID 16506)
+-- TOC entry 4738 (class 2606 OID 16506)
 -- Name: ubicaciones ubicaciones - mercaderia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -684,16 +843,7 @@ ALTER TABLE ONLY public.ubicaciones
 
 
 --
--- TOC entry 4722 (class 2606 OID 16511)
--- Name: ubicaciones ubicaciones - ubicaciones; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.ubicaciones
-    ADD CONSTRAINT "ubicaciones - ubicaciones" FOREIGN KEY (ubicacion) REFERENCES public.arballon_ubicaciones(id) NOT VALID;
-
-
---
--- TOC entry 4723 (class 2606 OID 16516)
+-- TOC entry 4739 (class 2606 OID 16516)
 -- Name: ubicaciones ubicaciones - usuarios; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -701,7 +851,16 @@ ALTER TABLE ONLY public.ubicaciones
     ADD CONSTRAINT "ubicaciones - usuarios" FOREIGN KEY (responsable) REFERENCES public.usuarios(id) NOT VALID;
 
 
--- Completed on 2024-08-26 01:30:42
+--
+-- TOC entry 4745 (class 2606 OID 16622)
+-- Name: vencimientos vencimientos - productos; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vencimientos
+    ADD CONSTRAINT "vencimientos - productos" FOREIGN KEY (producto) REFERENCES public.arballon_productos(id) NOT VALID;
+
+
+-- Completed on 2024-08-27 10:06:56
 
 --
 -- PostgreSQL database dump complete
