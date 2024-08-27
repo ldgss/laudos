@@ -37,6 +37,14 @@ sistema de laudos para mercaderia y hojalata
         login
         etc...
 
+8. para retomar el trabajo, actualizar cambios de los demas
+        
+        git pull
+
+7. para ver todas las ramas
+
+        git branch -a
+
 ## comandos y uso de git
 
 - listar ramas
@@ -99,3 +107,33 @@ sistema de laudos para mercaderia y hojalata
 
         git pull
 
+### Asignacion de tareas para desarrollo
+
+Se trabajara horizontalmente, realizando para cada seccion la vista, el controlador y el modelo.
+Recordar que antes que nada hay que chequear que el usuario este logueado y tenga autorizacion para estar en cada seccion.
+
+#### laureano
+
+        index
+        login
+        base
+        mercaderia
+        extracto
+        insumos
+        ubicaciones
+
+#### luciano
+
+        accesos
+        ayuda
+        sugerencias
+        despachos
+        vencimientos
+
+#### silvio
+
+        bloqueados
+        motivos_bloqueo
+        hojalata
+        permisos
+        usuarios
