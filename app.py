@@ -26,3 +26,7 @@ def mercaderia():
     title = "Mercaderia"
     body = "Mercaderia"
     return render_template("mercaderia/index.html", title=title, body=body)
+
+@app.errorhandler(404)
+def pagina_no_encontrada(error):
+    return render_template("pagina_no_encontrada.html"), 404
