@@ -29,4 +29,4 @@ def mercaderia():
 
 @app.errorhandler(404)
 def pagina_no_encontrada(error):
-    return render_template("pagina_no_encontrada.html"), 404
+    return render_template("error/pagina_no_encontrada.html"), 404
