@@ -1,9 +1,123 @@
 {% extends "base/base.html" %}
 
 {% block header %}
-    <h1>{% block title %} {{title}} {% endblock %}</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla con Espaciado</title>
+    <style>
+        
+        th {
+            border: 3px solid rgba(0, 0, 0, 0); /* Borde de 1px de color negro */
+            padding: 1px; /* Espaciado interno */
+            text-align: left;
+        }
+        td {
+            border: 3px solid rgba(0, 0, 0, 0); /* Borde de 1px de color negro */
+            padding: 1px; /* Espaciado interno */
+            text-align: left;
+        }
+        tr {
+            border-bottom: 1px solid transparent; /* Espacio visual entre filas */
+        }
+        /* Alternativa: Borde entre filas como espaciado visual */
+        tr:not(:last-child) {
+            border-bottom: 1px solid #ccc;  /* Borde inferior solo en filas, excepto la última fila */
+        }
+        .bold {
+            font-weight: bold; /* Clase para texto grueso */
+        }
+        .botones {
+            justify-content: left; /* Centrar horizontalmente */
+            
+        }
+    </style>
+</head>
+<form id="miFormulario">
+    <p>
+        <label for="nombreS">Nº de pallets:</label>
+        <input type="number" id="nombreS" name="nombreS" value="" required>
+    </p>
+
+    <body>
+        <h2>DATOS DE PRODUCCIÓN</h2>
+        <table>
+            <tr>
+                <td class="bold">Fecha:</td>
+
+                <td>30-08-2024</td>
+                <td class="bold">Hora:</td>
+                <td>15:30:18</td>
+                <td class="bold">Lote:</td>
+                <td>5-001-001</td>
+            </tr>
+        </table>
+    </body>
+    <body>
+        <table>
+            <tr>
+                <td class="bold">Cod.Producto:</td>
+                <td>1011023356</td>
+            </tr>
+            <tr>
+                <td class="bold">Den.Producto:</td>
+                <td>MI Lata 8 Corper</td>
+            </tr>
+            <tr>
+                <td class="bold">Cantidad:</td>
+                <td>115</td>
+            </tr>
+            <tr>
+                <td class="bold">Ubicacion:</td>
+                <td>010101</td>
+            </tr>
+        </table>
+    </body>
+    <h2>DETALLE DEL BLOQUEO</h2>
+    <p>
+        <label class="bold" for="nombre">Motivo del Bloqueo:</label>
+        <input type="text" id="nombre" name="nombre" value="" required>
+    </p>
+    <p>
+        <label class="bold" for="nombre">Responsable:</label>
+        <input type="text" id="Responsable" name="nombre" value="" required>
+    </p>
+    <p>
+        <label class="bold" for="nombre">Observación:</label>
+        <input type="text" id="nombre" name="nombre" value="" required>
+    </p>
+    <p>
+        <label class="bold" for="nombre">Num.Planilla:</label>
+        <input type="number" id="nombre" name="nombre" value="" required>
+    </p>
+    <div class="botones">
+        <input type="submit" value="BUSCAR">
+        <input type="button" value="BLOQUEAR" onclick="resetInput()">
+        
+    </div>
+    
+</form>
+
+<script>
+function resetInput() {
+    document.getElementById('nombreS').value = ''; // Limpiar el campo de text
+}
+</script>
+
+
+    <!-- <h1>{% block title %} {{title}} {% endblock %}</h1>
+    <label for="codigo">Ingrese número de pallets:</label>
+    <input type="number" id="codigo" name="codigo"required>
+    <button type="button" onclick="">BUSCAR</button>
+    <label for="codigo">Motivo de bloqueo:</label>
+    <button type="button" onclick="resetInput()">BLOQUEAR</button>
+    <script>
+        function resetInput() {
+            document.getElementById('').value = ''; // Limpiar el campo de texto
+        }
+        </script> -->
 {% endblock %}
 
 {% block content %}
-    <h2> {{body}} </h2>
+   
 {% endblock %}

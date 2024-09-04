@@ -1,0 +1,53 @@
+[33mcommit 4013d70ba6f0bc8da5221e86036d71049450757a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdesarrollo_team[m[33m, [m[1;31morigin/desarrollo_team[m[33m, [m[1;32mbloqueados[m[33m)[m
+Author: Laureano Della Gaspera <ldellagaspera@solvencia.local>
+Date:   Tue Aug 27 13:16:00 2024 -0300
+
+    actualizar readme team
+
+[33mcommit 3880ceb4f9c11c99340c9169ccd6e1e3223bf931[m
+Author: Laureano Della Gaspera <ldellagaspera@solvencia.local>
+Date:   Tue Aug 27 12:43:34 2024 -0300
+
+    agregar templates, bd v20, logo, favs, css, js
+
+[33mcommit a3d461102257e1717363422ea3b6eb9de2b0484d[m
+Author: Laureano Della Gaspera <ldellagaspera@solvencia.local>
+Date:   Mon Aug 26 02:20:04 2024 -0300
+
+    agregar requirements.txt, bd v15
+
+[33mcommit b8a32cea131734fb1d981bff9cc3f94a773e065b[m
+Author: Laureano Della Gaspera <ldellagaspera@solvencia.local>
+Date:   Wed Aug 21 12:40:10 2024 -0300
+
+    agregar estructura de archivos
+
+[33mcommit 08e8ea6e298bd656fa248a26a192248c94791e63[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: Laureano Della Gaspera <ldellagaspera@solvencia.local>
+Date:   Tue Aug 20 12:37:19 2024 -0300
+
+    agregar app.py
+
+[33mcommit d89f87921467d8676f314da3f4e731806d2f3a09[m
+Author: Laureano Della Gaspera <ldellagaspera@solvencia.local>
+Date:   Tue Aug 20 09:53:13 2024 -0300
+
+    agregar fechas en despacho, ubicaciones y permisos
+
+[33mcommit bdcac5eca4bad2aec506d4010a03c27872254291[m
+Author: Laureano Della Gaspera <ldellagaspera@solvencia.local>
+Date:   Mon Aug 19 12:40:20 2024 -0300
+
+    aclarar ramas de desarrollo
+
+[33mcommit af8efc2f5eb82f66da96a342109195a95a056ad2[m
+Author: Laureano Della Gaspera <ldellagaspera@solvencia.local>
+Date:   Mon Aug 19 12:31:33 2024 -0300
+
+    actualizar readme y agregar tablas
+
+[33mcommit f5cad1235116e0fd02f13c40ff9b469c1c1fb33d[m
+Author: laureano934 <ldgss75@gmail.com>
+Date:   Mon Aug 19 11:32:53 2024 -0300
+
+    Initial commit

@@ -26,3 +26,9 @@ def mercaderia():
     title = "Mercaderia"
     body = "Mercaderia"
     return render_template("mercaderia/index.html", title=title, body=body)
+
+@app.route("/bloqueos")
+def bloqueos():
+    title = "Bloqueos"
+    body = "Detalle"
+    return render_template("bloqueados/index.html", title=title, body=body)
