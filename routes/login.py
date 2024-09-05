@@ -38,3 +38,8 @@ def login_post():
     else:
         flash("usuario o contraseña incorrecta")
         return redirect(url_for("login.login_get"))
+    
+@login_bp.get("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login.login_get"))
