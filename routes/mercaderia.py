@@ -8,7 +8,7 @@ mercaderia_bp = Blueprint("mercaderia", __name__)
 
 @mercaderia_bp.route("/mercaderia")
 def mercaderia():
-    if helpers.session_on():
+    if helpers.session_on() and helpers.authorized_to("mercaderia"):
         title = "Mercaderia"
         body = "Mercaderia"
         return render_template("mercaderia/index.html", title=title, body=body)
