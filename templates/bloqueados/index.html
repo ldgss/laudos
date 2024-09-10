@@ -1,16 +1,11 @@
 {% extends "base/base.html" %}
-
 {% block header %}
     
-  </form>
 <form id="miFormulario">
-    <input type="number" class="form-control-plaintext">
-        <div class="input-group mb-3">
-            <span class="input-group-text" id="inputGroup-sizing-default">NºPallets</span>
-            <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-        </div>
-          
-
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="inputGroup-sizing-default">NºPallets</span>
+        <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+    </div>      
     <body>
         <h2>DATOS DE PRODUCCIÓN</h2>
         <table>
@@ -46,26 +41,41 @@
         </table>
     </body>
     <h2>DETALLE DEL BLOQUEO</h2>
-    <p>
-        <label class="bold" for="nombre">Motivo del Bloqueo:</label>
-        <input class="" type="text" id="nombre" name="nombre" value="" required>
-    </p>
-    <p>
-        <label class="bold" for="nombre">Responsable:</label>
-        <input type="text" id="Responsable" name="nombre" value="" required>
-    </p>
-    <p>
-        <label class="bold" for="nombre">Observación:</label>
-        <input type="text" id="nombre" name="nombre" value="" required>
-    </p>
-    <p>
-        <label class="bold" for="nombre">Num.Planilla:</label>
-        <input type="number" id="nombre" name="nombre" value="" required>
-    </p>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="inputGroup-sizing-default">Motivo bloqueo</span>
+        <select class="form-select" aria-label="Default select example">
+            <option selected>Seleccione Motivo</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+            <option value="4">Four</option>
+            <option value="5">five</option>
+            <option value="6">six</option>
+            <option value="7">seven</option>
+        </select>
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="inputGroup-sizing-default">Responsable</span>
+        <select class="form-select" aria-label="Default select example">
+            <option selected>Seleccione Responsable</option>
+            <option value="1">Usuario</option>
+            
+        </select>
+    </div>
+    <div class="input-group mb-3">
+        <label class="input-group-text" id="inputGroup-sizing-default">Observación</label>
+        <input type="text" class="input-group mb-3">
+                
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="inputGroup-sizing-default">NºPlanilla</span>
+        <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+    </div>
+    
     <div class="col-auto">
-        <input type="submit" class="btn btn-primary mb-3" value="BUSCAR">
-        <input type="button" value="BLOQUEAR" onclick="resetInput()">
-        
+
+        <button type="button" class="btn btn-primary">Buscar</button>
+        <button type="button" class="btn btn-danger" onclick="resetInput()">Bloquear</button>        
     </div>
     
 </form>
