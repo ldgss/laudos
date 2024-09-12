@@ -8,14 +8,16 @@ sistema de laudos para mercaderia y hojalata
 - postgresql
 
 ## instalacion
+
+### primer uso
+
 1. crear carpeta local donde ubicar el proyecto
+
 2. ejecutar el siguiente comando:
 
         git clone https://github.com/laureano934/laudos.git
 
-3. conceder acceso a github a traves del navegador
-4. instaslar la extension "python" en visual studio code
-5. configurar git:
+3. configurar git si fuera necesario:
 
 - configurar un nombre de usuario
 
@@ -29,6 +31,10 @@ sistema de laudos para mercaderia y hojalata
 
         git config --global color.ui auto
 
+4. conceder acceso a github a traves del navegador
+
+5. instaslar la extension "python" en visual studio code
+
 6. antes de empezar a hacer cambios, crear un rama para no trabajar en la principal; ejemplos de nombre podrian incluir:
 
         desarrollo
@@ -36,6 +42,8 @@ sistema de laudos para mercaderia y hojalata
         rutas
         login
         etc...
+
+### usos posteriores
 
 8. para retomar el trabajo, actualizar cambios de los demas
         
