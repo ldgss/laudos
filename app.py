@@ -1,34 +1,22 @@
+
 from flask import Flask
-from flask import url_for
-from markupsafe import escape
-from flask import request
-from flask import render_template
-from flask import abort
-from flask import redirect
-from flask import session
+import secrets
+from models import mod_login
+from utils import helpers
+from routes import login
+from routes import mercaderia
+from routes import extracto
+from routes import index
+from routes import errors
+from db import db
 
 app = Flask(__name__)
+app.secret_key = secrets.token_hex()
+app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:1234@localhost:5432/laudosdb'
+db.db.init_app(app)
+app.register_blueprint(login.login_bp)
+app.register_blueprint(mercaderia.mercaderia_bp)
+app.register_blueprint(index.index_bp)
+app.register_blueprint(errors.errors_bp)
+app.register_blueprint(extracto.extracto_bp)
 
-@app.route("/")
-def index():
-    title = "Laudos Solvencia S.A"
-    body = "Bienvenidos!"
-    return render_template("index.html", title=title, body=body)
-
-@app.route("/login")
-def login():
-    title = "Ingresar"
-    body = "Ingresar"
-    return render_template("login/index.html", title=title, body=body)
-
-@app.route("/mercaderia")
-def mercaderia():
-    title = "Mercaderia"
-    body = "Mercaderia"
-    return render_template("mercaderia/index.html", title=title, body=body)
-
-@app.route("/bloqueos")
-def bloqueos():
-    title = "Bloqueos"
-    body = "Detalle"
-    return render_template("bloqueados/index.html", title=title, body=body)

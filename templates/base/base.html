@@ -27,44 +27,90 @@
               <a class="nav-link" href="/">Inicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/login">Login</a>
+              {% if session["nombre"] %}
+                <a class="nav-link" href="/logout">Cerrar Sesion</a>
+              {% else %}
+                <a class="nav-link" href="/login">Iniciar Sesion</a>
+              {% endif %}
+            
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/ayuda">Ayuda</a>
+            
+            
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Productos
+              </a>
+              <ul class="dropdown-menu">
+                <li class="">
+                  <a class="dropdown-item" href="/mercaderia">Mercaderia</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/hojalata">Hojalata</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/extracto">Extracto</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/insumos">Insumos</a>
+                </li>
+              </ul>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/mercaderia">Mercaderia</a>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Calidad
+              </a>
+              <ul class="dropdown-menu">
+                <li class="">
+                  <a class="dropdown-item" href="/bloqueos">Bloqueos</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/motivosbloqueo">Motivos de bloqueo</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/vencimientos">Vencimientos</a>
+                </li>
+              </ul>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/hojalata">Hojalata</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/extracto">Extracto</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/bloqueos">Bloqueos</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/insumos">Insumos</a>
-            </li>
+          
             <li class="nav-item">
               <a class="nav-link" href="/ubicaciones">Ubicaciones</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/despachos">Despachos</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/accesos">Accesos</a>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Administracion
+              </a>
+              <ul class="dropdown-menu">
+                <li class="">
+                  <a class="dropdown-item" href="/accesos">Accesos</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/permisos">Permisos</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/usuarios">Usuarios</a>
+                </li>
+              </ul>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/permisos">Permisos</a>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Ayuda
+              </a>
+              <ul class="dropdown-menu">
+                <li class="">
+                  <a class="dropdown-item" href="/ayuda">Ayuda</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/sugerencias">Sugerencias</a>
+                </li>
+              </ul>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/sugerencias">Sugerencias</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/usuarios">Usuarios</a>
-            </li>
+
           </ul>
           
         </div>
