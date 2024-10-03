@@ -20,8 +20,8 @@ def login_get():
         return redirect(url_for("index.index"))
     else:
         title = "Ingresar"
-        body = "Ingresar"
-        return render_template("login/index.html", title=title, body=body)
+        section = "Ingresar"
+        return render_template("login/index.html", title=title, section=section)
     
 @login_bp.post("/login")
 def login_post():

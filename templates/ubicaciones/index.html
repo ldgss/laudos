@@ -1,9 +1,21 @@
 {% extends "base/base.html" %}
 
 {% block header %}
-    <h1>{% block title %} {{title}} {% endblock %}</h1>
+
 {% endblock %}
 
 {% block content %}
-    <h2> {{body}} </h2>
+
+<div class="container col-sm-12 col-lg-3">
+    <div class="m-3">
+        <a href="/ubicaciones/ubicar" class="btn btn-primary col-12">Ubicar</a>
+    </div>
+    <div class="m-3">
+        <a href="/ubicaciones/buscar" class="btn btn-primary col-12">Buscar</a>
+    </div>
+
+
+
+</div>
+
 {% endblock %}

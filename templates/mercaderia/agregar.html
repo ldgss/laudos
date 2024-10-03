@@ -1,9 +1,101 @@
 {% extends "base/base.html" %}
 
 {% block header %}
-    <h1>{% block title %} {{title}} {% endblock %}</h1>
+
 {% endblock %}
 
 {% block content %}
-    <h2> {{body}} </h2>
+
+<form action="agregar" method="post">
+
+    <div class="row m-4 justify-content-center">
+        <label for="operario" class="col-sm-2 col-form-label">Operario</label>
+        <div class="col-sm-5">
+            <input required maxlength="30" type="text" class="form-control" 
+            name="operario" id="operario" value="{{session["nombre"]}}">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="denominacion" class="col-sm-2 col-form-label">Denominacion</label>
+        <div class="col-sm-5">
+
+            <select required name="denominacion" id="denominacion" class="form-select">
+                <option disabled selected value>-- seleccione una opcion --</option>
+                <option value="Corper">Corper</option>
+                <option value="Corun">Corun</option>
+                <option value="Sabbortuc">Sabbortuc</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="vencimiento" class="col-sm-2 col-form-label">Vencimiento (n° de meses)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="12" max="1000" maxlength="4" class="form-control" name="vencimiento"
+                id="vencimiento">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="fecha_elaboracion" class="col-sm-2 col-form-label">Fecha de elaboración</label>
+        <div class="col-sm-5">
+            <input required type="date" class="form-control" name="fecha_elaboracion" id="fecha_elaboracion">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="fecha_etiquetado" class="col-sm-2 col-form-label">Fecha de etiquetado</label>
+        <div class="col-sm-5">
+            <input required type="date" class="form-control" name="fecha_etiquetado" id="fecha_etiquetado">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="hora_elaboracion" class="col-sm-2 col-form-label">Hora de elaboración</label>
+        <div class="col-sm-5">
+            <input required type="time" class="form-control" name="hora_elaboracion" id="hora_elaboracion">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="hola_etiquetado" class="col-sm-2 col-form-label">Hora de etiquetado</label>
+        <div class="col-sm-5">
+            <input required type="time" class="form-control" name="hola_etiquetado" id="hola_etiquetado">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="lote" class="col-sm-2 col-form-label">Lote</label>
+        <div class="col-sm-5">
+            <input required type="text" class="form-control" pattern="\d-\d{3}-\d{3}"
+                title="Por favor, use el formato: 1 dígito, guion, 3 dígitos, guion, 3 dígitos (ej: 4-100-200)"
+                name="lote" id="lote">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="parte" class="col-sm-2 col-form-label">Numero de parte</label>
+        <div class="col-sm-5">
+            <input required type="text" class="form-control" name="parte" id="parte"
+                title="Por favor, use el formato: año actual - 6 numeros (ej: 2024-000001)" pattern="^\d{1,4}-\d{6}$">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="cantidad" class="col-sm-2 col-form-label">Cantidad</label>
+        <div class="col-sm-5">
+            <input required type="number" min="1" max="1980" class="form-control" name="cantidad" id="cantidad">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+        <div class="col-sm-5">
+            <textarea class="form-control" id="observaciones" name="observaciones" 
+            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-1">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </div>
+</form>
+
 {% endblock %}
