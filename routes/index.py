@@ -10,7 +10,7 @@ index_bp = Blueprint("index", __name__)
 @index_bp.get("/")
 def index():
     if helpers.session_on():
-        title = "Sistema de laudos"
+        title = "Inicio"
         section = "Inicio"
         return render_template("index.html", title=title, section=section)
     else:

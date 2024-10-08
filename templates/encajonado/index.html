@@ -1,0 +1,28 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container col-sm-12 col-lg-3">
+
+    <form action="" method="post">
+        <div class="m-3">
+            <label class="form-label" for="buscar">Buscar</label>
+            <input class="form-control" placeholder="Marca" type="text" id="buscar" name="buscar">
+        </div>
+        <div class="m-3">
+            <button type="submit" disabled class="btn btn-primary col-12">Buscar</button>
+        </div>
+    </form>
+
+    <div class="m-3">
+        <a href="{{url_for('encajonado.encajonado_agregar')}}" class="btn btn-success col-12">Agregar</a>
+    </div>
+
+
+
+</div>
+{% endblock %}
