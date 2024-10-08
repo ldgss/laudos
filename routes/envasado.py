@@ -4,7 +4,9 @@ from flask import url_for
 from utils import helpers
 from flask import Blueprint
 from models import mod_mercaderia
-import json
+from flask import flash
+from flask import request
+from flask import session
 
 envasado_bp = Blueprint("envasado", __name__)
 
@@ -29,5 +31,17 @@ def envasado_agregar():
         title = "Envasado"
         section = "Envasado"
         return render_template("envasado/agregar.html", title=title, section=section, productos_arballon=productos_dict)
+    else:
+        return redirect(url_for("login.login_get"))
+    
+@envasado_bp.post("/envasado/agregar")
+def envasado_agregar_post():
+    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+        result = mod_mercaderia.insert_envasado(request.form)
+        if result:
+            return redirect(url_for("envasado.envasado_agregar"))
+        else:
+            flash("Se ha producido un error al intentar guardar los cambios.")
+            return redirect(url_for("envasado.envasado_agregar"))
     else:
         return redirect(url_for("login.login_get"))

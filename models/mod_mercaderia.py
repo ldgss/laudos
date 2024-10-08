@@ -26,3 +26,21 @@ def get_mercaderia():
     except Exception as e:
         print(f"Error: {e}")
         return None
+    
+def insert_envasado(form):
+    try:
+        sql = text("""
+                    SELECT *
+                    FROM vencimiento
+                    WHERE producto = :producto
+                    ORDER BY id DESC;
+                """
+                )
+        
+        result = db.db.session.execute(sql,{"producto": form["cod_cls"]})
+        print(form)
+        print(result.mappings().first())
+        # return result.mappings().first()
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
