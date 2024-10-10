@@ -1,0 +1,48 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+<script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+<script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="row m-4 justify-content-center">
+        <input type="text" id="barcode_text" hidden value="{{envasado["numero_unico"]}}">
+        <svg id="barcode"></svg>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
+            <table id="descripcion" class="table-bordered col-12">
+                <tr>
+                    <th>Lote:</th>
+                    <td>{{envasado["lote"]}}</td>
+                </tr>
+                <tr>
+                    <th>Fecha de Elaboracion:</th>
+                    <td>{{envasado["fecha_elaboracion"]}}</td>
+                </tr>
+                <tr>
+                    <th>Cantidad:</th>
+                    <td>{{envasado["cantidad"]}}</td>
+                </tr>
+                <tr>
+                    <th>Vencimiento:</th>
+                    <td>{{fecha_vencimiento}}</td>
+                </tr>
+                <tr>
+                    <th>Observaciones:</th>
+                    <td>{{envasado["observacion"]}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="m-2 text-center">
+            <button class="btn btn-primary" id="print-barcode">Imprimir Código de Barras</button>
+        </div>
+        <div class="m-2 text-center">
+            <a href="/envasado/agregar" class="btn btn-primary" id="print-barcode">Volver</a>
+        </div>
+    </div>
+{% endblock %}

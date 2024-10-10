@@ -6,6 +6,7 @@ sistema de laudos para mercaderia y hojalata
 - visual studio code
 - python
 - postgresql
+- msodbcsql
 
 ## instalacion
 

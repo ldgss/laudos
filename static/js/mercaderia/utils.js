@@ -83,5 +83,97 @@ function julianoAutomatico(){
     lote.placeholder += "X-XXX-" + hoy + ". El dia juliano de hoy es " + hoy;
 }
 
-window.addEventListener('load', actualizarFechaYHora);
-window.addEventListener('load', julianoAutomatico);
+function imprimir(){
+    const text = document.getElementById('barcode_text').value;
+    JsBarcode("#barcode", text, {
+        format: "CODE128",
+        width: 4, 
+        height: 200,
+        displayValue: true
+    });
+}
+
+function imprimir_new_tab(){
+        document.getElementById('print-barcode').addEventListener('click', function() {
+            
+            const barcodeSvg = document.getElementById('barcode').outerHTML;
+            const descripcion = document.getElementById('descripcion').outerHTML;
+            
+            
+            const newWindow = window.open('', '_blank');
+            newWindow.document.write(`
+                <html>
+                <head>
+                
+
+                <title>Código de Barras</title>
+                </head>
+                <body>
+                
+                <div style="text-align:center;">
+                ${barcodeSvg}
+                </div>
+
+                <div class="table-container">
+                    ${descripcion}
+                </div>
+
+                <style>
+                    
+                    .table-container {
+                        justify-content: center; 
+                        align-items: center;    
+                        
+                    }
+
+                   
+                    #descripcion {
+                        border-collapse: collapse; 
+                        width: 50%; 
+                        margin: 0 auto; 
+                        border: 2px solid black;
+                    }
+
+                    
+                    #descripcion th, #descripcion td {
+                        border: 1px solid black;
+                        padding: 8px; 
+                        text-align: left;
+                    }
+
+                    
+                    #descripcion tbody tr:nth-child(odd) {
+                        background-color: #f2f2f2; 
+                    }
+
+                    
+                    #descripcion thead {
+                        background-color: #4CAF50;
+                        color: white;
+                    }
+                </style>
+
+
+                
+                
+                <script>
+                //     window.onload = function() {
+                //         window.print();
+                //     }
+                // <\/script>
+                    </body>
+            </html>
+        `);
+
+        newWindow.document.close();
+    });
+}
+
+try {
+    window.addEventListener('load', actualizarFechaYHora);
+    window.addEventListener('load', julianoAutomatico);
+    window.addEventListener('load', imprimir);
+    window.addEventListener('load', imprimir_new_tab);
+} catch (error) {
+    // console.log(error)
+}
