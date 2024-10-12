@@ -1,105 +1,58 @@
 {% extends "base/base.html" %}
+
 {% block header %}
-    
-<form id="miFormulario">
-    <div class="input-group mb-3">
-        <span class="input-group-text" id="inputGroup-sizing-default">NºPallets</span>
-        <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-    </div>      
-    <body>
-        <h2>DATOS DE PRODUCCIÓN</h2>
-        <table>
-            <tr>
-                <td class="bold">Fecha:</td>
 
-                <td>30-08-2024</td>
-                <td class="bold">Hora:</td>
-                <td>15:30:18</td>
-                <td class="bold">Lote:</td>
-                <td>5-001-001</td>
-            </tr>
-        </table>
-    </body>
-    <body>
-        <table>
-            <tr>
-                <td class="bold">Cod.Producto:</td>
-                <td>1011023356</td>
-            </tr>
-            <tr>
-                <td class="bold">Den.Producto:</td>
-                <td>MI Lata 8 Corper</td>
-            </tr>
-            <tr>
-                <td class="bold">Cantidad:</td>
-                <td>115</td>
-            </tr>
-            <tr>
-                <td class="bold">Ubicacion:</td>
-                <td>010101</td>
-            </tr>
-        </table>
-    </body>
-    <h2>DETALLE DEL BLOQUEO</h2>
-    <div class="input-group mb-3">
-        <span class="input-group-text" id="inputGroup-sizing-default">Motivo bloqueo</span>
-        <select class="form-select" aria-label="Default select example">
-            <option selected>Seleccione Motivo</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-            <option value="4">Four</option>
-            <option value="5">five</option>
-            <option value="6">six</option>
-            <option value="7">seven</option>
-        </select>
-    </div>
-    <div class="input-group mb-3">
-        <span class="input-group-text" id="inputGroup-sizing-default">Responsable</span>
-        <select class="form-select" aria-label="Default select example">
-            <option selected>Seleccione Responsable</option>
-            <option value="1">Usuario</option>
-            
-        </select>
-    </div>
-    <div class="input-group mb-3">
-        <label class="input-group-text" id="inputGroup-sizing-default">Observación</label>
-        <input type="text" class="input-group mb-3">
-                
-    </div>
-    <div class="input-group mb-3">
-        <span class="input-group-text" id="inputGroup-sizing-default">NºPlanilla</span>
-        <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-    </div>
-    
-    <div class="col-auto">
-
-        <button type="button" class="btn btn-primary">Buscar</button>
-        <button type="button" class="btn btn-danger" onclick="resetInput()">Bloquear</button>        
-    </div>
-    
-</form>
-
-<script>
-function resetInput() {
-    document.getElementById('nombreS').value = ''; // Limpiar el campo de text
-}
-</script>
-
-
-    <!-- <h1>{% block title %} {{title}} {% endblock %}</h1>
-    <label for="codigo">Ingrese número de pallets:</label>
-    <input type="number" id="codigo" name="codigo"required>
-    <button type="button" onclick="">BUSCAR</button>
-    <label for="codigo">Motivo de bloqueo:</label>
-    <button type="button" onclick="resetInput()">BLOQUEAR</button>
-    <script>
-        function resetInput() {
-            document.getElementById('').value = ''; // Limpiar el campo de texto
-        }
-        </script> -->
 {% endblock %}
 
 {% block content %}
-   
+<h2 class="container-fluid">
+    {{body}}
+</h2>
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      ACCIONES DE BLOQUEO
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="/bloqueos/agregar">Agregar</a></li>
+      <li><a class="dropdown-item" href="/bloqueos/editar">Editar</a></li>
+      <li><a class="dropdown-item" href="#">Listado</a></li>
+    </ul>
+  </div>
+  <h1>
+    estadisticas de bloqueos
+  </h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">First</th>
+        <th scope="col">Last</th>
+        <th scope="col">Handle</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td colspan="2">Larry the Bird</td>
+        <td>@twitter</td>
+      </tr>
+    </tbody>
+  </table>
+    
+
+  
+  
+  
 {% endblock %}

@@ -8,6 +8,7 @@ from routes import mercaderia
 from routes import extracto
 from routes import index
 from routes import errors
+from routes import bloqueos
 from db import db
 
 app = Flask(__name__)
@@ -19,4 +20,4 @@ app.register_blueprint(mercaderia.mercaderia_bp)
 app.register_blueprint(index.index_bp)
 app.register_blueprint(errors.errors_bp)
 app.register_blueprint(extracto.extracto_bp)
-
+app.register_blueprint(bloqueos.bloqueos_bp)
