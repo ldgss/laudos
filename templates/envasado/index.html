@@ -6,15 +6,17 @@
 
 {% block content %}
 
-<div class="container col-sm-12 col-lg-3">
+<div class="container col-sm-12 col-md-8 col-lg-6">
 
-    <form action="" method="post">
+    <form action="/envasado/buscar" method="post">
         <div class="m-3">
             <label class="form-label" for="buscar">Buscar</label>
-            <input class="form-control" placeholder="Marca" type="text" id="buscar" name="buscar">
+            <input class="form-control" required
+            placeholder="Ingrese numero de parte, lote, fechas, observaciones" 
+            type="text" id="buscar" name="buscar">
         </div>
         <div class="m-3">
-            <button type="submit" disabled class="btn btn-primary col-12">Buscar</button>
+            <button type="submit" class="btn btn-primary col-12">Buscar</button>
         </div>
     </form>
 

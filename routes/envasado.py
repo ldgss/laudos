@@ -71,3 +71,22 @@ def envasado_imprimir(numero_unico):
                                fecha_vencimiento=fecha_vencimiento)
     else:
         return redirect(url_for("login.login_get"))
+    
+@envasado_bp.post("/envasado/buscar")
+def envasado_buscar():
+    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+        return redirect(url_for("envasado.envasado_listado", terminos_de_busqueda=request.form["buscar"]))
+    else:
+        return redirect(url_for("login.login_get"))
+    
+@envasado_bp.get("/envasado/listado/<terminos_de_busqueda>")
+def envasado_listado(terminos_de_busqueda):
+    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+        listado = mod_mercaderia.get_listado(terminos_de_busqueda)
+        title = "Envasado"
+        section = "Envasado"
+        return render_template("envasado/listado.html", 
+                               title=title, section=section, 
+                               listado=listado)
+    else:
+        return redirect(url_for("login.login_get"))

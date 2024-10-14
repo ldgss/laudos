@@ -138,3 +138,35 @@ def get_envasado(numero_unico):
     except Exception as e:
         print(f"Error: {e}")
         return None
+    
+def get_listado(terminos_de_busqueda):
+    try:
+        terminos_de_busqueda = terminos_de_busqueda.split()
+        condiciones_ilike = []
+        for termino in terminos_de_busqueda:
+            # chequear cada termino en cada columna
+            subcondicion = []
+            subcondicion.append(f"producto::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"observacion::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"cantidad::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"lote::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"fecha_elaboracion::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"responsable::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"numero_unico::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"vto::TEXT ILIKE '%{termino}%'")
+            
+            condiciones_ilike.append(f"({' OR '.join(subcondicion)})")
+
+        # refinamos la busqueda
+        condicion_final_ilike = ' AND '.join(condiciones_ilike)
+
+        query_sql = f"""
+            SELECT *
+            FROM mercaderia
+            WHERE {condicion_final_ilike};
+        """
+        resultados = db.db.session.execute(text(query_sql))
+        return  resultados.fetchall()
+    except Exception as e:
+        print(f"Error: {e}")
+        return None

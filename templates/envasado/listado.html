@@ -1,9 +1,56 @@
 {% extends "base/base.html" %}
 
 {% block header %}
-    <h1>{% block title %} {{title}} {% endblock %}</h1>
+   
 {% endblock %}
 
 {% block content %}
-    <h2> {{body}} </h2>
+<div class="container mt-5">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Observación</th>
+                <th>Cantidad</th>
+                <th>Lote</th>
+                <th>Fecha Elaboración</th>
+                <th>Responsable</th>
+                <th>Número Único</th>
+                <th>Vto</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for l in listado %}
+            <tr>
+                <td>
+                    {{l.producto}}
+                </td>
+                <td>
+                    {{l.observacion}}
+                </td>
+                <td>
+                    {{l.cantidad}}
+                </td>
+                <td>
+                    {{l.lote}}
+                </td>
+                <td>
+                    {{l.fecha_elaboracion}}
+                </td>
+                <td>
+                    {{l.responsable}}
+                </td>
+                <td>
+                    {{l.numero_unico}}
+                </td>
+                <td>
+                    {{l.vto}}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+    
+
 {% endblock %}
