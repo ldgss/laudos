@@ -141,19 +141,26 @@ def get_envasado(numero_unico):
     
 def get_listado(terminos_de_busqueda):
     try:
+        
         terminos_de_busqueda = terminos_de_busqueda.split()
         condiciones_ilike = []
         for termino in terminos_de_busqueda:
-            # chequear cada termino en cada columna
+            # chequear cada termino en cada columna de mercaderia
             subcondicion = []
-            subcondicion.append(f"producto::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"observacion::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"cantidad::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"lote::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"fecha_elaboracion::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"responsable::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"numero_unico::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"vto::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.producto::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.observacion::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.cantidad::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.lote::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.fecha_elaboracion::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.responsable::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.numero_unico::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.vto::TEXT ILIKE '%{termino}%'")
+            
+            # chequear cada termino en nombre usuario
+            subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
+            # chequear cada termino en meses vencimiento
+            subcondicion.append(f"v.meses::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"v.producto::TEXT ILIKE '%{termino}%'")
             
             condiciones_ilike.append(f"({' OR '.join(subcondicion)})")
 
@@ -161,12 +168,15 @@ def get_listado(terminos_de_busqueda):
         condicion_final_ilike = ' AND '.join(condiciones_ilike)
 
         query_sql = f"""
-            SELECT *
-            FROM mercaderia
+            SELECT m.*, u.*, v.*
+            FROM mercaderia m
+            FULL OUTER JOIN usuario u ON m.responsable = u.id
+            FULL OUTER JOIN vencimiento v ON m.vto = v.id
             WHERE {condicion_final_ilike};
         """
         resultados = db.db.session.execute(text(query_sql))
-        return  resultados.fetchall()
+        return resultados.fetchall()
+
     except Exception as e:
         print(f"Error: {e}")
         return None

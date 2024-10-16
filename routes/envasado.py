@@ -33,6 +33,7 @@ def envasado_agregar():
             {'cod_mae': cod_mae.strip(), 'den': den.strip(), 'cod_cls': cod_cls}
             for cod_mae, den, cod_cls in productos_arballon
         ]
+        
         title = "Envasado"
         section = "Envasado"
         return render_template("envasado/agregar.html", title=title, section=section, proximo_id=proximo_id,productos_arballon=productos_dict)
@@ -83,6 +84,10 @@ def envasado_buscar():
 def envasado_listado(terminos_de_busqueda):
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         listado = mod_mercaderia.get_listado(terminos_de_busqueda)
+        # *******************************************************************************
+        print(listado)
+        print("estamos devolviendo 2 resultados None, arreglar...")
+        # *******************************************************************************
         title = "Envasado"
         section = "Envasado"
         return render_template("envasado/listado.html", 
