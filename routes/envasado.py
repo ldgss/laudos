@@ -25,18 +25,10 @@ def envasado():
 @envasado_bp.get("/envasado/agregar")
 def envasado_agregar():
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
-        # enviar al form el listado de productos/marcas
-        # asi como tmb el ultimo id incrementado en uno
-        productos_arballon = mod_mercaderia.listar_productos_arballon()
         proximo_id = mod_mercaderia.get_ultimo_id()
-        productos_dict = [
-            {'cod_mae': cod_mae.strip(), 'den': den.strip(), 'cod_cls': cod_cls}
-            for cod_mae, den, cod_cls in productos_arballon
-        ]
-        
         title = "Envasado"
         section = "Envasado"
-        return render_template("envasado/agregar.html", title=title, section=section, proximo_id=proximo_id,productos_arballon=productos_dict)
+        return render_template("envasado/agregar.html", title=title, section=section, proximo_id=proximo_id,productos_arballon=session["productos_arballon"])
     else:
         return redirect(url_for("login.login_get"))
     
@@ -84,10 +76,6 @@ def envasado_buscar():
 def envasado_listado(terminos_de_busqueda):
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         listado = mod_mercaderia.get_listado(terminos_de_busqueda)
-        # *******************************************************************************
-        print(listado)
-        print("estamos devolviendo 2 resultados None, arreglar...")
-        # *******************************************************************************
         title = "Envasado"
         section = "Envasado"
         return render_template("envasado/listado.html", 

@@ -170,8 +170,8 @@ def get_listado(terminos_de_busqueda):
         query_sql = f"""
             SELECT m.*, u.*, v.*
             FROM mercaderia m
-            FULL OUTER JOIN usuario u ON m.responsable = u.id
-            FULL OUTER JOIN vencimiento v ON m.vto = v.id
+            JOIN usuario u ON m.responsable = u.id
+            JOIN vencimiento v ON m.vto = v.id
             WHERE {condicion_final_ilike};
         """
         resultados = db.db.session.execute(text(query_sql))
