@@ -90,18 +90,17 @@ def get_vencimiento_meses(vto_id):
         return None
     
 def insert_mercaderia(form, vto):
-    
     try:
         sql = text("""
                     INSERT INTO
                     mercaderia
                     (producto, observacion, cantidad, lote, fecha_elaboracion, 
                     responsable, numero_unico, vto, fecha_registro,
-                    antecedentes)
+                    antecedentes, den)
                     VALUES
                     (:producto, :observacion, :cantidad, :lote, :fecha_elaboracion, 
                     :responsable, :numero_unico, :vto, CURRENT_TIMESTAMP,
-                    :antecedentes)
+                    :antecedentes, :den)
                 """
                 )
         
@@ -116,6 +115,7 @@ def insert_mercaderia(form, vto):
                                                 "numero_unico": form['numero_unico'],
                                                 "vto": vto['id'],
                                                 "antecedentes": form['antecedentes'],
+                                                "den": form['denominacion']
                                             })
         db.db.session.commit()
         return True
@@ -144,6 +144,7 @@ def get_listado(terminos_de_busqueda):
         
         terminos_de_busqueda = terminos_de_busqueda.split()
         condiciones_ilike = []
+        
         for termino in terminos_de_busqueda:
             # chequear cada termino en cada columna de mercaderia
             subcondicion = []
@@ -155,6 +156,7 @@ def get_listado(terminos_de_busqueda):
             subcondicion.append(f"m.responsable::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.numero_unico::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.vto::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.den::TEXT ILIKE '%{termino}%'")
             
             # chequear cada termino en nombre usuario
             subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")

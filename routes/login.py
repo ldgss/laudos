@@ -28,8 +28,6 @@ def login_post():
     user = mod_login.log_user(usuario, password)
     if user:
         session.update(user)
-        # si o si debo guardar los productos en la sesion 
-        # ya que estan en otra base de datos
         productos_arballon = mod_mercaderia.listar_productos_arballon()
         productos_dict = [
             {'cod_mae': cod_mae.strip(), 'den': den.strip(), 'cod_cls': cod_cls}

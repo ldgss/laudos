@@ -25,11 +25,7 @@
                 {% for l in listado %}
                 <tr>
                     <td>
-                        {% for item in session["productos_arballon"] %}
-                            {% if item["cod_mae"]|string == l[1]|string: %}
-                                {{ item["den"] }}
-                            {% endif %}
-                        {% endfor %}
+                        {{l.den}}
                     </td>
                     <td>
                         {{l.observacion}}

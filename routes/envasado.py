@@ -28,7 +28,10 @@ def envasado_agregar():
         proximo_id = mod_mercaderia.get_ultimo_id()
         title = "Envasado"
         section = "Envasado"
-        return render_template("envasado/agregar.html", title=title, section=section, proximo_id=proximo_id,productos_arballon=session["productos_arballon"])
+        return render_template("envasado/agregar.html", 
+                               title=title, section=section, 
+                               proximo_id=proximo_id,
+                               productos_arballon=session["productos_arballon"])
     else:
         return redirect(url_for("login.login_get"))
     
