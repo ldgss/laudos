@@ -5,7 +5,7 @@
 -- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.3
 
--- Started on 2024-10-10 02:14:57
+-- Started on 2024-10-19 03:39:25
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -301,7 +301,8 @@ CREATE TABLE public.mercaderia (
     vto bigint NOT NULL,
     fecha_registro timestamp with time zone NOT NULL,
     antecedentes text,
-    fecha_encajonado timestamp with time zone
+    fecha_encajonado timestamp with time zone,
+    den text NOT NULL
 );
 
 
@@ -767,14 +768,7 @@ COPY public.insumo_envase (id, producto, numero_unico, fecha_consumo, responsabl
 -- Data for Name: mercaderia; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.mercaderia (id, producto, observacion, cantidad, lote, fecha_elaboracion, fecha_etiquetado, responsable, numero_unico, vto, fecha_registro, antecedentes, fecha_encajonado) FROM stdin;
-17	1010075211	nuevo primer pallet de jumbalay	294	4-001-284	2024-10-10 00:08:00-03	\N	1	2024-T-000000	6	2024-10-10 00:09:42.770394-03		\N
-18	1011045212	jandaia	115	4-001-284	2024-10-10 00:30:00-03	\N	1	2024-T-000001	10	2024-10-10 00:30:56.340616-03		\N
-19	1011073212	wd	115	4-001-284	2024-10-10 00:32:00-03	\N	1	2024-T-000002	10	2024-10-10 00:32:44.404692-03		\N
-20	1011098212	abolladas	115	4-001-284	2024-10-10 00:40:00-03	\N	1	2024-T-000003	10	2024-10-10 00:40:57.80534-03		\N
-21	101075113	bot jumbalay	840	4-001-284	2024-10-10 00:46:00-03	\N	1	2024-T-000004	11	2024-10-10 00:47:07.778775-03		\N
-22	1011048212	knor	115	4-001-284	2024-10-10 01:03:00-03	\N	1	2024-T-000005	10	2024-10-10 01:03:58.722113-03		\N
-23	1031039311	criollo	1980	4-001-284	2024-10-10 01:24:00-03	\N	1	2024-T-000006	8	2024-10-10 01:25:28.056516-03		\N
+COPY public.mercaderia (id, producto, observacion, cantidad, lote, fecha_elaboracion, fecha_etiquetado, responsable, numero_unico, vto, fecha_registro, antecedentes, fecha_encajonado, den) FROM stdin;
 \.
 
 
@@ -1238,7 +1232,7 @@ SELECT pg_catalog.setval('public.insumo_id_seq', 1, false);
 -- Name: mercaderia_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.mercaderia_id_seq', 23, true);
+SELECT pg_catalog.setval('public.mercaderia_id_seq', 40, true);
 
 
 --
@@ -1646,7 +1640,7 @@ ALTER TABLE ONLY public.vencimiento
     ADD CONSTRAINT "FK_vencimiento_usuario" FOREIGN KEY (responsable) REFERENCES public.usuario(id);
 
 
--- Completed on 2024-10-10 02:14:57
+-- Completed on 2024-10-19 03:39:25
 
 --
 -- PostgreSQL database dump complete

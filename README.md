@@ -6,7 +6,7 @@ sistema de laudos para mercaderia y hojalata
 - visual studio code
 - python
 - postgresql
-- msodbcsql
+- msodbcsql (instalar el driver para conectar con sql-server)
 
 ## instalacion
 
@@ -53,6 +53,12 @@ sistema de laudos para mercaderia y hojalata
 7. para ver todas las ramas
 
         git branch -a
+
+9. restaurar la base de datos en caso de que hubiera una version nueva,
+la misma se encuentra en la carpeta db en dos versiones;
+
+        custom o backup de posgresql, el archivo no lleva extension
+        plain o sql, el archivo termina en extension sql
 
 ## comandos y uso de git
 
