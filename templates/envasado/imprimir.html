@@ -15,24 +15,37 @@
         <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
             <table id="descripcion" class="table-bordered col-12">
                 <tr>
-                    <th>Lote:</th>
-                    <td>{{envasado["lote"]}}</td>
+                    <th>Denominacion:</th>
+                    <td>{{envasado["den"]}}</td>
+                </tr>
+                <tr>
+                    <th>Numero único:</th>
+                    <td>{{envasado["numero_unico"]}}</td>
                 </tr>
                 <tr>
                     <th>Fecha de Elaboracion:</th>
-                    <td>{{envasado["fecha_elaboracion"]}}</td>
+                    <td class="fecha_elaboracion">{{envasado["fecha_elaboracion"].strftime('%Y-%m-%d %H:%M')}}</td>
+                </tr>
+                <tr>
+                    <th>Vencimiento:</th>
+                    <td hidden class="meses">{{envasado["meses"]}}</td>
+                    <td class="vencimiento"></td>
+                </tr>
+                <tr>
+                    <th>Lote:</th>
+                    <td>{{envasado["lote"]}}</td>
                 </tr>
                 <tr>
                     <th>Cantidad:</th>
                     <td>{{envasado["cantidad"]}}</td>
                 </tr>
                 <tr>
-                    <th>Vencimiento:</th>
-                    <td>{{fecha_vencimiento}}</td>
-                </tr>
-                <tr>
                     <th>Observaciones:</th>
                     <td>{{envasado["observacion"]}}</td>
+                </tr>
+                <tr>
+                    <th>Responsable:</th>
+                    <td>{{envasado["nombre"]}}</td>
                 </tr>
             </table>
         </div>
@@ -40,9 +53,8 @@
     <div class="row justify-content-center">
         <div class="m-2 text-center">
             <button class="btn btn-primary" id="print-barcode">Imprimir Código de Barras</button>
-        </div>
-        <div class="m-2 text-center">
-            <a href="/envasado/agregar" class="btn btn-primary" id="print-barcode">Volver</a>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+            
         </div>
     </div>
 {% endblock %}

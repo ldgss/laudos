@@ -104,7 +104,7 @@ def insert_mercaderia(form, vto):
                 """
                 )
         
-        vencimiento = db.db.session.execute(sql,
+        envasado = db.db.session.execute(sql,
                                             {
                                                 "producto": form['cod_mae'],
                                                 "observacion": form['observaciones'],
@@ -127,21 +127,23 @@ def insert_mercaderia(form, vto):
 def get_envasado(numero_unico):
     try:
         sql = text("""
-                    SELECT *
-                    FROM mercaderia
+                    SELECT m.*, v.*, u.*
+                    FROM mercaderia m
+                    JOIN vencimiento v ON m.vto = v.id
+                    JOIN usuario u ON m.responsable = u.id
                     WHERE numero_unico = :numero_unico
                 """
                 )
         
-        vencimiento = db.db.session.execute(sql,{"numero_unico": numero_unico})
-        return vencimiento.mappings().first()
+        envasado = db.db.session.execute(sql,{"numero_unico": numero_unico})
+        return envasado.mappings().first()
     except Exception as e:
         print(f"Error: {e}")
         return None
     
-def get_listado(terminos_de_busqueda):
+def get_listado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
-        
+        # todo
         terminos_de_busqueda = terminos_de_busqueda.split()
         condiciones_ilike = []
         
@@ -174,10 +176,29 @@ def get_listado(terminos_de_busqueda):
             FROM mercaderia m
             JOIN usuario u ON m.responsable = u.id
             JOIN vencimiento v ON m.vto = v.id
-            WHERE {condicion_final_ilike};
+            WHERE {condicion_final_ilike}
+            LIMIT :limit OFFSET :offset;
         """
-        resultados = db.db.session.execute(text(query_sql))
-        return resultados.fetchall()
+        resultados = db.db.session.execute(text(query_sql),
+                    {"limit": resultados_por_pagina, "offset": offset})
+    
+        # calculo el numero de paginas
+        total_resultados = f"""
+                                SELECT COUNT(*)
+                                FROM (
+                                    SELECT m.*, u.*, v.*
+                                    FROM mercaderia m
+                                    JOIN usuario u ON m.responsable = u.id
+                                    JOIN vencimiento v ON m.vto = v.id
+                                    WHERE {condicion_final_ilike}
+                                ) AS total_count;
+                            """
+
+        total_resultados_scalar = db.db.session.execute(text(total_resultados)).scalar()
+        total_paginas = total_resultados_scalar // resultados_por_pagina
+        if total_resultados_scalar % resultados_por_pagina != 0:
+            total_paginas += 1
+        return [resultados.fetchall(), total_paginas]
 
     except Exception as e:
         print(f"Error: {e}")

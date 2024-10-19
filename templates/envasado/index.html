@@ -1,6 +1,7 @@
 {% extends "base/base.html" %}
 
 {% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
 
 {% endblock %}
 
@@ -23,6 +24,11 @@
     <div class="m-3">
         <a href="{{url_for('envasado.envasado_agregar')}}" class="btn btn-success col-12">Agregar</a>
     </div>
+    <div class="m-3">
+        <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
+
+    </div>
+    
 
 
 

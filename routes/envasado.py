@@ -12,6 +12,8 @@ from dateutil.relativedelta import relativedelta
 
 
 envasado_bp = Blueprint("envasado", __name__)
+# cantidad para paginacion
+resultados_por_pagina = 2
 
 @envasado_bp.get("/envasado")
 def envasado():
@@ -57,14 +59,11 @@ def envasado_agregar_post():
 def envasado_imprimir(numero_unico):
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         envasado = mod_mercaderia.get_envasado(numero_unico)
-        vto_meses = mod_mercaderia.get_vencimiento_meses(envasado["vto"])
-        fecha_vencimiento = envasado['fecha_elaboracion'] + relativedelta(months=vto_meses["meses"])
         title = "Envasado"
         section = "Envasado"
         return render_template("envasado/imprimir.html", 
                                title=title, section=section, 
-                               envasado=envasado,
-                               fecha_vencimiento=fecha_vencimiento)
+                               envasado=envasado)
     else:
         return redirect(url_for("login.login_get"))
     
@@ -78,11 +77,25 @@ def envasado_buscar():
 @envasado_bp.get("/envasado/listado/<terminos_de_busqueda>")
 def envasado_listado(terminos_de_busqueda):
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
-        listado = mod_mercaderia.get_listado(terminos_de_busqueda)
+        # paginacion
+        pagina = request.args.get('page', 1, type=int)
+        offset = (pagina - 1) * resultados_por_pagina
+        
+        resultado = mod_mercaderia.get_listado(terminos_de_busqueda, resultados_por_pagina, offset)
         title = "Envasado"
         section = "Envasado"
         return render_template("envasado/listado.html", 
                                title=title, section=section, 
-                               listado=listado)
+                               terminos_de_busqueda=terminos_de_busqueda,
+                               listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
+    else:
+        return redirect(url_for("login.login_get"))
+   
+@envasado_bp.get("/envasado/anular/<numero_unico>")
+def envasado_anular(numero_unico):
+    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+        # todo
+        # decidir como anular el pallet
+        pass
     else:
         return redirect(url_for("login.login_get"))

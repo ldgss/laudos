@@ -169,11 +169,60 @@ function imprimir_new_tab(){
     });
 }
 
+function boton_volver() {
+    const currentUrl = window.location.pathname;
+    const urlSegments = currentUrl.split('/').filter(segment => segment);
+
+    if (urlSegments.length > 1) {
+        // volver al menu principal
+        window.location.href = '/' + urlSegments[0];
+    } else {
+        // si no hay pagina previa, volver al index
+        window.location.href = "/";
+    }
+}
+
+function calcular_vencimiento(fecha_elaboracion, meses) {
+    const [year, month, day] = fecha_elaboracion.split(' ')[0].split('-').map(Number);
+    const [hours, minutes] = fecha_elaboracion.split(' ')[1].split(':').map(Number);
+    const date = new Date(year, month - 1, day, hours, minutes);
+    date.setMonth(date.getMonth() + meses);
+    
+    const nuevoYear = date.getFullYear();
+    const nuevoMes = String(date.getMonth() + 1).padStart(2, '0');
+    const nuevoDia = String(date.getDate()).padStart(2, '0');
+    const nuevoHoras = String(date.getHours()).padStart(2, '0');
+    const nuevoMinutos = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${nuevoYear}-${nuevoMes}-${nuevoDia} ${nuevoHoras}:${nuevoMinutos}`;
+}
+
+function actualizar_vencimiento_en_listado(){
+    document.querySelectorAll('#listado_con_vto tbody tr').forEach(row => {
+        const fecha_elaboracion = row.querySelector('.fecha_elaboracion').innerText;
+        const meses = parseInt(row.querySelector('.meses').innerText);
+        const vencimiento = calcular_vencimiento(fecha_elaboracion, meses);
+        
+        row.querySelector('.vencimiento').innerText = vencimiento;
+    });
+}
+
+function actualizar_vencimiento_unico(){
+    const fecha_elaboracion = document.querySelector('.fecha_elaboracion').innerText;
+    const meses = parseInt(document.querySelector('.meses').innerText);
+    const vencimiento = calcular_vencimiento(fecha_elaboracion, meses);
+        
+    document.querySelector('.vencimiento').innerText = vencimiento;
+    
+}
+
 try {
     window.addEventListener('load', actualizarFechaYHora);
     window.addEventListener('load', julianoAutomatico);
     window.addEventListener('load', imprimir);
     window.addEventListener('load', imprimir_new_tab);
+    window.addEventListener('load', actualizar_vencimiento_en_listado);
+    window.addEventListener('load', actualizar_vencimiento_unico);
 } catch (error) {
     // console.log(error)
 }
