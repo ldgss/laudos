@@ -7,8 +7,6 @@ from models import mod_mercaderia
 from flask import flash
 from flask import request
 from flask import session
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 
 envasado_bp = Blueprint("envasado", __name__)
@@ -94,7 +92,7 @@ def envasado_listado(terminos_de_busqueda):
 @envasado_bp.get("/envasado/anular/<numero_unico>")
 def envasado_anular(numero_unico):
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
-        # todo
+        # todo 8
         # decidir como anular el pallet
         pass
     else:

@@ -21,12 +21,12 @@ app.config['SQLALCHEMY_BINDS'] = {
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.db.init_app(app)
 app.register_blueprint(login.login_bp)
-app.register_blueprint(envasado.envasado_bp)
-app.register_blueprint(etiquetado.etiquetado_bp)
-app.register_blueprint(encajonado.encajonado_bp)
-app.register_blueprint(ubicaciones.ubicaciones_bp)
-app.register_blueprint(insumos.insumos_bp)
 app.register_blueprint(index.index_bp)
 app.register_blueprint(errors.errors_bp)
-app.register_blueprint(extracto.extracto_bp)
+app.register_blueprint(envasado.envasado_bp)
+# app.register_blueprint(etiquetado.etiquetado_bp)
+# app.register_blueprint(encajonado.encajonado_bp)
+# app.register_blueprint(ubicaciones.ubicaciones_bp)
+# app.register_blueprint(insumos.insumos_bp)
+# app.register_blueprint(extracto.extracto_bp)
 

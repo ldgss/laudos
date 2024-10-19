@@ -143,7 +143,7 @@ def get_envasado(numero_unico):
     
 def get_listado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
-        # todo
+        # todo 7
         terminos_de_busqueda = terminos_de_busqueda.split()
         condiciones_ilike = []
         

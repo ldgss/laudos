@@ -14,3 +14,5 @@ def ubicaciones():
         return render_template("ubicaciones/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
+    
+# todo 6

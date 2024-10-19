@@ -14,3 +14,5 @@ def insumos():
         return render_template("insumos/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
+    
+# todo 5
