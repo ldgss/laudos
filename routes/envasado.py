@@ -41,7 +41,7 @@ def envasado_agregar_post():
         # obtenemos el id solo del vencimiento necesario
         vto = mod_mercaderia.get_vencimiento(request.form)
         # el insert devuelve True si todo salio bien
-        barcode = mod_mercaderia.insert_mercaderia(request.form, vto)
+        barcode = mod_mercaderia.guardar_envasado(request.form, vto)
         title = "Envasado"
         section = "Envasado"
         if barcode:
@@ -79,7 +79,7 @@ def envasado_listado(terminos_de_busqueda):
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
         
-        resultado = mod_mercaderia.get_listado(terminos_de_busqueda, resultados_por_pagina, offset)
+        resultado = mod_mercaderia.get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset)
         title = "Envasado"
         section = "Envasado"
         return render_template("envasado/listado.html", 
