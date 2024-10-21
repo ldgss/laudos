@@ -10,8 +10,8 @@ index_bp = Blueprint("index", __name__)
 @index_bp.get("/")
 def index():
     if helpers.session_on():
-        title = "Laudos Solvencia S.A"
-        body = f"Bienvenido/a {session['nombre']}"
-        return render_template("index.html", title=title, body=body)
+        title = "Inicio"
+        section = "Inicio"
+        return render_template("index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))

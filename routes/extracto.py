@@ -10,7 +10,7 @@ extracto_bp = Blueprint("extracto", __name__)
 def extracto():
     if helpers.session_on() and helpers.authorized_to("extracto"):
         title = "Extracto"
-        body = "Extracto"
-        return render_template("extracto/index.html", title=title, body=body)
+        section = "Extracto"
+        return render_template("extracto/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))

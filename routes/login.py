@@ -7,9 +7,7 @@ from flask import url_for
 from flask import flash
 from models import mod_login
 from utils import helpers
-from db import db
-import pytz
-from datetime import datetime
+from models import mod_mercaderia
 
 
 login_bp = Blueprint('login', __name__)
@@ -20,25 +18,28 @@ def login_get():
         return redirect(url_for("index.index"))
     else:
         title = "Ingresar"
-        body = "Ingresar"
-        return render_template("login/index.html", title=title, body=body)
-    
+        section = "Ingresar"
+        return render_template("login/index.html", title=title, section=section)
+
 @login_bp.post("/login")
 def login_post():
     usuario = request.form["usuario"]
     password = request.form["password"]
-    result = mod_login.log_user(usuario, password)
-    if result:
-        session.update(result)
-        session["fecha_creacion"] = helpers.convertir_a_local(session["fecha_creacion"])
-        session["fecha_modificacion"] = helpers.convertir_a_local(session["fecha_creacion"])
-        session["fecha_registro"] = helpers.convertir_a_local(session["fecha_creacion"])
+    user = mod_login.log_user(usuario, password)
+    if user:
+        session.update(user)
+        productos_arballon = mod_mercaderia.listar_productos_arballon()
+        productos_dict = [
+            {'cod_mae': cod_mae.strip(), 'den': den.strip(), 'cod_cls': cod_cls}
+            for cod_mae, den, cod_cls in productos_arballon
+        ]
+        session["productos_arballon"] = productos_dict
         return redirect(url_for("index.index"))
     else:
         flash("usuario o contraseña incorrecta")
         return redirect(url_for("login.login_get"))
-    
+
 @login_bp.get("/logout")
-def logout(): 
+def logout():
     session.clear()
     return redirect(url_for("login.login_get"))
