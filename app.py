@@ -15,7 +15,7 @@ from db import db
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex()
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:1234@localhost:5432/laudosdb'
+app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:1234@localhost:5432/laudos'
 app.config['SQLALCHEMY_BINDS'] = {
     'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+17+for+SQL+Server'
 }
