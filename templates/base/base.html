@@ -40,13 +40,16 @@
                   <a class="dropdown-item" href="/envasado">Envasado</a>
                 </li>
                 <li class="">
-                  <a class="dropdown-item" href="/etiquetado">Etiquetado</a>
+                  <a class="dropdown-item" href="/etiquetado">Etiquetado (línea)</a>
                 </li>
                 <li class="">
-                  <a class="dropdown-item" href="/encajonado">Encajonado</a>
+                  <a class="dropdown-item" href="/encajonado">Encajonado (línea)</a>
                 </li>
                 <li class="">
                   <a class="dropdown-item" href="/extracto">Extracto</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/transformacion">Transformación</a>
                 </li>
                 <li class="">
                   <a class="dropdown-item" href="/hojalata">Hojalata</a>
@@ -151,7 +154,7 @@
         {% else %}
           <p class="col-md-8 fs-4">Bienvenido/a!</p>
         {% endif %}
-
+          <p class="">{{section}}</p>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         

@@ -40,7 +40,7 @@ def etiquetado_agregar_post():
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         # obtenemos el id solo del vencimiento necesario
         vto = mod_mercaderia.get_vencimiento(request.form)
-        # el insert devuelve True si todo salio bien
+        
         barcode = mod_mercaderia.guardar_etiquetado(request.form, vto)
         title = "Etiquetado"
         section = "Etiquetado"
@@ -86,14 +86,5 @@ def etiquetado_listado(terminos_de_busqueda):
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,
                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
-    else:
-        return redirect(url_for("login.login_get"))
-   
-@etiquetado_bp.get("/etiquetado/anular/<numero_unico>")
-def etiquetado_anular(numero_unico):
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
-        # todo 8
-        # decidir como anular el pallet
-        pass
     else:
         return redirect(url_for("login.login_get"))

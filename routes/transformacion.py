@@ -8,6 +8,8 @@ from flask import flash
 from flask import request
 from flask import session
 
+# todo
+# transformacion
 
 envasado_bp = Blueprint("envasado", __name__)
 # cantidad para paginacion
