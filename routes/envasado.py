@@ -40,8 +40,9 @@ def envasado_agregar_post():
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         # obtenemos el id solo del vencimiento necesario
         vto = mod_mercaderia.get_vencimiento(request.form)
-        
-        barcode = mod_mercaderia.guardar_envasado(request.form, vto)
+        # ensamblo el lote
+        lote = f"{request.form["lote_a"]}-{request.form["lote_b"]}-{request.form["lote_c"]}"
+        barcode = mod_mercaderia.guardar_envasado(request.form, vto, lote)
         title = "Envasado"
         section = "Envasado"
         if barcode:

@@ -33,16 +33,19 @@ function rellenarCantidad() {
         case 'Extrac':
             break;
         case 'Pas500':
+            cantidadInput.value = 1080;
             break;
         case 'Pelado':
             cantidadInput.value = 294;
             break;
         case 'Pulpa':
+            console.log("Defina si la pulpa es Lata 8 o Botella 500");
             break;
         case 'Pure':
             cantidadInput.value = 1980;
             break;
         case 'Tri500':
+            cantidadInput.value = 1080;
             break;
         case 'Tri8':
             cantidadInput.value = 115;
@@ -51,11 +54,12 @@ function rellenarCantidad() {
             cantidadInput.value = 840;
             break;
         case 'Tri950':
+            cantidadInput.value = 840;
             break;
         case 'Tritur':
             break; 
         default:
-            cantidadInput.value = "";
+            console.log("La cantidad no esta definida")
             break;
     }
 }
@@ -73,14 +77,22 @@ function actualizarValoresOcultos() {
     }
 }
 
+function lote_a_automatico(){
+    const lote_a = document.getElementById("lote_a");
+    const fechaActual = new Date()
+    const year = fechaActual.getFullYear();
+    const hoy = year.toString()[3]
+    console.log(hoy)
+    lote_a.value = hoy;
+}
+
 function julianoAutomatico(){
-    const lote = document.getElementById("lote");
+    const lote_c = document.getElementById("lote_c");
     const fechaActual = new Date()
     const year = fechaActual.getFullYear();
     const fechaInicial = new Date(year, 0, 1);
     const hoy = Math.floor((fechaActual - fechaInicial) / (1000 * 60 * 60 * 24)) + 1;
-
-    lote.placeholder += "X-XXX-" + hoy + ". El dia juliano de hoy es " + hoy;
+    lote_c.value = hoy;
 }
 
 function imprimir(){
@@ -219,6 +231,7 @@ function actualizar_vencimiento_unico(){
 try {
     window.addEventListener('load', actualizarFechaYHora);
     window.addEventListener('load', julianoAutomatico);
+    window.addEventListener('load', lote_a_automatico);
     window.addEventListener('load', imprimir);
     window.addEventListener('load', imprimir_new_tab);
     window.addEventListener('load', actualizar_vencimiento_en_listado);

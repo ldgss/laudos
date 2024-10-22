@@ -45,7 +45,38 @@ def get_ultimo_id():
         if not ultimo_id:
             # si es el primer pallet
             year = datetime.now().year
-            return f"{year}-T-000000"
+            return f"{year}-T1-000000"
+        else:
+            # si ya existen pallets, aumentar el numero del id
+            prefijo = ultimo_id[:-6]
+            sufijo = int(ultimo_id[-6:])
+            nuevo_numero = sufijo + 1
+            nuevo_numero_str = f"{nuevo_numero:06d}"
+            nuevo_codigo = prefijo + nuevo_numero_str
+            return nuevo_codigo
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    
+def get_ultimo_id_extracto():
+    try:
+        sql = text("""
+                    SELECT numero_unico
+                    FROM extracto
+                    ORDER BY id DESC
+                    LIMIT 1
+                   ;
+                """
+                )
+        
+        result = db.db.session.execute(sql)
+        
+        ultimo_id = result.scalar()
+        
+        if not ultimo_id:
+            # si es el primer pallet
+            year = datetime.now().year
+            return f"{year}-E1-000000"
         else:
             # si ya existen pallets, aumentar el numero del id
             prefijo = ultimo_id[:-6]
@@ -74,7 +105,7 @@ def get_vencimiento(form):
         print(f"Error: {e}")
         return None
     
-def guardar_envasado(form, vto):
+def guardar_envasado(form, vto, lote):
     try:
         sql = text("""
                     INSERT INTO
@@ -94,7 +125,7 @@ def guardar_envasado(form, vto):
                                                 "producto": form['cod_mae'],
                                                 "observacion": form['observaciones'],
                                                 "cantidad": form['cantidad'],
-                                                "lote": form['lote'],
+                                                "lote": lote,
                                                 "fecha_elaboracion": f"{form['fecha']} {form['hora']}",
                                                 "responsable": form['user_id'],
                                                 "numero_unico": form['numero_unico'],
@@ -108,7 +139,7 @@ def guardar_envasado(form, vto):
         print(f"Error: {e}")
         return None
     
-def guardar_etiquetado(form, vto):
+def guardar_etiquetado(form, vto, lote):
     try:
         sql = text("""
                     INSERT INTO
@@ -128,7 +159,7 @@ def guardar_etiquetado(form, vto):
                                                 "producto": form['cod_mae'],
                                                 "observacion": form['observaciones'],
                                                 "cantidad": form['cantidad'],
-                                                "lote": form['lote'],
+                                                "lote": lote,
                                                 "fecha_etiquetado": f"{form['fecha']} {form['hora']}",
                                                 "responsable": form['user_id'],
                                                 "numero_unico": form['numero_unico'],
@@ -142,7 +173,7 @@ def guardar_etiquetado(form, vto):
         print(f"Error: {e}")
         return None
     
-def guardar_encajonado(form, vto):
+def guardar_encajonado(form, vto, lote):
     try:
         sql = text("""
                     INSERT INTO
@@ -162,11 +193,44 @@ def guardar_encajonado(form, vto):
                                                 "producto": form['cod_mae'],
                                                 "observacion": form['observaciones'],
                                                 "cantidad": form['cantidad'],
-                                                "lote": form['lote'],
+                                                "lote": lote,
                                                 "fecha_encajonado": f"{form['fecha']} {form['hora']}",
                                                 "responsable": form['user_id'],
                                                 "numero_unico": form['numero_unico'],
                                                 "vto": vto['id'],
+                                                "den": form['denominacion']
+                                            })
+        db.db.session.commit()
+        return True
+    except Exception as e:
+        db.db.session.rollback()
+        print(f"Error: {e}")
+        return None
+    
+def guardar_extracto(form, vto, lote):
+    try:
+        sql = text("""
+                    INSERT INTO
+                    extracto
+                    (numero_unico, producto, fecha_elaboracion, lote, recipiente, numero_recipiente,
+                    observaciones, vto_meses, responsable, fecha_registro, den)
+                    VALUES
+                    (:numero_unico, :producto, :fecha_elaboracion, :lote, :recipiente, :numero_recipiente,
+                    :observaciones, :vto_meses, :responsable, CURRENT_TIMESTAMP, :den)
+                """
+                )
+        
+        envasado = db.db.session.execute(sql,
+                                            {
+                                                "producto": form['cod_mae'],
+                                                "observaciones": form['observaciones'],
+                                                "recipiente": form['recipiente'],
+                                                "numero_recipiente": form['numero_recipiente'],
+                                                "lote": lote,
+                                                "fecha_elaboracion": f"{form['fecha']} {form['hora']}",
+                                                "responsable": form['user_id'],
+                                                "numero_unico": form['numero_unico'],
+                                                "vto_meses": vto['id'],
                                                 "den": form['denominacion']
                                             })
         db.db.session.commit()
@@ -224,6 +288,23 @@ def get_encajonado(numero_unico):
                     WHERE numero_unico = :numero_unico
                     AND fecha_elaboracion IS NULL
                     AND fecha_etiquetado IS NULL
+                """
+                )
+        
+        envasado = db.db.session.execute(sql,{"numero_unico": numero_unico})
+        return envasado.mappings().first()
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    
+def get_extracto(numero_unico):
+    try:
+        sql = text("""
+                    SELECT e.*, v.*, u.*
+                    FROM extracto e
+                    JOIN vencimiento v ON e.vto_meses = v.id
+                    JOIN usuario u ON e.responsable = u.id
+                    WHERE numero_unico = :numero_unico
                 """
                 )
         
@@ -421,6 +502,70 @@ def get_listado_encajonado(terminos_de_busqueda, resultados_por_pagina, offset):
                                     WHERE {condicion_final_ilike}
                                     AND fecha_elaboracion IS NULL
                                     AND fecha_etiquetado IS NULL
+                                ) AS total_count;
+                            """
+
+        total_resultados_scalar = db.db.session.execute(text(total_resultados)).scalar()
+        total_paginas = total_resultados_scalar // resultados_por_pagina
+        if total_resultados_scalar % resultados_por_pagina != 0:
+            total_paginas += 1
+        return [resultados.fetchall(), total_paginas]
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    
+def get_listado_extracto(terminos_de_busqueda, resultados_por_pagina, offset):
+    try:
+        # todo 7
+        terminos_de_busqueda = terminos_de_busqueda.split()
+        condiciones_ilike = []
+        
+        for termino in terminos_de_busqueda:
+            # chequear cada termino en cada columna de extracto
+            subcondicion = []
+            subcondicion.append(f"e.producto::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.observaciones::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.lote::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.recipiente::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.numero_recipiente::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.fecha_elaboracion::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.responsable::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.numero_unico::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.vto_meses::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.den::TEXT ILIKE '%{termino}%'")
+            
+            # chequear cada termino en nombre usuario
+            subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
+            # chequear cada termino en meses vencimiento
+            subcondicion.append(f"v.meses::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"v.producto::TEXT ILIKE '%{termino}%'")
+            
+            condiciones_ilike.append(f"({' OR '.join(subcondicion)})")
+
+        # refinamos la busqueda
+        condicion_final_ilike = ' AND '.join(condiciones_ilike)
+
+        query_sql = f"""
+            SELECT e.*, u.*, v.*
+            FROM extracto e
+            JOIN usuario u ON e.responsable = u.id
+            JOIN vencimiento v ON e.vto_meses = v.id
+            WHERE {condicion_final_ilike}
+            LIMIT :limit OFFSET :offset;
+        """
+        resultados = db.db.session.execute(text(query_sql),
+                    {"limit": resultados_por_pagina, "offset": offset})
+    
+        # calculo el numero de paginas
+        total_resultados = f"""
+                                SELECT COUNT(*)
+                                FROM (
+                                    SELECT e.*, u.*, v.*
+                                    FROM extracto e
+                                    JOIN usuario u ON e.responsable = u.id
+                                    JOIN vencimiento v ON e.vto_meses = v.id
+                                    WHERE {condicion_final_ilike}
                                 ) AS total_count;
                             """
 
