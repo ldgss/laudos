@@ -15,4 +15,21 @@ def ubicaciones():
     else:
         return redirect(url_for("login.login_get"))
     
-# todo 6
+@ubicaciones_bp.get("/ubicaciones/agregar")
+def ubicaciones_agregar():
+    if helpers.session_on() and helpers.authorized_to("ubicacion"):
+        title = "Ubicaciones"
+        section = "Ubicaciones"
+        return render_template("ubicaciones/agregar.html", title=title, section=section)
+    else:
+        return redirect(url_for("login.login_get"))
+    
+@ubicaciones_bp.get("/ubicaciones/agregar/<numero_unico>")
+def ubicaciones_agregar_scan(numero_unico):
+    if helpers.session_on() and helpers.authorized_to("ubicacion"):
+        title = "Ubicaciones"
+        section = "Ubicaciones"
+        return render_template("ubicaciones/agregar.html", 
+                               title=title, section=section, numero_unico=numero_unico)
+    else:
+        return redirect(url_for("login.login_get"))

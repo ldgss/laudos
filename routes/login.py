@@ -28,6 +28,7 @@ def login_post():
     password = request.form["password"]
     user = mod_login.log_user(usuario, password)
     if user:
+        session.permanent = True  # Marca la sesión como permanente
         session.update(user)
         acceso.guardar_login(request)
         productos_arballon = mod_mercaderia.listar_productos_arballon()

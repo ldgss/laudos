@@ -8,49 +8,50 @@
 
 {% block content %}
     <div class="row m-4 justify-content-center">
-        <input type="text" id="barcode_text" hidden value="{{envasado["numero_unico"]}}">
+        <input type="text" id="barcode_text" hidden value="{{reacondicionado["reacondicionado"][0]["numero_unico"]}}">
         <svg id="barcode"></svg>
     </div>
     <div class="row m-4 justify-content-center">
         <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
             <table id="descripcion" class="table-bordered col-12">
+                {% for r in reacondicionado["reacondicionado"]%}
                 <tr>
                     <th>Denominacion:</th>
-                    <td>{{envasado["den"]}}</td>
+                    <td>{{r["den"]}}</td>
                 </tr>
                 <tr>
                     <th>Numero único:</th>
-                    <td>{{envasado["numero_unico"]}}</td>
+                    <td>{{r["numero_unico_original"]}}</td>
                 </tr>
                 <tr>
                     <th>Fecha de Elaboracion:</th>
-                    <td class="fecha_elaboracion">{{envasado["fecha_elaboracion"].strftime('%Y-%m-%d %H:%M')}}</td>
+                    <td class="fecha_elaboracion">{{r["fecha_elaboracion"].strftime('%Y-%m-%d %H:%M')}}</td>
                 </tr>
                 <tr>
                     <th>Vencimiento:</th>
-                    <td hidden class="meses">{{envasado["meses"]}}</td>
+                    <td hidden class="meses">{{r["meses"]}}</td>
                     <td class="vencimiento"></td>
                 </tr>
                 <tr>
                     <th>Lote:</th>
-                    <td>{{envasado["lote"]}}</td>
+                    <td>{{r["lote"]}}</td>
                 </tr>
                 <tr>
                     <th>Cantidad:</th>
-                    <td>{{envasado["cantidad"]}}</td>
+                    <td>{{r["cantidad"]}}</td>
                 </tr>
                 <tr>
                     <th>Observaciones:</th>
-                    <td>{{envasado["observacion"]}}</td>
-                </tr>
-                <tr>
-                    <th>Antecedentes:</th>
-                    <td>{{envasado["antecedentes"]}}</td>
+                    <td>{{r["observacion"]}}</td>
                 </tr>
                 <tr>
                     <th>Responsable:</th>
-                    <td>{{envasado["nombre"]}}</td>
+                    <td>{{r["nombre"]}}</td>
                 </tr>
+                <tr>
+                    <td colspan="3" style="background-color: #f0f0f0; height: 5px;"></td>
+                </tr>
+                {% endfor %}
             </table>
         </div>
     </div>

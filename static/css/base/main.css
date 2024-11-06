@@ -1,0 +1,12 @@
+[class*="-success"] {
+    color: white;
+    background: #50aa2e !important;
+}
+[class*="-primary"] {
+    color: white;
+    background: #264eaa !important;
+}
+[class*="-secondary"] {
+    color: white;
+    background: #6b7280 !important;
+}

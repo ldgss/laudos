@@ -212,10 +212,10 @@ def guardar_extracto(form, vto, lote):
         sql = text("""
                     INSERT INTO
                     extracto
-                    (numero_unico, producto, fecha_elaboracion, lote, recipiente, numero_recipiente,
+                    (numero_unico, producto, fecha_elaboracion, lote, brix, numero_recipiente,
                     observaciones, vto_meses, responsable, fecha_registro, den)
                     VALUES
-                    (:numero_unico, :producto, :fecha_elaboracion, :lote, :recipiente, :numero_recipiente,
+                    (:numero_unico, :producto, :fecha_elaboracion, :lote, :brix, :numero_recipiente,
                     :observaciones, :vto_meses, :responsable, CURRENT_TIMESTAMP, :den)
                 """
                 )
@@ -224,7 +224,7 @@ def guardar_extracto(form, vto, lote):
                                             {
                                                 "producto": form['cod_mae'],
                                                 "observaciones": form['observaciones'],
-                                                "recipiente": form['recipiente'],
+                                                "brix": form['brix'],
                                                 "numero_recipiente": form['numero_recipiente'],
                                                 "lote": lote,
                                                 "fecha_elaboracion": f"{form['fecha']} {form['hora']}",
@@ -527,7 +527,7 @@ def get_listado_extracto(terminos_de_busqueda, resultados_por_pagina, offset):
             subcondicion.append(f"e.producto::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"e.observaciones::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"e.lote::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"e.recipiente::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.brix::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"e.numero_recipiente::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"e.fecha_elaboracion::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"e.responsable::TEXT ILIKE '%{termino}%'")

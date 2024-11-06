@@ -8,7 +8,7 @@
 
 {% block content %}
     <div class="row m-4 justify-content-center">
-        <input type="text" id="barcode_text" hidden value="{{extracto["numero_unico"]}}">
+        <input type="text" id="barcode_text" hidden value="{{envasado["numero_unico"]}}">
         <svg id="barcode"></svg>
     </div>
     <div class="row m-4 justify-content-center">
@@ -16,40 +16,36 @@
             <table id="descripcion" class="table-bordered col-12">
                 <tr>
                     <th>Denominacion:</th>
-                    <td>{{extracto["den"]}}</td>
+                    <td>{{envasado["den"]}}</td>
                 </tr>
                 <tr>
                     <th>Numero único:</th>
-                    <td>{{extracto["numero_unico"]}}</td>
+                    <td>{{envasado["numero_unico"]}}</td>
                 </tr>
                 <tr>
                     <th>Fecha de Elaboracion:</th>
-                    <td class="fecha_elaboracion">{{extracto["fecha_elaboracion"].strftime('%Y-%m-%d %H:%M')}}</td>
+                    <td class="fecha_elaboracion">{{envasado["fecha_elaboracion"].strftime('%Y-%m-%d %H:%M')}}</td>
                 </tr>
                 <tr>
                     <th>Vencimiento:</th>
-                    <td hidden class="meses">{{extracto["vto_meses"]}}</td>
+                    <td hidden class="meses">{{envasado["meses"]}}</td>
                     <td class="vencimiento"></td>
                 </tr>
                 <tr>
                     <th>Lote:</th>
-                    <td>{{extracto["lote"]}}</td>
+                    <td>{{envasado["lote"]}}</td>
                 </tr>
                 <tr>
-                    <th>Brix:</th>
-                    <td>{{extracto["brix"]}}</td>
-                </tr>
-                <tr>
-                    <th>Nro. recipiente:</th>
-                    <td>{{extracto["numero_recipiente"]}}</td>
+                    <th>Cantidad:</th>
+                    <td>{{envasado["cantidad"]}}</td>
                 </tr>
                 <tr>
                     <th>Observaciones:</th>
-                    <td>{{extracto["observacion"]}}</td>
+                    <td>{{envasado["observacion"]}}</td>
                 </tr>
                 <tr>
                     <th>Responsable:</th>
-                    <td>{{extracto["nombre"]}}</td>
+                    <td>{{envasado["nombre"]}}</td>
                 </tr>
             </table>
         </div>

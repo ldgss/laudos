@@ -26,9 +26,6 @@ function actualizarFechaYHora() {
 function rellenarCantidad() {
     const clase = document.getElementById("cod_cls").value;
     const cantidadInput = document.getElementById("cantidad");
-    console.log("mae" + document.getElementById("cod_mae").value)
-    console.log("clase" + document.getElementById("cod_cls").value)
-    console.log("den" + document.getElementById("denominacion").value)
     switch (clase) {
         case 'Extrac':
             break;
@@ -82,7 +79,6 @@ function lote_a_automatico(){
     const fechaActual = new Date()
     const year = fechaActual.getFullYear();
     const hoy = year.toString()[3]
-    console.log(hoy)
     lote_a.value = hoy;
 }
 
@@ -219,14 +215,33 @@ function actualizar_vencimiento_en_listado(){
     });
 }
 
-function actualizar_vencimiento_unico(){
-    const fecha_elaboracion = document.querySelector('.fecha_elaboracion').innerText;
-    const meses = parseInt(document.querySelector('.meses').innerText);
-    const vencimiento = calcular_vencimiento(fecha_elaboracion, meses);
+// function actualizar_vencimiento_unico(){
+//     const fecha_elaboracion = document.querySelector('.fecha_elaboracion').innerText;
+//     const meses = parseInt(document.querySelector('.meses').innerText);
+//     const vencimiento = calcular_vencimiento(fecha_elaboracion, meses);
         
-    document.querySelector('.vencimiento').innerText = vencimiento;
+//     document.querySelector('.vencimiento').innerText = vencimiento;
     
+// }
+
+function actualizar_vencimiento_unico(){
+    const elementosFechaElaboracion = document.querySelectorAll('.fecha_elaboracion');
+    const elementosMeses = document.querySelectorAll('.meses');
+    const elementosVencimiento = document.querySelectorAll('.vencimiento');
+    
+    // Asegurarse de que haya el mismo número de elementos de fecha, meses y vencimiento
+    const cantidadElementos = elementosFechaElaboracion.length;
+
+    for (let i = 0; i < cantidadElementos; i++) {
+        const fecha_elaboracion = elementosFechaElaboracion[i].innerText;
+        const meses = parseInt(elementosMeses[i].innerText);
+        const vencimiento = calcular_vencimiento(fecha_elaboracion, meses);
+        
+        // Actualizar el vencimiento en cada elemento correspondiente
+        elementosVencimiento[i].innerText = vencimiento;
+    }
 }
+
 
 try {
     window.addEventListener('load', actualizarFechaYHora);

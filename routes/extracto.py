@@ -15,7 +15,7 @@ resultados_por_pagina = 2
 
 @extracto_bp.get("/extracto")
 def extracto():
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to("extracto"):
         title = "Extracto"
         section = "Extracto"
         return render_template("extracto/index.html", title=title, section=section)
@@ -24,7 +24,7 @@ def extracto():
     
 @extracto_bp.get("/extracto/agregar")
 def extracto_agregar():
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to("extracto"):
         proximo_id = mod_mercaderia.get_ultimo_id_extracto()
         title = "Extracto"
         section = "Extracto"
@@ -37,7 +37,7 @@ def extracto_agregar():
     
 @extracto_bp.post("/extracto/agregar")
 def extracto_agregar_post():
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to("extracto"):
         # obtenemos el id solo del vencimiento necesario
         vto = mod_mercaderia.get_vencimiento(request.form)
         # ensamblo el lote
@@ -56,7 +56,7 @@ def extracto_agregar_post():
     
 @extracto_bp.get("/extracto/imprimir/<numero_unico>")
 def extracto_imprimir(numero_unico):
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to("extracto"):
         extracto = mod_mercaderia.get_extracto(numero_unico)
         title = "Extracto"
         section = "Extracto"
@@ -68,14 +68,14 @@ def extracto_imprimir(numero_unico):
     
 @extracto_bp.post("/extracto/buscar")
 def extracto_buscar():
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to("extracto"):
         return redirect(url_for("extracto.extracto_listado", terminos_de_busqueda=request.form["buscar"]))
     else:
         return redirect(url_for("login.login_get"))
     
 @extracto_bp.get("/extracto/listado/<terminos_de_busqueda>")
 def extracto_listado(terminos_de_busqueda):
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to("extracto"):
         # paginacion
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina

@@ -80,10 +80,12 @@
         </div>
     </div>
     <div class="row m-4 justify-content-center">
-        <label for="recipiente" class="col-sm-2 col-form-label">Recipiente</label>
+        <label for="brix" class="col-sm-2 col-form-label">Brix</label>
         <div class="col-sm-5">
-            <input maxlength="300" type="text" class="form-control" 
-            name="recipiente" id="recipiente">
+            <input type="number" step="0.01" min="0" max="9999.99" 
+            class="form-control" name="brix" id="brix"
+            placeholder="0.00" pattern="^\d{1,4}(\.\d{1,2})?$" 
+            >
         </div>
     </div>
     <div class="row m-4 justify-content-center">
