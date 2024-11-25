@@ -1,58 +1,36 @@
 {% extends "base/base.html" %}
 
 {% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
 
 {% endblock %}
 
 {% block content %}
-<h2 class="container-fluid">
-    {{body}}
-</h2>
-<div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      ACCIONES DE BLOQUEO
-    </button>
-    <ul class="dropdown-menu">
-      <li><a class="dropdown-item" href="/bloqueos/agregar">Agregar</a></li>
-      <li><a class="dropdown-item" href="/bloqueos/editar">Editar</a></li>
-      <li><a class="dropdown-item" href="#">Listado</a></li>
-    </ul>
-  </div>
-  <h1>
-    estadisticas de bloqueos
-  </h1>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td colspan="2">Larry the Bird</td>
-        <td>@twitter</td>
-      </tr>
-    </tbody>
-  </table>
+
+<div class="container col-sm-12 col-md-8 col-lg-6">
+
+    <form action="/hojalata/buscar" method="post">
+        <div class="m-3">
+            <label class="form-label" for="buscar">Buscar</label>
+            <input class="form-control" required
+            placeholder="Ingrese numero de parte, lote, fechas, observaciones" 
+            type="text" id="buscar" name="buscar">
+        </div>
+        <div class="m-3">
+            <button type="submit" class="btn btn-primary col-12">Buscar</button>
+        </div>
+    </form>
+
+    <div class="m-3">
+        <a href="{{url_for('hojalata.hojalata_agregar')}}" class="btn btn-success col-12">Agregar</a>
+    </div>
+    <div class="m-3">
+        <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
+
+    </div>
     
 
-  
-  
-  
+
+
+</div>
 {% endblock %}
