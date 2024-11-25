@@ -13,12 +13,8 @@
                 <tr>
                     <th>Denominacion</th>
                     <th>Número Único</th>
-                    <th>Fecha Elaboración</th>
-                    <th>Vencimiento</th>
-                    <th>Lote</th>
-                    <th>Cantidad</th>
+                    <th>Tipo de reacondicionado</th>
                     <th>Observación</th>
-                    <th>Antecedentes</th>
                     <th>Responsable</th>
                     <th>Acción</th>
                 </tr>
@@ -27,33 +23,19 @@
                 {% for l in listado %}
                 <tr>
                     <td>
-                        {{l.den}}
+                        {{l.nueva_den}}
                     </td>
                     <td>
                         {{l.numero_unico}}
                     </td>
-                    <td class="fecha_elaboracion">
-                        {{l.fecha_elaboracion.strftime('%Y-%m-%d %H:%M')}}
-                    </td>
-                    <td hidden class="meses">
-                        {{l.meses}}
-                    </td>
-                    <td class="vencimiento">
+                    <td>
+                        {{l.tipo_reacondicionado}}
                     </td>
                     <td>
-                        {{l.lote}}
+                        {{l.observaciones}}
                     </td>
                     <td>
-                        {{l.cantidad}}
-                    </td>
-                    <td>
-                        {{l.observacion}}
-                    </td>
-                    <td>
-                        {{l.antecedentes}}
-                    </td>
-                    <td>
-                        {{l.nombre}}
+                        {{l.responsable_nombre}}
                     </td>
                     <td>
                         <a href="{{url_for('reacondicionado.reacondicionado_imprimir', numero_unico=l.numero_unico)}}" class="btn btn-outline-primary">Ver</a >

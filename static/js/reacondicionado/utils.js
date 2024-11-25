@@ -59,6 +59,12 @@ function buscarParte(button) {
                         nuevoDiv.innerHTML += `
                         <!-- Nueva fila para Cantidad disponible y Cantidad a tomar -->
                         <div class="row m-4 justify-content-center">
+                            <label for="cantidad" class="col-sm-2 col-form-label">Detalle</label>
+                            <div class="col-sm-5 d-flex align-items-center">
+                                ${data["reacondicionado"][i]["lote"]}
+                            </div>
+                        </div>
+                        <div class="row m-4 justify-content-center">
                             <label for="cantidad" class="col-sm-2 col-form-label">Cantidades</label>
                             <div class="col-sm-5 d-flex align-items-center cantidades">
                                 <input hidden name="id_a_tomar" type="text" value="${data["reacondicionado"][i]["id"]}">
@@ -72,6 +78,12 @@ function buscarParte(button) {
                 }else{
                     nuevoDiv.innerHTML += `
                         <!-- Nueva fila para Cantidad disponible y Cantidad a tomar -->
+                        <div class="row m-4 justify-content-center">
+                            <label for="cantidad" class="col-sm-2 col-form-label">Detalle</label>
+                            <div class="col-sm-5 d-flex align-items-center">
+                                ${data["lote"]}
+                            </div>
+                        </div>
                         <div class="row m-4 justify-content-center">
                             <label for="cantidad" class="col-sm-2 col-form-label">Cantidades</label>
                             <div class="col-sm-5 d-flex align-items-center cantidades">

@@ -5,7 +5,7 @@
 -- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.3
 
--- Started on 2024-11-06 02:40:14
+-- Started on 2024-11-20 00:30:33
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -93,7 +93,7 @@ CREATE SEQUENCE public.acceso_id_seq
 ALTER SEQUENCE public.acceso_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4990 (class 0 OID 0)
+-- TOC entry 4993 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: acceso_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -138,7 +138,7 @@ CREATE SEQUENCE public.bloqueado_id_seq
 ALTER SEQUENCE public.bloqueado_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4991 (class 0 OID 0)
+-- TOC entry 4994 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: bloqueado_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -180,7 +180,7 @@ CREATE SEQUENCE public.despacho_id_seq
 ALTER SEQUENCE public.despacho_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4992 (class 0 OID 0)
+-- TOC entry 4995 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: despacho_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -220,7 +220,7 @@ CREATE SEQUENCE public.estado_tareas_id_seq
 ALTER SEQUENCE public.estado_tareas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4993 (class 0 OID 0)
+-- TOC entry 4996 (class 0 OID 0)
 -- Dependencies: 243
 -- Name: estado_tareas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -267,7 +267,7 @@ CREATE SEQUENCE public.extracto_id_seq
 ALTER SEQUENCE public.extracto_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4994 (class 0 OID 0)
+-- TOC entry 4997 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: extracto_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -315,7 +315,7 @@ CREATE SEQUENCE public.hojalata_id_seq
 ALTER SEQUENCE public.hojalata_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4995 (class 0 OID 0)
+-- TOC entry 4998 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: hojalata_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -356,7 +356,7 @@ CREATE SEQUENCE public.insumo_id_seq
 ALTER SEQUENCE public.insumo_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4996 (class 0 OID 0)
+-- TOC entry 4999 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: insumo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -389,12 +389,12 @@ CREATE TABLE public.mercaderia (
 ALTER TABLE public.mercaderia OWNER TO postgres;
 
 --
--- TOC entry 4997 (class 0 OID 0)
+-- TOC entry 5000 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: TABLE mercaderia; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON TABLE public.mercaderia IS 'v 201024';
+COMMENT ON TABLE public.mercaderia IS 'v 201124';
 
 
 --
@@ -413,7 +413,7 @@ CREATE SEQUENCE public.mercaderia_id_seq
 ALTER SEQUENCE public.mercaderia_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4998 (class 0 OID 0)
+-- TOC entry 5001 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: mercaderia_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -455,7 +455,7 @@ CREATE SEQUENCE public.mezcla_detalle_id_seq
 ALTER SEQUENCE public.mezcla_detalle_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4999 (class 0 OID 0)
+-- TOC entry 5002 (class 0 OID 0)
 -- Dependencies: 247
 -- Name: mezcla_detalle_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -475,7 +475,7 @@ CREATE TABLE public.reacondicionado (
     fecha_registro timestamp with time zone NOT NULL,
     nueva_den text NOT NULL,
     observaciones text,
-    reproceso boolean NOT NULL
+    tipo_reacondicionado text NOT NULL
 );
 
 
@@ -497,7 +497,7 @@ CREATE SEQUENCE public.mezcla_id_seq
 ALTER SEQUENCE public.mezcla_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5000 (class 0 OID 0)
+-- TOC entry 5003 (class 0 OID 0)
 -- Dependencies: 245
 -- Name: mezcla_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -539,7 +539,7 @@ CREATE SEQUENCE public.motivo_bloqueo_id_seq
 ALTER SEQUENCE public.motivo_bloqueo_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5001 (class 0 OID 0)
+-- TOC entry 5004 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: motivo_bloqueo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -589,7 +589,7 @@ CREATE SEQUENCE public.permiso_id_seq
 ALTER SEQUENCE public.permiso_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5002 (class 0 OID 0)
+-- TOC entry 5005 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: permiso_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -629,7 +629,7 @@ CREATE SEQUENCE public.tareas_id_seq
 ALTER SEQUENCE public.tareas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5003 (class 0 OID 0)
+-- TOC entry 5006 (class 0 OID 0)
 -- Dependencies: 241
 -- Name: tareas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -645,14 +645,15 @@ ALTER SEQUENCE public.tareas_id_seq OWNED BY public.tarea.id;
 CREATE TABLE public.ubicacion (
     id bigint NOT NULL,
     ubicacion_fila bigint NOT NULL,
-    mercaderia bigint,
-    hojalata bigint,
-    extracto bigint,
+    mercaderia text,
+    hojalata text,
+    extracto text,
     responsable bigint NOT NULL,
     fecha_registro timestamp with time zone NOT NULL,
-    insumo_envase bigint,
-    ubicacion_profundidad smallint,
-    ubicacion_altura smallint
+    insumo_envase text,
+    ubicacion_profundidad smallint NOT NULL,
+    ubicacion_altura smallint NOT NULL,
+    reacondicionado text
 );
 
 
@@ -674,7 +675,7 @@ CREATE SEQUENCE public.ubicacion_id_seq
 ALTER SEQUENCE public.ubicacion_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5004 (class 0 OID 0)
+-- TOC entry 5007 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: ubicacion_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -713,7 +714,7 @@ CREATE SEQUENCE public.ubicaciones_nombres_id_seq
 ALTER SEQUENCE public.ubicaciones_nombres_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5005 (class 0 OID 0)
+-- TOC entry 5008 (class 0 OID 0)
 -- Dependencies: 239
 -- Name: ubicaciones_nombres_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -754,7 +755,7 @@ CREATE SEQUENCE public.usuario_id_seq
 ALTER SEQUENCE public.usuario_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5006 (class 0 OID 0)
+-- TOC entry 5009 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: usuario_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -794,7 +795,7 @@ CREATE SEQUENCE public.vencimiento_id_seq
 ALTER SEQUENCE public.vencimiento_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5007 (class 0 OID 0)
+-- TOC entry 5010 (class 0 OID 0)
 -- Dependencies: 237
 -- Name: vencimiento_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -939,7 +940,7 @@ ALTER TABLE ONLY public.vencimiento ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- TOC entry 4952 (class 0 OID 16722)
+-- TOC entry 4955 (class 0 OID 16722)
 -- Dependencies: 216
 -- Data for Name: acceso; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -949,7 +950,7 @@ COPY public.acceso (id, ip, dispositivo, usuario, fecha_registro) FROM stdin;
 
 
 --
--- TOC entry 4954 (class 0 OID 16731)
+-- TOC entry 4957 (class 0 OID 16731)
 -- Dependencies: 218
 -- Data for Name: bloqueado; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -959,7 +960,7 @@ COPY public.bloqueado (id, mercaderia, hojalata, extracto, estado, numero_planil
 
 
 --
--- TOC entry 4956 (class 0 OID 16740)
+-- TOC entry 4959 (class 0 OID 16740)
 -- Dependencies: 220
 -- Data for Name: despacho; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -969,7 +970,7 @@ COPY public.despacho (id, mercaderia, hojalata, extracto, responsable, fecha_reg
 
 
 --
--- TOC entry 4958 (class 0 OID 16747)
+-- TOC entry 4961 (class 0 OID 16747)
 -- Dependencies: 222
 -- Data for Name: extracto; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -979,7 +980,7 @@ COPY public.extracto (id, numero_unico, producto, fecha_elaboracion, lote, brix,
 
 
 --
--- TOC entry 4962 (class 0 OID 16765)
+-- TOC entry 4965 (class 0 OID 16765)
 -- Dependencies: 226
 -- Data for Name: hojalata; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -989,7 +990,7 @@ COPY public.hojalata (id, producto, observacion, fecha_elaboracion, lote, lote_c
 
 
 --
--- TOC entry 4960 (class 0 OID 16756)
+-- TOC entry 4963 (class 0 OID 16756)
 -- Dependencies: 224
 -- Data for Name: insumo_envase; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -999,7 +1000,7 @@ COPY public.insumo_envase (id, producto, numero_unico, fecha_consumo, responsabl
 
 
 --
--- TOC entry 4964 (class 0 OID 16774)
+-- TOC entry 4967 (class 0 OID 16774)
 -- Dependencies: 228
 -- Data for Name: mercaderia; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1009,7 +1010,7 @@ COPY public.mercaderia (id, producto, observacion, cantidad, lote, fecha_elabora
 
 
 --
--- TOC entry 4966 (class 0 OID 16783)
+-- TOC entry 4969 (class 0 OID 16783)
 -- Dependencies: 230
 -- Data for Name: motivo_bloqueo; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1042,7 +1043,7 @@ COPY public.motivo_bloqueo (id, motivo, mercaderia, hojalata, responsable, fecha
 
 
 --
--- TOC entry 4968 (class 0 OID 16792)
+-- TOC entry 4971 (class 0 OID 16792)
 -- Dependencies: 232
 -- Data for Name: permiso; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1053,17 +1054,17 @@ COPY public.permiso (id, mercaderia, hojalata, ubicacion, bloqueo, usuario, desp
 
 
 --
--- TOC entry 4982 (class 0 OID 25600)
+-- TOC entry 4985 (class 0 OID 25600)
 -- Dependencies: 246
 -- Data for Name: reacondicionado; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.reacondicionado (id, numero_unico, responsable, fecha_registro, nueva_den, observaciones, reproceso) FROM stdin;
+COPY public.reacondicionado (id, numero_unico, responsable, fecha_registro, nueva_den, observaciones, tipo_reacondicionado) FROM stdin;
 \.
 
 
 --
--- TOC entry 4984 (class 0 OID 25614)
+-- TOC entry 4987 (class 0 OID 25614)
 -- Dependencies: 248
 -- Data for Name: reacondicionado_detalle; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1073,7 +1074,7 @@ COPY public.reacondicionado_detalle (id, reacondicionado, mercaderia, cantidad, 
 
 
 --
--- TOC entry 4978 (class 0 OID 25474)
+-- TOC entry 4981 (class 0 OID 25474)
 -- Dependencies: 242
 -- Data for Name: tarea; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1083,7 +1084,7 @@ COPY public.tarea (id, tarea, responsable, fecha_registro, hecho) FROM stdin;
 
 
 --
--- TOC entry 4980 (class 0 OID 25488)
+-- TOC entry 4983 (class 0 OID 25488)
 -- Dependencies: 244
 -- Data for Name: tarea_comentario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1093,17 +1094,17 @@ COPY public.tarea_comentario (id, tarea, comentario, responsable, fecha_registro
 
 
 --
--- TOC entry 4970 (class 0 OID 16799)
+-- TOC entry 4973 (class 0 OID 16799)
 -- Dependencies: 234
 -- Data for Name: ubicacion; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ubicacion (id, ubicacion_fila, mercaderia, hojalata, extracto, responsable, fecha_registro, insumo_envase, ubicacion_profundidad, ubicacion_altura) FROM stdin;
+COPY public.ubicacion (id, ubicacion_fila, mercaderia, hojalata, extracto, responsable, fecha_registro, insumo_envase, ubicacion_profundidad, ubicacion_altura, reacondicionado) FROM stdin;
 \.
 
 
 --
--- TOC entry 4976 (class 0 OID 17172)
+-- TOC entry 4979 (class 0 OID 17172)
 -- Dependencies: 240
 -- Data for Name: ubicacion_nombre; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1431,7 +1432,7 @@ COPY public.ubicacion_nombre (id, posicion, sector, fecha_registro) FROM stdin;
 
 
 --
--- TOC entry 4972 (class 0 OID 16806)
+-- TOC entry 4975 (class 0 OID 16806)
 -- Dependencies: 236
 -- Data for Name: usuario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1442,7 +1443,7 @@ COPY public.usuario (id, nombre, password, fecha_creacion, fecha_modificacion, e
 
 
 --
--- TOC entry 4974 (class 0 OID 16816)
+-- TOC entry 4977 (class 0 OID 16816)
 -- Dependencies: 238
 -- Data for Name: vencimiento; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1461,16 +1462,16 @@ COPY public.vencimiento (id, producto, meses, responsable, fecha_registro) FROM 
 
 
 --
--- TOC entry 5008 (class 0 OID 0)
+-- TOC entry 5011 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: acceso_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.acceso_id_seq', 141, true);
+SELECT pg_catalog.setval('public.acceso_id_seq', 176, true);
 
 
 --
--- TOC entry 5009 (class 0 OID 0)
+-- TOC entry 5012 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: bloqueado_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1479,7 +1480,7 @@ SELECT pg_catalog.setval('public.bloqueado_id_seq', 1, false);
 
 
 --
--- TOC entry 5010 (class 0 OID 0)
+-- TOC entry 5013 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: despacho_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1488,7 +1489,7 @@ SELECT pg_catalog.setval('public.despacho_id_seq', 1, false);
 
 
 --
--- TOC entry 5011 (class 0 OID 0)
+-- TOC entry 5014 (class 0 OID 0)
 -- Dependencies: 243
 -- Name: estado_tareas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1497,16 +1498,16 @@ SELECT pg_catalog.setval('public.estado_tareas_id_seq', 1, false);
 
 
 --
--- TOC entry 5012 (class 0 OID 0)
+-- TOC entry 5015 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: extracto_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.extracto_id_seq', 13, true);
+SELECT pg_catalog.setval('public.extracto_id_seq', 19, true);
 
 
 --
--- TOC entry 5013 (class 0 OID 0)
+-- TOC entry 5016 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: hojalata_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1515,7 +1516,7 @@ SELECT pg_catalog.setval('public.hojalata_id_seq', 1, false);
 
 
 --
--- TOC entry 5014 (class 0 OID 0)
+-- TOC entry 5017 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: insumo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1524,34 +1525,34 @@ SELECT pg_catalog.setval('public.insumo_id_seq', 1, false);
 
 
 --
--- TOC entry 5015 (class 0 OID 0)
+-- TOC entry 5018 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: mercaderia_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.mercaderia_id_seq', 132, true);
+SELECT pg_catalog.setval('public.mercaderia_id_seq', 154, true);
 
 
 --
--- TOC entry 5016 (class 0 OID 0)
+-- TOC entry 5019 (class 0 OID 0)
 -- Dependencies: 247
 -- Name: mezcla_detalle_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.mezcla_detalle_id_seq', 102, true);
+SELECT pg_catalog.setval('public.mezcla_detalle_id_seq', 139, true);
 
 
 --
--- TOC entry 5017 (class 0 OID 0)
+-- TOC entry 5020 (class 0 OID 0)
 -- Dependencies: 245
 -- Name: mezcla_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.mezcla_id_seq', 63, true);
+SELECT pg_catalog.setval('public.mezcla_id_seq', 77, true);
 
 
 --
--- TOC entry 5018 (class 0 OID 0)
+-- TOC entry 5021 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: motivo_bloqueo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1560,7 +1561,7 @@ SELECT pg_catalog.setval('public.motivo_bloqueo_id_seq', 24, true);
 
 
 --
--- TOC entry 5019 (class 0 OID 0)
+-- TOC entry 5022 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: permiso_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1569,7 +1570,7 @@ SELECT pg_catalog.setval('public.permiso_id_seq', 1, true);
 
 
 --
--- TOC entry 5020 (class 0 OID 0)
+-- TOC entry 5023 (class 0 OID 0)
 -- Dependencies: 241
 -- Name: tareas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1578,16 +1579,16 @@ SELECT pg_catalog.setval('public.tareas_id_seq', 1, false);
 
 
 --
--- TOC entry 5021 (class 0 OID 0)
+-- TOC entry 5024 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: ubicacion_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ubicacion_id_seq', 1, false);
+SELECT pg_catalog.setval('public.ubicacion_id_seq', 20, true);
 
 
 --
--- TOC entry 5022 (class 0 OID 0)
+-- TOC entry 5025 (class 0 OID 0)
 -- Dependencies: 239
 -- Name: ubicaciones_nombres_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1596,7 +1597,7 @@ SELECT pg_catalog.setval('public.ubicaciones_nombres_id_seq', 318, true);
 
 
 --
--- TOC entry 5023 (class 0 OID 0)
+-- TOC entry 5026 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: usuario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1605,7 +1606,7 @@ SELECT pg_catalog.setval('public.usuario_id_seq', 1, true);
 
 
 --
--- TOC entry 5024 (class 0 OID 0)
+-- TOC entry 5027 (class 0 OID 0)
 -- Dependencies: 237
 -- Name: vencimiento_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1713,7 +1714,7 @@ ALTER TABLE ONLY public.mercaderia
 
 
 --
--- TOC entry 4773 (class 2606 OID 25619)
+-- TOC entry 4775 (class 2606 OID 25619)
 -- Name: reacondicionado_detalle mezcla_detalle_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1737,6 +1738,15 @@ ALTER TABLE ONLY public.reacondicionado
 
 ALTER TABLE ONLY public.motivo_bloqueo
     ADD CONSTRAINT motivo_bloqueo_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4773 (class 2606 OID 25711)
+-- Name: reacondicionado numero_unico_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reacondicionado
+    ADD CONSTRAINT numero_unico_unique UNIQUE (numero_unico);
 
 
 --
@@ -1803,7 +1813,7 @@ ALTER TABLE ONLY public.vencimiento
 
 
 --
--- TOC entry 4804 (class 2606 OID 25635)
+-- TOC entry 4807 (class 2606 OID 25635)
 -- Name: reacondicionado_detalle FK__mercaderia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1812,7 +1822,7 @@ ALTER TABLE ONLY public.reacondicionado_detalle
 
 
 --
--- TOC entry 4805 (class 2606 OID 25660)
+-- TOC entry 4808 (class 2606 OID 25660)
 -- Name: reacondicionado_detalle FK__mezcla; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1821,7 +1831,7 @@ ALTER TABLE ONLY public.reacondicionado_detalle
 
 
 --
--- TOC entry 4801 (class 2606 OID 25496)
+-- TOC entry 4804 (class 2606 OID 25496)
 -- Name: tarea_comentario FK__tareas; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1830,7 +1840,7 @@ ALTER TABLE ONLY public.tarea_comentario
 
 
 --
--- TOC entry 4800 (class 2606 OID 25482)
+-- TOC entry 4803 (class 2606 OID 25482)
 -- Name: tarea FK__usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1839,7 +1849,7 @@ ALTER TABLE ONLY public.tarea
 
 
 --
--- TOC entry 4802 (class 2606 OID 25501)
+-- TOC entry 4805 (class 2606 OID 25501)
 -- Name: tarea_comentario FK__usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1848,7 +1858,7 @@ ALTER TABLE ONLY public.tarea_comentario
 
 
 --
--- TOC entry 4803 (class 2606 OID 25608)
+-- TOC entry 4806 (class 2606 OID 25608)
 -- Name: reacondicionado FK__usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1857,7 +1867,7 @@ ALTER TABLE ONLY public.reacondicionado
 
 
 --
--- TOC entry 4774 (class 2606 OID 16828)
+-- TOC entry 4776 (class 2606 OID 16828)
 -- Name: acceso FK_acceso_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1866,7 +1876,7 @@ ALTER TABLE ONLY public.acceso
 
 
 --
--- TOC entry 4775 (class 2606 OID 17047)
+-- TOC entry 4777 (class 2606 OID 17047)
 -- Name: bloqueado FK_bloqueado_extracto; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1875,7 +1885,7 @@ ALTER TABLE ONLY public.bloqueado
 
 
 --
--- TOC entry 4776 (class 2606 OID 17042)
+-- TOC entry 4778 (class 2606 OID 17042)
 -- Name: bloqueado FK_bloqueado_hojalata; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1884,7 +1894,7 @@ ALTER TABLE ONLY public.bloqueado
 
 
 --
--- TOC entry 4777 (class 2606 OID 17037)
+-- TOC entry 4779 (class 2606 OID 17037)
 -- Name: bloqueado FK_bloqueado_mercaderia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1893,7 +1903,7 @@ ALTER TABLE ONLY public.bloqueado
 
 
 --
--- TOC entry 4778 (class 2606 OID 17032)
+-- TOC entry 4780 (class 2606 OID 17032)
 -- Name: bloqueado FK_bloqueado_motivo_bloqueo; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1902,7 +1912,7 @@ ALTER TABLE ONLY public.bloqueado
 
 
 --
--- TOC entry 4779 (class 2606 OID 17027)
+-- TOC entry 4781 (class 2606 OID 17027)
 -- Name: bloqueado FK_bloqueado_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1911,7 +1921,7 @@ ALTER TABLE ONLY public.bloqueado
 
 
 --
--- TOC entry 4780 (class 2606 OID 17082)
+-- TOC entry 4782 (class 2606 OID 17082)
 -- Name: despacho FK_despacho_extracto; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1920,7 +1930,7 @@ ALTER TABLE ONLY public.despacho
 
 
 --
--- TOC entry 4781 (class 2606 OID 17077)
+-- TOC entry 4783 (class 2606 OID 17077)
 -- Name: despacho FK_despacho_hojalata; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1929,7 +1939,7 @@ ALTER TABLE ONLY public.despacho
 
 
 --
--- TOC entry 4782 (class 2606 OID 17072)
+-- TOC entry 4784 (class 2606 OID 17072)
 -- Name: despacho FK_despacho_mercaderia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1938,7 +1948,7 @@ ALTER TABLE ONLY public.despacho
 
 
 --
--- TOC entry 4783 (class 2606 OID 17087)
+-- TOC entry 4785 (class 2606 OID 17087)
 -- Name: despacho FK_despacho_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1947,7 +1957,7 @@ ALTER TABLE ONLY public.despacho
 
 
 --
--- TOC entry 4784 (class 2606 OID 16951)
+-- TOC entry 4786 (class 2606 OID 16951)
 -- Name: extracto FK_extracto_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1956,7 +1966,7 @@ ALTER TABLE ONLY public.extracto
 
 
 --
--- TOC entry 4785 (class 2606 OID 16946)
+-- TOC entry 4787 (class 2606 OID 16946)
 -- Name: extracto FK_extracto_vencimiento; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1965,7 +1975,7 @@ ALTER TABLE ONLY public.extracto
 
 
 --
--- TOC entry 4787 (class 2606 OID 16917)
+-- TOC entry 4789 (class 2606 OID 16917)
 -- Name: hojalata FK_hojalata_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1974,7 +1984,7 @@ ALTER TABLE ONLY public.hojalata
 
 
 --
--- TOC entry 4788 (class 2606 OID 16912)
+-- TOC entry 4790 (class 2606 OID 16912)
 -- Name: hojalata FK_hojalata_vencimiento; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1983,7 +1993,7 @@ ALTER TABLE ONLY public.hojalata
 
 
 --
--- TOC entry 4786 (class 2606 OID 16865)
+-- TOC entry 4788 (class 2606 OID 16865)
 -- Name: insumo_envase FK_insumo_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1992,7 +2002,7 @@ ALTER TABLE ONLY public.insumo_envase
 
 
 --
--- TOC entry 4789 (class 2606 OID 16974)
+-- TOC entry 4791 (class 2606 OID 16974)
 -- Name: mercaderia FK_mercaderia_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2001,7 +2011,7 @@ ALTER TABLE ONLY public.mercaderia
 
 
 --
--- TOC entry 4790 (class 2606 OID 17204)
+-- TOC entry 4792 (class 2606 OID 17204)
 -- Name: mercaderia FK_mercaderia_vencimiento; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2010,7 +2020,7 @@ ALTER TABLE ONLY public.mercaderia
 
 
 --
--- TOC entry 4806 (class 2606 OID 25665)
+-- TOC entry 4809 (class 2606 OID 25665)
 -- Name: reacondicionado_detalle FK_mezcla_detalle_mezcla_detalle; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2019,7 +2029,7 @@ ALTER TABLE ONLY public.reacondicionado_detalle
 
 
 --
--- TOC entry 4791 (class 2606 OID 16848)
+-- TOC entry 4793 (class 2606 OID 16848)
 -- Name: motivo_bloqueo FK_motivo_bloqueo_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2028,7 +2038,7 @@ ALTER TABLE ONLY public.motivo_bloqueo
 
 
 --
--- TOC entry 4792 (class 2606 OID 16837)
+-- TOC entry 4794 (class 2606 OID 16837)
 -- Name: permiso FK_permiso_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2037,7 +2047,7 @@ ALTER TABLE ONLY public.permiso
 
 
 --
--- TOC entry 4807 (class 2606 OID 25675)
+-- TOC entry 4810 (class 2606 OID 25675)
 -- Name: reacondicionado_detalle FK_reacondicionado_detalle_mercaderia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2046,43 +2056,52 @@ ALTER TABLE ONLY public.reacondicionado_detalle
 
 
 --
--- TOC entry 4793 (class 2606 OID 17134)
+-- TOC entry 4795 (class 2606 OID 25747)
 -- Name: ubicacion FK_ubicacion_extracto; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.ubicacion
-    ADD CONSTRAINT "FK_ubicacion_extracto" FOREIGN KEY (extracto) REFERENCES public.extracto(id);
+    ADD CONSTRAINT "FK_ubicacion_extracto" FOREIGN KEY (extracto) REFERENCES public.extracto(numero_unico);
 
 
 --
--- TOC entry 4794 (class 2606 OID 17129)
+-- TOC entry 4796 (class 2606 OID 25742)
 -- Name: ubicacion FK_ubicacion_hojalata; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.ubicacion
-    ADD CONSTRAINT "FK_ubicacion_hojalata" FOREIGN KEY (hojalata) REFERENCES public.hojalata(id);
+    ADD CONSTRAINT "FK_ubicacion_hojalata" FOREIGN KEY (hojalata) REFERENCES public.hojalata(numero_unico);
 
 
 --
--- TOC entry 4795 (class 2606 OID 17185)
+-- TOC entry 4797 (class 2606 OID 25752)
 -- Name: ubicacion FK_ubicacion_insumo_envase; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.ubicacion
-    ADD CONSTRAINT "FK_ubicacion_insumo_envase" FOREIGN KEY (insumo_envase) REFERENCES public.insumo_envase(id);
+    ADD CONSTRAINT "FK_ubicacion_insumo_envase" FOREIGN KEY (insumo_envase) REFERENCES public.insumo_envase(numero_unico);
 
 
 --
--- TOC entry 4796 (class 2606 OID 17124)
+-- TOC entry 4798 (class 2606 OID 25737)
 -- Name: ubicacion FK_ubicacion_mercaderia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.ubicacion
-    ADD CONSTRAINT "FK_ubicacion_mercaderia" FOREIGN KEY (mercaderia) REFERENCES public.mercaderia(id);
+    ADD CONSTRAINT "FK_ubicacion_mercaderia" FOREIGN KEY (mercaderia) REFERENCES public.mercaderia(numero_unico);
 
 
 --
--- TOC entry 4797 (class 2606 OID 25670)
+-- TOC entry 4799 (class 2606 OID 25757)
+-- Name: ubicacion FK_ubicacion_reacondicionado; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ubicacion
+    ADD CONSTRAINT "FK_ubicacion_reacondicionado" FOREIGN KEY (reacondicionado) REFERENCES public.reacondicionado(numero_unico);
+
+
+--
+-- TOC entry 4800 (class 2606 OID 25670)
 -- Name: ubicacion FK_ubicacion_ubicaciones_nombres; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2091,7 +2110,7 @@ ALTER TABLE ONLY public.ubicacion
 
 
 --
--- TOC entry 4798 (class 2606 OID 17139)
+-- TOC entry 4801 (class 2606 OID 17139)
 -- Name: ubicacion FK_ubicacion_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2100,7 +2119,7 @@ ALTER TABLE ONLY public.ubicacion
 
 
 --
--- TOC entry 4799 (class 2606 OID 16882)
+-- TOC entry 4802 (class 2606 OID 16882)
 -- Name: vencimiento FK_vencimiento_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2108,7 +2127,7 @@ ALTER TABLE ONLY public.vencimiento
     ADD CONSTRAINT "FK_vencimiento_usuario" FOREIGN KEY (responsable) REFERENCES public.usuario(id);
 
 
--- Completed on 2024-11-06 02:40:14
+-- Completed on 2024-11-20 00:30:33
 
 --
 -- PostgreSQL database dump complete

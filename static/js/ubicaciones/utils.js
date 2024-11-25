@@ -34,8 +34,30 @@ Quagga.init({
 
 // Detecta el código de barras
 Quagga.onDetected(function (data) {
-    document.getElementById('numero_unico').value = "Scan Result: " + data.codeResult.code;
+    document.getElementById('numero_unico').value = data.codeResult.code;
     console.log(data.codeResult.code);
 });
 
 });
+
+function validarUbicacion(){
+    const denominacionInput = document.getElementById('ubicacion');
+    const denominacion_opciones = document.getElementById('ubicacion_nombre');
+    const opciones = Array.from(denominacion_opciones.options).map(option => option.value);
+
+    if (!opciones.includes(denominacionInput.value)) {
+        denominacionInput.value = '';
+    }
+}
+
+function actualizarValoresOcultos() {
+    const input = document.getElementById("ubicacion");
+    const options = document.getElementById("ubicacion_nombre").options;
+
+    for (let option of options) {
+        if (option.value === input.value) {
+            document.getElementById("id_ubicacion").value = option.getAttribute("data-cod-id");
+            break; 
+        }
+    }
+}

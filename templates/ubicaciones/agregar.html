@@ -23,12 +23,11 @@
 
 <form action="agregar" method="post">
     <div class="row m-4 justify-content-center">
-        <label for="parte" class="col-sm-2 col-form-label">Numero de parte</label>
+        <label for="numero_unico" class="col-sm-2 col-form-label">Numero de parte</label>
         <div class="col-sm-5">
             <input required type="text" class="form-control" 
-            value="{{ numero_unico }}"
             name="numero_unico" id="numero_unico"
-            title="(Ej: 2024-T1-000001)" pattern="^\d{4}-(T1|T2|H1|E1)-\d{6}$">
+            title="(Ej: 2024-T1-000001, 2024-T2-000001, 2024-H1-000001, 2024-E1-000001, 2024-I1-000001, )" pattern="^\d{4}-(T1|T2|H1|E1|I1)-\d{6}$">
         </div>
     </div>
     <div class="row m-4 justify-content-center">
@@ -36,15 +35,29 @@
         <div class="col-sm-5">
             <input list="ubicacion_nombre" required type="text" 
             class="form-control" name="ubicacion" id="ubicacion"
-            onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
-            <input type="hidden" id="id" name="id">
+            onblur="validarUbicacion()" oninput="actualizarValoresOcultos()">
+            <input type="hidden" id="id_ubicacion" name="id_ubicacion">
             <datalist id="ubicacion_nombre">
-                {% for u in ubicaciones %}
-                <option value="{{ u.posicion | trim }} - {{u.sector}}" 
-                data-cod-id="{{ u.id | trim }}" 
+                {% for u in ubicacion_nombre %}
+                <option value="{{ u.posicion | trim }} - {{u.sector | trim}}" 
+                data-cod-id="{{ u.id | trim }}">
                 </option>
                 {% endfor %}
             </datalist>
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="altura" class="col-sm-2 col-form-label">Altura</label>
+        <div class="col-sm-5">
+            <input required type="number" class="form-control" 
+            name="altura" id="altura" min="1" max="5">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="profundidad" class="col-sm-2 col-form-label">Profundidad</label>
+        <div class="col-sm-5">
+            <input required type="number" class="form-control" 
+            name="profundidad" id="profundidad" min="1" max="50">
         </div>
     </div>
     <div class="row m-4 justify-content-center">

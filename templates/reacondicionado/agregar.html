@@ -68,13 +68,18 @@
     </div>
 
     <div class="row m-4 justify-content-center">
-        <label class="col-sm-2 form-check-label" for="reproceso">Reproceso</label>
-        <div class="col-sm-5 form-check form-switch">
-            <!-- <input type="hidden" name="reproceso" value="False"> -->
-            <!-- <input class="form-check-input" type="checkbox" id="reproceso" name="reproceso" value="True" -->
-            <input class="form-check-input" type="checkbox" id="reproceso" name="reproceso"
-            style="width: 50px; height: 25px; margin-left: -33px;"
+        <label class="col-sm-2" for="tipo_reacondicionado">Tipo de reacondicionado</label>
+        <div class="col-sm-5">
+            <input list="tipo_reacondicionado_opciones" required type="text" 
+            class="form-control" name="tipo_reacondicionado" id="tipo_reacondicionado"
+            onblur="validarTipoDeReacondicionado();"
             >
+            <datalist id="tipo_reacondicionado_opciones">
+                <option value="Reacondicionado"></option>
+                <option value="Etiquetado"></option>
+                <option value="Encajonado"></option>
+                <option value="Reproceso"></option>
+            </datalist>
         </div>
     </div>
 

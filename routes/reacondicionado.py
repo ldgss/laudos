@@ -13,7 +13,7 @@ from flask import jsonify
 
 reacondicionado_bp = Blueprint("reacondicionado", __name__)
 # cantidad para paginacion
-resultados_por_pagina = 2
+resultados_por_pagina = 20
 
 @reacondicionado_bp.get("/reacondicionado")
 def reacondicionado():
@@ -83,7 +83,7 @@ def reacondicionado_listado(terminos_de_busqueda):
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
         
-        resultado = mod_mercaderia.get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, offset)
+        resultado = mod_reacondicionado.get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, offset)
         title = "Reacondicionado"
         section = "Reacondicionado"
         return render_template("reacondicionado/listado.html", 

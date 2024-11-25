@@ -58,8 +58,8 @@ def etiquetado_agregar_post():
 def etiquetado_imprimir(numero_unico):
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         etiquetado = mod_mercaderia.get_etiquetado(numero_unico)
-        title = "etiquetado"
-        section = "etiquetado"
+        title = "Etiquetado"
+        section = "Etiquetado"
         return render_template("etiquetado/imprimir.html", 
                                title=title, section=section, 
                                etiquetado=etiquetado)

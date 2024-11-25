@@ -8,6 +8,16 @@ function validarMarca() {
     }
 }
 
+function validarTipoDeReacondicionado() {
+    const denominacionInput = document.getElementById('tipo_reacondicionado');
+    const denominacion_opciones = document.getElementById('tipo_reacondicionado_opciones');
+    const opciones = Array.from(denominacion_opciones.options).map(option => option.value);
+
+    if (!opciones.includes(denominacionInput.value)) {
+        denominacionInput.value = '';
+    }
+}
+
 function actualizarFechaYHora() {
     const inputFecha = document.getElementById('fecha');
     const inputHora = document.getElementById('hora');
@@ -190,9 +200,9 @@ function boton_volver() {
     }
 }
 
-function calcular_vencimiento(fecha_elaboracion, meses) {
-    const [year, month, day] = fecha_elaboracion.split(' ')[0].split('-').map(Number);
-    const [hours, minutes] = fecha_elaboracion.split(' ')[1].split(':').map(Number);
+function calcular_vencimiento(fecha, meses) {
+    const [year, month, day] = fecha.split(' ')[0].split('-').map(Number);
+    const [hours, minutes] = fecha.split(' ')[1].split(':').map(Number);
     const date = new Date(year, month - 1, day, hours, minutes);
     date.setMonth(date.getMonth() + meses);
     
@@ -205,42 +215,56 @@ function calcular_vencimiento(fecha_elaboracion, meses) {
     return `${nuevoYear}-${nuevoMes}-${nuevoDia} ${nuevoHoras}:${nuevoMinutos}`;
 }
 
-function actualizar_vencimiento_en_listado(){
+function actualizar_vencimiento_en_listado() {
     document.querySelectorAll('#listado_con_vto tbody tr').forEach(row => {
-        const fecha_elaboracion = row.querySelector('.fecha_elaboracion').innerText;
-        const meses = parseInt(row.querySelector('.meses').innerText);
-        const vencimiento = calcular_vencimiento(fecha_elaboracion, meses);
+        let fecha_elaboracion = row.querySelector('.fecha_elaboracion');
+        let fecha_etiquetado = row.querySelector('.fecha_etiquetado');
+        let fecha_encajonado = row.querySelector('.fecha_encajonado');
+
+        // Selecciona la fecha disponible
+        let fecha = fecha_elaboracion || fecha_etiquetado || fecha_encajonado;
+
+        if (fecha) {
+            const fechaValor = fecha.innerText;
+            const meses = parseInt(row.querySelector('.meses').innerText);
+            const vencimiento = calcular_vencimiento(fechaValor, meses);
         
-        row.querySelector('.vencimiento').innerText = vencimiento;
+            row.querySelector('.vencimiento').innerText = vencimiento;
+        }
     });
 }
 
-// function actualizar_vencimiento_unico(){
-//     const fecha_elaboracion = document.querySelector('.fecha_elaboracion').innerText;
-//     const meses = parseInt(document.querySelector('.meses').innerText);
-//     const vencimiento = calcular_vencimiento(fecha_elaboracion, meses);
-        
-//     document.querySelector('.vencimiento').innerText = vencimiento;
-    
-// }
 
-function actualizar_vencimiento_unico(){
+
+function actualizar_vencimiento_unico() {
     const elementosFechaElaboracion = document.querySelectorAll('.fecha_elaboracion');
+    const elementosFechaEtiquetado = document.querySelectorAll('.fecha_etiquetado');
+    const elementosFechaEncajonado = document.querySelectorAll('.fecha_encajonado');
     const elementosMeses = document.querySelectorAll('.meses');
     const elementosVencimiento = document.querySelectorAll('.vencimiento');
     
     // Asegurarse de que haya el mismo número de elementos de fecha, meses y vencimiento
-    const cantidadElementos = elementosFechaElaboracion.length;
+    const cantidadElementos = Math.max(
+        elementosFechaElaboracion.length, 
+        elementosFechaEtiquetado.length, 
+        elementosFechaEncajonado.length
+    );
 
     for (let i = 0; i < cantidadElementos; i++) {
-        const fecha_elaboracion = elementosFechaElaboracion[i].innerText;
-        const meses = parseInt(elementosMeses[i].innerText);
-        const vencimiento = calcular_vencimiento(fecha_elaboracion, meses);
+        // Selecciona la fecha disponible (la primera que esté presente)
+        let fecha = elementosFechaElaboracion[i] || elementosFechaEtiquetado[i] || elementosFechaEncajonado[i];
         
-        // Actualizar el vencimiento en cada elemento correspondiente
-        elementosVencimiento[i].innerText = vencimiento;
+        if (fecha) {
+            const fechaValor = fecha.innerText;
+            const meses = parseInt(elementosMeses[i].innerText);
+            const vencimiento = calcular_vencimiento(fechaValor, meses);
+        
+            // Actualizar el vencimiento en cada elemento correspondiente
+            elementosVencimiento[i].innerText = vencimiento;
+        }
     }
 }
+
 
 
 try {
