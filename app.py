@@ -12,6 +12,7 @@ from routes import index
 from routes import errors
 from routes import bloqueos
 from routes import hojalata
+from routes import materia
 from db import db
 
 app = Flask(__name__)
@@ -31,3 +32,4 @@ app.register_blueprint(errors.errors_bp)
 app.register_blueprint(extracto.extracto_bp)
 app.register_blueprint(bloqueos.bloqueos_bp)
 app.register_blueprint(hojalata.hojalata_bp)
+app.register_blueprint(materia.materia_bp)

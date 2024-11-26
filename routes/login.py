@@ -10,6 +10,7 @@ from utils import helpers
 from models import mod_mercaderia
 
 
+
 login_bp = Blueprint('login', __name__)
 
 @login_bp.get("/login")
