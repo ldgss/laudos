@@ -18,7 +18,9 @@ from flask import session
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex()
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:1234@localhost:5432/laudosdb'
+# todo
+# poner la pass en archivo o var de sistema
+app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://laudosdbdba:amk?CULsKW%KZpAo@leo.solvencia.local:5432/laudosdb'
 app.config['SQLALCHEMY_BINDS'] = {
     'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+17+for+SQL+Server'
 }
