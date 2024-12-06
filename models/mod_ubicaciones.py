@@ -133,34 +133,23 @@ def get_listado_ubicaciones(terminos_de_busqueda, resultados_por_pagina, offset)
         
         for termino in terminos_de_busqueda:
             subcondicion = []
-            # chequear cada termino en cada columna de mercaderia
-            subcondicion.append(f"m.producto::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"m.observacion::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"m.cantidad::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"m.lote::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"m.fecha_elaboracion::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"m.responsable::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"m.numero_unico::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"m.vto::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"m.den::TEXT ILIKE '%{termino}%'")
-
-            # chequear cada termino en nombre reacondicionado
-            subcondicion.append(f"r.numero_unico::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"r.responsable::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"r.fecha_registro::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"r.nueva_den::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"r.observaciones::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"r.tipo_reacondicionado::TEXT ILIKE '%{termino}%'")
-
-            # chequear cada termino en nombre reacondicionado_detalle
-            subcondicion.append(f"rd.fecha_registro::TEXT ILIKE '%{termino}%'")
-
-            # chequear cada termino en nombre usuario
-            subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
-            # chequear cada termino en meses vencimiento
-            subcondicion.append(f"v.meses::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"v.producto::TEXT ILIKE '%{termino}%'")
+            # chequear cada termino en cada columna de ubicacion
+            subcondicion.append(f"u.mercaderia::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"u.hojalata::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"u.extracto::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"u.fecha_registro::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"u.insumo_envase::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"u.ubicacion_profundidad::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"u.ubicacion_altura::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"u.reacondicionado::TEXT ILIKE '%{termino}%'")
             
+            # chequear cada termino en cada columna de ubicacion_nombre
+            subcondicion.append(f"u_n.posicion::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"u_n.sector::TEXT ILIKE '%{termino}%'")
+            
+            # chequear cada termino en cada columna de usuario
+            subcondicion.append(f"usuario.nombre::TEXT ILIKE '%{termino}%'")
+
             condiciones_ilike.append(f"({' OR '.join(subcondicion)})")
 
         # refinamos la busqueda
@@ -168,24 +157,33 @@ def get_listado_ubicaciones(terminos_de_busqueda, resultados_por_pagina, offset)
 
         
         query_sql = f"""
-            SELECT 
-                r.*, 
-                u.nombre AS responsable_nombre, 
-                array_agg(json_build_object(
-                    'mercaderia_id', m.id,
-                    'numero_unico_original', m.numero_unico,
-                    'producto', v.producto,
-                    'meses', v.meses,
-                    'detalle_id', rd.id
-                )) AS detalles
-            FROM reacondicionado r
-            LEFT JOIN usuario u ON r.responsable = u.id
-            RIGHT JOIN reacondicionado_detalle rd ON r.id = rd.reacondicionado
-            LEFT JOIN mercaderia m ON m.id = rd.mercaderia_original
-            LEFT JOIN vencimiento v ON v.id = m.vto
-            WHERE {condicion_final_ilike}
-            GROUP BY r.id, u.nombre
-            LIMIT :limit OFFSET :offset;
+            
+WITH ubicacion_con_row AS (
+    SELECT 
+        u.*, 
+        u_n.*, 
+        usuario.nombre,
+        ROW_NUMBER() OVER (
+            PARTITION BY 
+                u.mercaderia, u.reacondicionado
+            ORDER BY u.fecha_registro DESC
+        ) AS rn
+    FROM ubicacion u
+    LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
+    LEFT JOIN usuario ON u.responsable = usuario.id
+    WHERE 
+        (u.mercaderia = '2024-T1-000000' OR u.reacondicionado = '2024-T2-000000' OR u.extracto = '2024-E1-000000')
+)
+SELECT 
+    u.*, 
+    u_n.*, 
+    usuario.nombre
+FROM ubicacion_con_row AS u
+LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
+LEFT JOIN usuario ON u.responsable = usuario.id
+WHERE u.rn = 1;
+
+
 
         """
         resultados = db.db.session.execute(text(query_sql),
@@ -195,13 +193,34 @@ def get_listado_ubicaciones(terminos_de_busqueda, resultados_por_pagina, offset)
         total_resultados = f"""
                                 SELECT COUNT(*)
                                 FROM (
-                                    SELECT m.*, r.*, rd.*, v.meses, u.nombre, m.numero_unico AS numero_unico_original
-                                    FROM reacondicionado r
-                                    RIGHT JOIN reacondicionado_detalle rd ON r.id = rd.reacondicionado
-                                    LEFT JOIN mercaderia m ON m.id = rd.mercaderia_original
-                                    LEFT JOIN vencimiento v ON v.id = m.vto
-                                    LEFT JOIN usuario u ON r.responsable = u.id
-                                    WHERE {condicion_final_ilike}
+                                   
+                               WITH ubicacion_con_row AS (
+    SELECT 
+        u.*, 
+        u_n.*, 
+        usuario.nombre,
+        ROW_NUMBER() OVER (
+            PARTITION BY 
+                u.mercaderia, u.reacondicionado
+            ORDER BY u.fecha_registro DESC
+        ) AS rn
+    FROM ubicacion u
+    LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
+    LEFT JOIN usuario ON u.responsable = usuario.id
+    WHERE 
+        (u.mercaderia = '2024-T1-000000' OR u.reacondicionado = '2024-T2-000000' OR u.extracto = '2024-E1-000000')
+)
+SELECT 
+    u.*, 
+    u_n.*, 
+    usuario.nombre
+FROM ubicacion_con_row AS u
+LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
+LEFT JOIN usuario ON u.responsable = usuario.id
+WHERE u.rn = 1;
+
+
+
                                 ) AS total_count;
                             """
 

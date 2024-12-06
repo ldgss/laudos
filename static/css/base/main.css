@@ -10,3 +10,10 @@
     color: white;
     background: #6b7280 !important;
 }
+
+#descripcion_reacondicionado {
+    position: absolute;
+    left: -9999px; /* Fuera del viewport */
+    top: -9999px;
+    opacity: 0;    /* Invisible */
+}

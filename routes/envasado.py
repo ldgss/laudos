@@ -11,7 +11,7 @@ from flask import session
 
 envasado_bp = Blueprint("envasado", __name__)
 # cantidad para paginacion
-resultados_por_pagina = 2
+resultados_por_pagina = 20
 
 @envasado_bp.get("/envasado")
 def envasado():

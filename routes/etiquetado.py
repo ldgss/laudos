@@ -11,7 +11,7 @@ from flask import session
 
 etiquetado_bp = Blueprint("etiquetado", __name__)
 # cantidad para paginacion
-resultados_por_pagina = 2
+resultados_por_pagina = 20
 
 @etiquetado_bp.get("/etiquetado")
 def etiquetado():

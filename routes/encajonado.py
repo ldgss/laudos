@@ -11,7 +11,7 @@ from flask import session
 
 encajonado_bp = Blueprint("encajonado", __name__)
 # cantidad para paginacion
-resultados_por_pagina = 2
+resultados_por_pagina = 20
 
 @encajonado_bp.get("/encajonado")
 def encajonado():

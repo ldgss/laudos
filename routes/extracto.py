@@ -11,7 +11,7 @@ from flask import session
 
 extracto_bp = Blueprint("extracto", __name__)
 # cantidad para paginacion
-resultados_por_pagina = 2
+resultados_por_pagina = 20
 
 @extracto_bp.get("/extracto")
 def extracto():

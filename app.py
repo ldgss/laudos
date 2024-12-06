@@ -14,13 +14,23 @@ from routes import errors
 from db import db
 from datetime import timedelta
 from flask import session
+from utils import tokens
 
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex()
-# todo
-# poner la pass en archivo o var de sistema
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://laudosdbdba:amk?CULsKW%KZpAo@leo.solvencia.local:5432/laudosdb'
+
+if app.debug:
+    print("modo de base de datos: desarrollo")
+    user = tokens.development_user
+    password = tokens.development_pass
+    app.config["SQLALCHEMY_DATABASE_URI"] = f'postgresql://{user}:{password}@leo.solvencia.local:5432/laudosdb'
+else:
+    print("modo de base de datos: produccion")
+    user = tokens.production_user
+    password = tokens.production_pass
+    app.config["SQLALCHEMY_DATABASE_URI"] = f'postgresql://{user}:{password}@leo.solvencia.local:5432/laudosdb'
+
 app.config['SQLALCHEMY_BINDS'] = {
     'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+17+for+SQL+Server'
 }

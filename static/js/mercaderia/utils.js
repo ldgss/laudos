@@ -115,9 +115,17 @@ function imprimir_new_tab(){
         document.getElementById('print-barcode').addEventListener('click', function() {
             
             const barcodeSvg = document.getElementById('barcode').outerHTML;
-            const descripcion = document.getElementById('descripcion').outerHTML;
-            
-            
+            let contenido;
+            let id_para_estilo;
+
+            if (document.getElementById('descripcion')){
+                contenido = document.getElementById('descripcion').outerHTML;
+                id_para_estilo = "descripcion"
+            }else{
+                contenido = document.getElementById('descripcion_reacondicionado').outerHTML;
+                id_para_estilo = "descripcion_reacondicionado"
+            }
+
             const newWindow = window.open('', '_blank');
             newWindow.document.write(`
                 <html>
@@ -133,7 +141,7 @@ function imprimir_new_tab(){
                 </div>
 
                 <div class="table-container">
-                    ${descripcion}
+                    ${contenido}
                 </div>
 
                 <style>
@@ -145,7 +153,7 @@ function imprimir_new_tab(){
                     }
 
                    
-                    #descripcion {
+                    #${id_para_estilo} {
                         border-collapse: collapse; 
                         width: 50%; 
                         margin: 0 auto; 
@@ -153,19 +161,19 @@ function imprimir_new_tab(){
                     }
 
                     
-                    #descripcion th, #descripcion td {
+                    #${id_para_estilo} th, #${id_para_estilo} td {
                         border: 1px solid black;
                         padding: 8px; 
                         text-align: left;
                     }
 
                     
-                    #descripcion tbody tr:nth-child(odd) {
-                        background-color: #f2f2f2; 
+                    #${id_para_estilo} tbody tr:nth-child(odd) {
+                        background-color: #ffffff; 
                     }
 
                     
-                    #descripcion thead {
+                    #${id_para_estilo} thead {
                         background-color: #4CAF50;
                         color: white;
                     }
