@@ -25,15 +25,18 @@ if app.debug:
     user = tokens.development_user
     password = tokens.development_pass
     app.config["SQLALCHEMY_DATABASE_URI"] = f'postgresql://{user}:{password}@leo.solvencia.local:5432/laudosdb'
+    app.config['SQLALCHEMY_BINDS'] = {
+        'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+17+for+SQL+Server'
+    }
 else:
     print("modo de base de datos: produccion")
     user = tokens.production_user
     password = tokens.production_pass
     app.config["SQLALCHEMY_DATABASE_URI"] = f'postgresql://{user}:{password}@leo.solvencia.local:5432/laudosdb'
+    app.config['SQLALCHEMY_BINDS'] = {
+        'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+18+for+SQL+Server'
+    }
 
-app.config['SQLALCHEMY_BINDS'] = {
-    'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+17+for+SQL+Server'
-}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 db.db.init_app(app)
