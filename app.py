@@ -34,7 +34,8 @@ else:
     password = tokens.production_pass
     app.config["SQLALCHEMY_DATABASE_URI"] = f'postgresql://{user}:{password}@leo.solvencia.local:5432/laudosdb'
     app.config['SQLALCHEMY_BINDS'] = {
-        'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+18+for+SQL+Server'
+        # 'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+18+for+SQL+Server'
+        'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes'
     }
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
