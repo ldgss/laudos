@@ -41,7 +41,7 @@ def ubicaciones_agregar_post():
     if helpers.session_on() and helpers.authorized_to("ubicacion"):
         barcode = mod_ubicaciones.guardar_ubicaciones()
         if barcode:
-            return redirect(url_for("ubicaciones.ubicacioens_track", numero_unico=request.form["numero_unico"]))
+            return redirect(url_for("ubicaciones.ubicaciones_track", numero_unico=request.form["numero_unico"]))
         else:
             flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
             return redirect(url_for("ubicaciones.ubicaciones_agregar"))
