@@ -8,7 +8,7 @@ Quagga.init({
         type: "LiveStream",
         target: document.querySelector('#interactive'), // Selección del elemento para la transmisión
         constraints: {
-            facingMode: "user" // Usa la cámara trasera
+            facingMode: "environment" // Usa la cámara trasera
         }
     },
     decoder: {
