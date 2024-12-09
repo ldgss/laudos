@@ -22,7 +22,7 @@
                 {% for l in listado %}
                 <tr>
                     <td>
-                        numero
+                        {{ l.mercaderia or l.hojalata or l.extracto or l.insumo or l.reacondicionado }}
                     </td>
                     <td>
                         {{l.posicion}}
@@ -34,7 +34,9 @@
                         {{l.nombre}}
                     </td>
                     <td>
-                        <a href="{{url_for('ubicaciones.ubicaciones_track', numero_unico=numero)}}" class="btn btn-outline-primary">Ver</a >
+                        <a href="{{ url_for('ubicaciones.ubicaciones_track', numero_unico=l.mercaderia or l.hojalata or l.extracto or l.insumo or l.reacondicionado) }}" 
+                        class="btn btn-outline-primary">Ver</a>
+
                     </td>
                 </tr>
                 {% endfor %}

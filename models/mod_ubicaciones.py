@@ -172,7 +172,7 @@ WITH ubicacion_con_row AS (
     LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
     LEFT JOIN usuario ON u.responsable = usuario.id
     WHERE 
-        (u.mercaderia = '2024-T1-000000' OR u.reacondicionado = '2024-T2-000000' OR u.extracto = '2024-E1-000000')
+        {condicion_final_ilike}
 )
 SELECT 
     u.*, 
@@ -191,10 +191,7 @@ WHERE u.rn = 1;
     
         # calculo el numero de paginas
         total_resultados = f"""
-                                SELECT COUNT(*)
-                                FROM (
-                                   
-                               WITH ubicacion_con_row AS (
+                                WITH ubicacion_con_row AS (
     SELECT 
         u.*, 
         u_n.*, 
@@ -208,20 +205,15 @@ WHERE u.rn = 1;
     LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
     LEFT JOIN usuario ON u.responsable = usuario.id
     WHERE 
-        (u.mercaderia = '2024-T1-000000' OR u.reacondicionado = '2024-T2-000000' OR u.extracto = '2024-E1-000000')
+        {condicion_final_ilike}
 )
-SELECT 
-    u.*, 
-    u_n.*, 
-    usuario.nombre
-FROM ubicacion_con_row AS u
-LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
-LEFT JOIN usuario ON u.responsable = usuario.id
-WHERE u.rn = 1;
+SELECT COUNT(*)
+FROM (
+    SELECT *
+    FROM ubicacion_con_row
+    WHERE rn = 1
+) AS total_count;
 
-
-
-                                ) AS total_count;
                             """
 
         total_resultados_scalar = db.db.session.execute(text(total_resultados)).scalar()

@@ -49,7 +49,7 @@ def ubicaciones_agregar_post():
         return redirect(url_for("login.login_get"))
 
 @ubicaciones_bp.get("/ubicaciones/track/<numero_unico>")
-def ubicacioens_track(numero_unico):
+def ubicaciones_track(numero_unico):
     if helpers.session_on() and helpers.authorized_to("ubicacion"):
         ubicaciones = mod_ubicaciones.get_ubicaciones(numero_unico)
         title = "Ubicaciones"
