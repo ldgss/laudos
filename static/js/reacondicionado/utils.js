@@ -32,9 +32,15 @@ document.getElementById("btn_agregar").addEventListener("click", function() {
 
 function buscarParte(button) {
     const inputNumeroUnico = button.previousElementSibling;
+    let inputs = document.querySelectorAll("input");
+    let repetitions = Array.from(inputs).filter(input => input.value === inputNumeroUnico.value).length;
     const rowContainer = button.closest(".row");  // Encuentra el contenedor de esta fila
     if (inputNumeroUnico.validity.patternMismatch) {
-        console.log("Formato incorrecto en numero_unico");
+        alert("Formato incorrecto en numero_unico");
+        return
+    } else if (repetitions > 1 ) {
+        alert("El pallet ya esta presente en esta operacion. Unifique su consumo.")
+        return
     } else if (inputNumeroUnico.value !== "") {
         console.log("searching")
         fetch("/reacondicionado/buscart1t2t/" + inputNumeroUnico.value)
