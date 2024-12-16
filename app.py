@@ -50,5 +50,5 @@ app.register_blueprint(encajonado.encajonado_bp)
 app.register_blueprint(extracto.extracto_bp)
 app.register_blueprint(reacondicionado.reacondicionado_bp)
 app.register_blueprint(ubicaciones.ubicaciones_bp)
-# app.register_blueprint(insumos.insumos_bp)
+app.register_blueprint(insumos.insumos_bp)
 
