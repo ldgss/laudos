@@ -1,9 +1,108 @@
 {% extends "base/base.html" %}
 
 {% block header %}
-    <h1>{% block title %} {{title}} {% endblock %}</h1>
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+   
 {% endblock %}
 
 {% block content %}
-    <h2> {{body}} </h2>
+<div class="container mt-5">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover" id="listado_con_vto">
+            <thead>
+                <tr>
+                    <th>Denominacion</th>
+                    <th>Número Único</th>
+                    <th>Fecha Elaboración</th>
+                    <th>Vto</th>
+                    <th>Lote</th>
+                    <th>Cantidad</th>
+                    <th>Observación</th>
+                    <th>Responsable</th>
+                    <th>Laudo</th>
+                    <th>Acción</th>
+                    <th>Seleccionar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for l in listado %}
+                <tr>
+                    <td>
+                        {{l.den}}
+                    </td>
+                    <td>
+                        {{l.numero_unico}}
+                    </td>
+                    <td class="fecha_elaboracion">
+                        {{l.fecha_elaboracion.strftime('%Y-%m-%d %H:%M')}}
+                    </td>
+                    <td hidden class="meses">
+                        {{l.meses}}
+                    </td>
+                    <td class="vencimiento">
+                    </td>
+                    <td>
+                        {{l.lote}}
+                    </td>
+                    <td>
+                        {{l.cantidad}}
+                    </td>
+                    <td>
+                        {{l.observacion}}
+                    </td>
+                    <td>
+                        {{l.nombre}}
+                    </td>
+                    <td>
+                        <a href="" class="btn btn-outline-primary">Ver</a >
+                    </td>
+                    <td>
+                        <a href="{{url_for('bloqueos.bloqueos_agregar_id', numero_unico=l.numero_unico)}}" class="btn btn-danger">Bloquear</a >
+                    </td>
+                    <td>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="id_unico">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="mb-3 form-check">
+                            <label class="form-check-label" for="id_unico"></label>
+                          </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="text-center">
+    <nav aria-label="Paginación">
+        <ul class="pagination justify-content-center">
+        {% if pagina_actual > 1 %}
+            <li class="page-item">
+            <a class="page-link" href="">Anterior</a>
+            </li>
+        {% endif %}
+        {% for i in range(1, total_paginas + 1) %}
+            <li class="page-item {% if i == pagina_actual %}active{% endif %}">
+            <a class="page-link" href="">{{ i }}</a>
+            </li>
+        {% endfor %}
+        {% if pagina_actual < total_paginas %}
+            <li class="page-item">
+            <a class="page-link" href="">Siguiente</a>
+            </li>
+        {% endif %}
+        </ul>
+    </nav>
+    
+    <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+    
+    <a href="{{url_for('bloqueos.bloqueos_agregar_multiple')}}" class="btn btn-success">Agregar Seleccion</a>
+    
+
+</div>
+    
+
 {% endblock %}

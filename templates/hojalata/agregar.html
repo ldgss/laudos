@@ -20,13 +20,13 @@
     <div class="row m-4 justify-content-center">
         <label for="denominacion" class="col-sm-2 col-form-label">Denominación</label>
         <div class="col-sm-5">
-            <input list="denominacion_opciones" required type="text" 
+            <input list="denominacion_opciones_hojalata" required type="text" 
                    class="form-control" name="denominacion" id="denominacion"
                    onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
             <input type="hidden" id="cod_cls" name="cod_cls">
             <input type="hidden" id="cod_mae" name="cod_mae">
             <datalist id="denominacion_opciones">
-                {% for p in productos_arballon %}
+                {% for p in productos_arballon_hojalata%}
                     <option value="{{ p.den }}" data-cod-cls="{{ p.cod_cls }}" data-cod-mae="{{ p.cod_mae }}"></option>
                 {% endfor %}
             </datalist>
@@ -65,7 +65,7 @@
             <input required type="text" class="form-control" 
             value="{{ proximo_id }}"
             name="numero_unico" id="numero_unico"
-            title="(Ej: 2024-T-000001)" pattern="^\d{4}-(T|H)-\d{6}$">
+            title="(Ej: 2024-H-000000)" pattern="^\d{4}-(T|H)-\d{6}$">
         </div>
     </div>
     <div class="row m-4 justify-content-center">

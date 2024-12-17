@@ -52,11 +52,11 @@
                         {{l.nombre}}
                     </td>
                     <td>
-                        <a href="{{url_for('hojalata.hojalata_imprimir', numero_unico=l.numero_unico)}}" class="btn btn-outline-primary">Ver</a >
+                        <a href="{{url_for('envasado.envasado_imprimir', numero_unico=l.numero_unico)}}" class="btn btn-outline-primary">Ver</a >
                     </td>
-                    <!-- <td>
+                    <td>
                         <a href="{{url_for('envasado.envasado_anular', numero_unico=l.numero_unico)}}" class="btn btn-outline-danger">Anular</a >
-                    </td> -->
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -69,17 +69,17 @@
         <ul class="pagination justify-content-center">
         {% if pagina_actual > 1 %}
             <li class="page-item">
-            <a class="page-link" href="{{ url_for('hojalata.hojalata_listado', terminos_de_busqueda=terminos_de_busqueda,page=pagina_actual - 1) }}">Anterior</a>
+            <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda,page=pagina_actual - 1) }}">Anterior</a>
             </li>
         {% endif %}
         {% for i in range(1, total_paginas + 1) %}
             <li class="page-item {% if i == pagina_actual %}active{% endif %}">
-            <a class="page-link" href="{{ url_for('hojalata.hojalata_listado', terminos_de_busqueda=terminos_de_busqueda,page=i) }}">{{ i }}</a>
+            <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda,page=i) }}">{{ i }}</a>
             </li>
         {% endfor %}
         {% if pagina_actual < total_paginas %}
             <li class="page-item">
-            <a class="page-link" href="{{ url_for('hojalata.hojalata_listado', terminos_de_busqueda=terminos_de_busqueda,page=pagina_actual + 1) }}">Siguiente</a>
+            <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda,page=pagina_actual + 1) }}">Siguiente</a>
             </li>
         {% endif %}
         </ul>
@@ -88,4 +88,6 @@
     <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
 
 </div>
+    
+
 {% endblock %}

@@ -95,10 +95,10 @@ def insert_mercaderia(form, vto):
                     INSERT INTO
                     hojalata
                    (producto, observacion, fecha_elaboracion, lote, lote_cuerpo, lote_tapa, cantidad,   
-                    numero_unico, responsable, vto_meses, fecha_registro)
+                    numero_unico, responsable, vto_meses, fecha_registro, den)
                     VALUES
                     (:producto, :observacion, :fecha_elaboracion, :lote, :lote_cuerpo, :lote_tapa, :cantidad,
-                    :numero_unico, :responsable,  :vto_meses, CURRENT_TIMESTAMP)
+                    :numero_unico, :responsable,  :vto_meses, CURRENT_TIMESTAMP, :den)
                 """
                 )
         
@@ -114,6 +114,7 @@ def insert_mercaderia(form, vto):
                                                 "numero_unico": form['numero_unico'],
                                                 "responsable": form['user_id'],                                                
                                                 "vto_meses": vto['id'],
+                                                "den": form['denominacion']
                                             })
         db.db.session.commit()
         return True
@@ -146,16 +147,17 @@ def get_listado(terminos_de_busqueda, resultados_por_pagina, offset):
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
-            # chequear cada termino en cada columna de hojalata
+            # chequear cada termino en cada columna de mercaderia
             subcondicion = []
             subcondicion.append(f"h.producto::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"h.observacion::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"h.cantidad::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"h.lote::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"h.fecha_elaboracion::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"h.responsable::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"h.numero_unico::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"m.den::TEXT ILIKE '%{termino}%'")
-            
+            subcondicion.append(f"h.vto_meses::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"h.den::TEXT ILIKE '%{termino}%'")
             
             # chequear cada termino en nombre usuario
             subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
@@ -200,3 +202,4 @@ def get_listado(terminos_de_busqueda, resultados_por_pagina, offset):
     except Exception as e:
         print(f"Error: {e}")
         return None
+

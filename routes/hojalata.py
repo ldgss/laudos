@@ -41,8 +41,8 @@ def hojalata_listado(terminos_de_busqueda):
         offset = (pagina - 1) * resultados_por_pagina
       
         resultado = mod_hojalata.get_listado(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "Hojalata"
-        section = "Hojalata"
+        title = "hojalata"
+        section = "hojalata"
         return render_template("hojalata/listado.html", 
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,
@@ -59,7 +59,7 @@ def hojalata_agregar():
         return render_template("hojalata/agregar.html", 
                                title=title, section=section, 
                                proximo_id=proximo_id,
-                               productos_arballon=session["productos_arballon"])
+                               productos_arballon_hojalata=session["productos_arballon_hojalata"])
     else:
         return redirect(url_for("login.login_get"))
     
@@ -69,7 +69,7 @@ def hojalata_agregar_post():
         # obtenemos el id solo del vencimiento necesario
         vto = mod_mercaderia.get_vencimiento(request.form)
         # el insert devuelve True si todo salio bien
-        barcode = mod_mercaderia.insert_mercaderia(request.form, vto)
+        barcode = mod_hojalata.insert_mercaderia(request.form, vto)
         title = "hojalata"
         section = "hojalata"
         if barcode:

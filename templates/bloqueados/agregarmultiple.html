@@ -1,0 +1,35 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <h1>{% block title %} {{title}} {% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="row m-4 justify-content-center">
+    <label for="operario" class="col-sm-2 col-form-label">Operario</label>
+    <div class="col-sm-5">
+        <input readonly maxlength="30" type="text" class="form-control" 
+        name="user_name" id="user_name" value="{{session["nombre"]}}">
+        <input type="hidden" id="user_id" name="user_id" value="{{session["id"]}}">
+        
+    </div>
+</div>
+<div>
+
+  
+  <div class="input-group">
+    <input type="text" aria-label="First name" class="form-control" placeholder="ID">
+    <input type="text" aria-label="Last name" class="form-control" placeholder="Motivo">
+    <input type="text" class="form-control" placeholder="Nº Planilla" aria-label="Recipient's username" aria-describedby="button-addon2">
+    <button type="button" class="btn btn-danger">Danger</button>
+  </div>
+  <div class="row m-4 justify-content-center">
+    <label for="antecedentes" class="col-sm-2 col-form-label">N° de parte de antecedentes</label>
+    <div class="col-sm-5">
+        <input type="text" class="form-control" name="antecedentes" id="antecedentes"
+            title="(Ej: 2024-T-000001,2024-T-000002 ... No use espacios entre las comas)" pattern="^\d{4}-(T|H)-\d{6}(,\d{4}-(T|H)-\d{6})*$">
+    </div>
+</div>
+
+    <h2> {{body}} </h2>
+{% endblock %}
