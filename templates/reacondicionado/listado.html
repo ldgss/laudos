@@ -13,12 +13,8 @@
                 <tr>
                     <th>Denominacion</th>
                     <th>Número Único</th>
-                    <th>Fecha Elaboración</th>
-                    <th>Vencimiento</th>
-                    <th>Lote</th>
+                    <th>Tipo de reacondicionado</th>
                     <th>Observación</th>
-                    <th>Brix</th>
-                    <th>Nro. Recipiente</th>
                     <th>Responsable</th>
                     <th>Acción</th>
                 </tr>
@@ -27,36 +23,22 @@
                 {% for l in listado %}
                 <tr>
                     <td>
-                        {{l.den}}
+                        {{l.nueva_den}}
                     </td>
                     <td>
                         {{l.numero_unico}}
                     </td>
-                    <td class="fecha_elaboracion">
-                        {{l.fecha_elaboracion.strftime('%Y-%m-%d %H:%M')}}
-                    </td>
-                    <td hidden class="meses">
-                        {{l.meses}}
-                    </td>
-                    <td class="vencimiento">
-                    </td>
                     <td>
-                        {{l.lote}}
+                        {{l.tipo_reacondicionado}}
                     </td>
                     <td>
                         {{l.observaciones}}
                     </td>
                     <td>
-                        {{l.brix}}
+                        {{l.responsable_nombre}}
                     </td>
                     <td>
-                        {{l.numero_recipiente}}
-                    </td>
-                    <td>
-                        {{l.nombre}}
-                    </td>
-                    <td>
-                        <a href="{{url_for('extracto.extracto_imprimir', numero_unico=l.numero_unico)}}" class="btn btn-outline-primary">Ver</a >
+                        <a href="{{url_for('reacondicionado.reacondicionado_imprimir', numero_unico=l.numero_unico)}}" class="btn btn-outline-primary">Ver</a >
                     </td>
                     <td>
                     </td>
@@ -72,17 +54,17 @@
         <ul class="pagination justify-content-center">
         {% if pagina_actual > 1 %}
             <li class="page-item">
-            <a class="page-link" href="{{ url_for('extracto.extracto_listado', terminos_de_busqueda=terminos_de_busqueda,page=pagina_actual - 1) }}">Anterior</a>
+            <a class="page-link" href="{{ url_for('reacondicionado.reacondicionado_listado', terminos_de_busqueda=terminos_de_busqueda,page=pagina_actual - 1) }}">Anterior</a>
             </li>
         {% endif %}
         {% for i in range(1, total_paginas + 1) %}
             <li class="page-item {% if i == pagina_actual %}active{% endif %}">
-            <a class="page-link" href="{{ url_for('extracto.extracto_listado', terminos_de_busqueda=terminos_de_busqueda,page=i) }}">{{ i }}</a>
+            <a class="page-link" href="{{ url_for('reacondicionado.reacondicionado_listado', terminos_de_busqueda=terminos_de_busqueda,page=i) }}">{{ i }}</a>
             </li>
         {% endfor %}
         {% if pagina_actual < total_paginas %}
             <li class="page-item">
-            <a class="page-link" href="{{ url_for('extracto.extracto_listado', terminos_de_busqueda=terminos_de_busqueda,page=pagina_actual + 1) }}">Siguiente</a>
+            <a class="page-link" href="{{ url_for('reacondicionado.reacondicionado_listado', terminos_de_busqueda=terminos_de_busqueda,page=pagina_actual + 1) }}">Siguiente</a>
             </li>
         {% endif %}
         </ul>

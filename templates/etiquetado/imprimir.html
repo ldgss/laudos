@@ -8,7 +8,7 @@
 
 {% block content %}
     <div class="row m-4 justify-content-center">
-        <input type="text" id="barcode_text" hidden value="{{envasado["numero_unico"]}}">
+        <input type="text" id="barcode_text" hidden value="{{etiquetado["numero_unico"]}}">
         <svg id="barcode"></svg>
     </div>
     <div class="row m-4 justify-content-center">
@@ -16,36 +16,36 @@
             <table id="descripcion" class="table-bordered col-12">
                 <tr>
                     <th>Denominacion:</th>
-                    <td>{{envasado["den"]}}</td>
+                    <td>{{etiquetado["den"]}}</td>
                 </tr>
                 <tr>
                     <th>Numero único:</th>
-                    <td>{{envasado["numero_unico"]}}</td>
+                    <td>{{etiquetado["numero_unico"]}}</td>
                 </tr>
                 <tr>
-                    <th>Fecha de Elaboracion:</th>
-                    <td class="fecha_elaboracion">{{envasado["fecha_elaboracion"].strftime('%Y-%m-%d %H:%M')}}</td>
+                    <th>Fecha de Etiquetado:</th>
+                    <td class="fecha_elaboracion">{{etiquetado["fecha_etiquetado"].strftime('%Y-%m-%d %H:%M')}}</td>
                 </tr>
                 <tr>
                     <th>Vencimiento:</th>
-                    <td hidden class="meses">{{envasado["meses"]}}</td>
+                    <td hidden class="meses">{{etiquetado["meses"]}}</td>
                     <td class="vencimiento"></td>
                 </tr>
                 <tr>
                     <th>Lote:</th>
-                    <td>{{envasado["lote"]}}</td>
+                    <td>{{etiquetado["lote"]}}</td>
                 </tr>
                 <tr>
                     <th>Cantidad:</th>
-                    <td>{{envasado["cantidad"]}}</td>
+                    <td>{{etiquetado["cantidad"]}}</td>
                 </tr>
                 <!-- <tr>
                     <th>Observaciones:</th>
-                    <td>{{envasado["observacion"]}}</td>
+                    <td>{{etiquetado["observacion"]}}</td>
                 </tr> -->
                 <tr>
                     <th>Responsable:</th>
-                    <td>{{envasado["nombre"]}}</td>
+                    <td>{{etiquetado["nombre"]}}</td>
                 </tr>
             </table>
         </div>
