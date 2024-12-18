@@ -11,32 +11,38 @@
         <table class="table table-striped table-hover" id="listado_con_vto">
             <thead>
                 <tr>
-                    <th>Número Único</th>
-                    <th>Posicion</th>
-                    <th>Sector</th>
+                    <th>Insumo</th>
+                    <th>Codigo</th>
+                    <th>Fecha consumo</th>
                     <th>Responsable</th>
-                    <th>Acción</th>
+                    <th>Fecha registro</th>
+                    <th>Lote</th>
+                    <th>Cantidad</th>
                 </tr>
             </thead>
             <tbody>
                 {% for l in listado %}
                 <tr>
                     <td>
-                        {{ l.mercaderia or l.hojalata or l.extracto or l.insumo or l.reacondicionado }}
+                        {{l.insumo}}
                     </td>
                     <td>
-                        {{l.posicion}}
+                        {{l.codigo_insumo}}
                     </td>
                     <td>
-                        {{l.sector}}
+                        {{l.fecha_consumo.strftime('%Y-%m-%d %H:%M')}}
                     </td>
                     <td>
                         {{l.nombre}}
                     </td>
                     <td>
-                        <a href="{{ url_for('ubicaciones.ubicaciones_track', numero_unico=l.mercaderia or l.hojalata or l.extracto or l.insumo or l.reacondicionado) }}" 
-                        class="btn btn-outline-primary">Ver</a>
-
+                        {{l.fecha_registro.strftime('%Y-%m-%d %H:%M')}}
+                    </td>
+                    <td>
+                        {{l.lote_insumo}}
+                    </td>
+                    <td>
+                        {{l.cantidad}}
                     </td>
                 </tr>
                 {% endfor %}

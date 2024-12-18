@@ -68,6 +68,62 @@ def guardar_insumos():
         print(f"Error: {e}")
         return None
 
+def get_listado_insumos(terminos_de_busqueda, resultados_por_pagina, offset):
+    try:
+        # todo 7
+        terminos_de_busqueda = terminos_de_busqueda.split()
+        condiciones_ilike = []
+        
+        for termino in terminos_de_busqueda:
+            # chequear cada termino en cada columna de extracto
+            subcondicion = []
+            subcondicion.append(f"i_e.insumo::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"i_e.codigo_insumo::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"i_e.fecha_consumo::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"i_e.responsable::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"i_e.fecha_registro::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"i_e.lote_insumo::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"i_e.cantidad::TEXT ILIKE '%{termino}%'")
+            
+            # chequear cada termino en nombre usuario
+            subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
+            
+            condiciones_ilike.append(f"({' OR '.join(subcondicion)})")
+
+        # refinamos la busqueda
+        condicion_final_ilike = ' AND '.join(condiciones_ilike)
+
+        query_sql = f"""
+            SELECT i_e.*, u.*
+            FROM insumo_envase i_e
+            JOIN usuario u ON i_e.responsable = u.id
+            WHERE {condicion_final_ilike}
+            LIMIT :limit OFFSET :offset;
+        """
+        resultados = db.db.session.execute(text(query_sql),
+                    {"limit": resultados_por_pagina, "offset": offset})
+    
+        # calculo el numero de paginas
+        total_resultados = f"""
+                                SELECT COUNT(*)
+                                FROM (
+                                    SELECT i_e.*, u.*
+                                    FROM insumo_envase i_e
+                                    JOIN usuario u ON i_e.responsable = u.id
+                                    WHERE {condicion_final_ilike}
+                                ) AS total_count;
+                            """
+
+        total_resultados_scalar = db.db.session.execute(text(total_resultados)).scalar()
+        total_paginas = total_resultados_scalar // resultados_por_pagina
+        if total_resultados_scalar % resultados_por_pagina != 0:
+            total_paginas += 1
+        return [resultados.fetchall(), total_paginas]
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
 def get_ultimo_id():
     try:
         sql = text("""
