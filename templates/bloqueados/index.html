@@ -17,13 +17,18 @@
             type="text" id="buscar" name="buscar">
         </div>
         <div class="m-3">
-            <button type="submit" class="btn btn-primary col-12">Buscar</button>
+            <button type="submit" class="btn btn-primary col-12">Buscar Produccion</button>
         </div>
     </form>
-<!-- 
-    <div class="m-3">
-        <a href="{{url_for('bloqueos.bloqueos_agregar')}}" class="btn btn-success col-12">Agregar Bloqueo</a>
-    </div> -->
+
+    <form action="/bloqueos/buscarbloqueados" method="post">
+        
+        <div class="m-3">
+            <button type="submit" class="btn btn-warning col-12">Buscar Bloqueados</button>
+        </div>
+    </form>
+
+    
     
     <div class="m-3">
         <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>

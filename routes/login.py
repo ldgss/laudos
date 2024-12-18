@@ -5,15 +5,12 @@ from flask import request
 from flask import redirect
 from flask import url_for
 from flask import flash
+from routes import acceso
 from models import mod_login
 from utils import helpers
 from models import mod_mercaderia
-<<<<<<< HEAD
 from models import mod_hojalata
 
-=======
-from routes import acceso
->>>>>>> 317e44d89249db988439cf9cc103e9b5a2bcabc0
 
 
 login_bp = Blueprint('login', __name__)
@@ -43,16 +40,12 @@ def login_post():
             for cod_mae, den, cod_cls in productos_arballon
         ]
         session["productos_arballon"] = productos_dict
-<<<<<<< HEAD
         productos_arballon_hojalata = mod_hojalata.listar_productos_arballon_hojalata()
         productos_dict_hojalata = [
             {'cod_mae': cod_mae.strip(), 'den': den.strip(), 'cod_cls': cod_cls}
             for cod_mae, den, cod_cls in productos_arballon_hojalata
         ]
         session["productos_arballon_hojalata"] = productos_dict_hojalata
-=======
-        
->>>>>>> 317e44d89249db988439cf9cc103e9b5a2bcabc0
         return redirect(url_for("index.index"))
     else:
         flash("usuario o contraseña incorrecta")

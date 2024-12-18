@@ -4,6 +4,7 @@ from flask import url_for
 from utils import helpers
 from flask import Blueprint
 from models import mod_hojalata
+from models import mod_mercaderia
 from models import mod_bloqueos
 from flask import flash
 from flask import request
@@ -43,7 +44,7 @@ def bloqueos_agregar_post():
         # obtenemos el id solo del vencimiento necesario
         
         # el insert devuelve True si todo salio bien
-        barcode = mod_bloqueos.insert_bloqueados(request.form)
+        barcode = mod_bloqueos.insert_bloqueados_envasado(request.form)
         title = "Bloqueados"
         section = "Bloqueados"
         if barcode:
@@ -74,7 +75,7 @@ def bloqueados_imprimir(id_unico):
 @bloqueos_bp.get("/bloqueos/agregar/<numero_unico>")
 def bloqueos_agregar_id(numero_unico):
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
-        hojalata = mod_hojalata.get_hojalata(numero_unico)
+        hojalata = mod_mercaderia.get_envasado(numero_unico)
         title = "bloqueados"
         section = "bloqueados"
         return render_template("bloqueados/agregar.html", 
@@ -103,6 +104,14 @@ def bloqueos_buscar():
     else:
         return redirect(url_for("login.login_get"))
     
+@bloqueos_bp.post("/bloqueos/buscarbloqueados")
+def bloqueos_buscarbloqueados():
+    if helpers.session_on() and helpers.authorized_to("bloqueo"):
+        return redirect(url_for("bloqueos.bloqueados_listado", terminos_de_busqueda=request.form["buscar"]))
+    else:
+        return redirect(url_for("login.login_get"))
+    
+
 @bloqueos_bp.get("/bloqueos/listado/<terminos_de_busqueda>")
 def bloqueados_listado(terminos_de_busqueda):
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
@@ -110,7 +119,7 @@ def bloqueados_listado(terminos_de_busqueda):
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
       
-        resultado = mod_hojalata.get_listado(terminos_de_busqueda, resultados_por_pagina, offset)
+        resultado = mod_bloqueos.get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset)
         title = "Bloqueados"
         section = "Bloqueados"
         return render_template("bloqueados/listado.html", 

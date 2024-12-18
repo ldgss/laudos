@@ -13,7 +13,6 @@ from routes import index
 from routes import errors
 from routes import bloqueos
 from routes import hojalata
-from routes import materia
 from db import db
 from datetime import timedelta
 from flask import session
@@ -22,16 +21,12 @@ from utils import tokens
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex()
-<<<<<<< HEAD
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:1234@localhost:5432/laudos'
-app.config['SQLALCHEMY_BINDS'] = {'sqlserver':'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+17+for+SQL+Server'}
-=======
 
 if app.debug:
     print("modo de base de datos: desarrollo")
     user = tokens.development_user
     password = tokens.development_pass
-    app.config["SQLALCHEMY_DATABASE_URI"] = f'postgresql://{user}:{password}@leo.solvencia.local:5432/laudosdb'
+    app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:1234@localhost:5432/laudos'
     app.config['SQLALCHEMY_BINDS'] = {
         'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+17+for+SQL+Server'
     }
@@ -45,7 +40,6 @@ else:
         'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes'
     }
 
->>>>>>> 317e44d89249db988439cf9cc103e9b5a2bcabc0
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 db.db.init_app(app)
@@ -59,13 +53,5 @@ app.register_blueprint(extracto.extracto_bp)
 app.register_blueprint(reacondicionado.reacondicionado_bp)
 app.register_blueprint(ubicaciones.ubicaciones_bp)
 app.register_blueprint(insumos.insumos_bp)
-<<<<<<< HEAD
-app.register_blueprint(index.index_bp)
-app.register_blueprint(errors.errors_bp)
-app.register_blueprint(extracto.extracto_bp)
 app.register_blueprint(bloqueos.bloqueos_bp)
 app.register_blueprint(hojalata.hojalata_bp)
-app.register_blueprint(materia.materia_bp)
-=======
-
->>>>>>> 317e44d89249db988439cf9cc103e9b5a2bcabc0
