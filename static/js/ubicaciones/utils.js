@@ -1,6 +1,15 @@
+// Audio para el sonido de éxito
+const beepSound = new Audio("/static/sounds/scan_success.mp3"); // Cambia el URL si tienes otro sonido
+// Obtener el patrón del input
+const inputElement = document.getElementById('numero_unico');
+const inputPattern = inputElement.getAttribute('pattern');
+const barcodeRegex = new RegExp(inputPattern); 
+
+
 document.addEventListener('DOMContentLoaded', function () {
 
-
+const modal = new bootstrap.Modal(document.getElementById('interactionModal'));
+modal.show();
 
 Quagga.init({
     inputStream: {
@@ -32,10 +41,30 @@ Quagga.init({
     Quagga.start();
 });
 
+
 // Detecta el código de barras
+// Quagga.onDetected(function (data) {
+//     document.getElementById('numero_unico').value = data.codeResult.code;
+//     console.log(data.codeResult.code);
+// });
+
 Quagga.onDetected(function (data) {
-    document.getElementById('numero_unico').value = data.codeResult.code;
-    console.log(data.codeResult.code);
+    const detectedCode = data.codeResult.code;
+
+    // Verifica si el código coincide con el patrón del input
+    if (barcodeRegex.test(detectedCode)) {
+        // Asigna el valor al input
+        inputElement.value = detectedCode;
+        console.log("Código válido detectado:", detectedCode);
+
+        // Detener el escaneo
+        Quagga.stop();
+
+        // Reproducir sonido
+        beepSound.play();
+    } else {
+        console.log("Código no válido:", detectedCode);
+    }
 });
 
 });

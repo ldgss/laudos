@@ -7,7 +7,7 @@ def log_user(usuario, password):
                     SELECT *
                     FROM usuario
                     FULL OUTER JOIN permiso ON usuario.id = permiso.responsable
-                    WHERE usuario.nombre = :usuario AND usuario.password = :password;
+                    WHERE usuario.nombre ILIKE :usuario AND usuario.password = :password;
                 """
                 )
         
