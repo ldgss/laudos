@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script defer src="{{url_for("static", filename="js/base/utils.js")}}"></script>
+    <link href="{{url_for("static", filename="css/base/main.css")}}" rel="stylesheet">
 
   </head>
   <body>
@@ -17,7 +18,7 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <a class="navbar-brand" href="/">
-          <img src="{{url_for("static", filename="img/logo.png")}}" alt="logo de solvencia">
+          <img style="max-width: 270px;" src="{{url_for("static", filename="img/logo6.png")}}" alt="logo de solvencia">
         </a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,16 +38,19 @@
               </a>
               <ul class="dropdown-menu">
                 <li class="">
-                  <a class="dropdown-item" href="/envasado">Envasado</a>
+                  <a class="dropdown-item" href="/envasado">Semielaborado (línea)</a>
                 </li>
                 <li class="">
-                  <a class="dropdown-item" href="/etiquetado">Etiquetado</a>
+                  <a class="dropdown-item" href="/etiquetado">Etiquetado (línea)</a>
                 </li>
                 <li class="">
-                  <a class="dropdown-item" href="/encajonado">Encajonado</a>
+                  <a class="dropdown-item" href="/encajonado">Encajonado (línea)</a>
                 </li>
                 <li class="">
                   <a class="dropdown-item" href="/extracto">Extracto</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/reacondicionado">Reacondicionado</a>
                 </li>
                 <li class="">
                   <a class="dropdown-item" href="/hojalata">Hojalata</a>
@@ -128,7 +132,7 @@
 
             <li class="nav-item">
               {% if session["nombre"] %}
-                <a class="nav-link" href="/logout">Cerrar Sesion ({{session["nombre"]}})</a>
+                <a class="nav-link" href="/logout">Salir</a>
               {% else %}
                 <a class="nav-link" href="/login">Iniciar Sesion</a>
               {% endif %}
@@ -151,7 +155,7 @@
         {% else %}
           <p class="col-md-8 fs-4">Bienvenido/a!</p>
         {% endif %}
-
+          <h4 class="">{{section}}</h4>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         

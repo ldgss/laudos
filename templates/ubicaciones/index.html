@@ -1,21 +1,36 @@
 {% extends "base/base.html" %}
 
 {% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
 
 {% endblock %}
 
 {% block content %}
 
-<div class="container col-sm-12 col-lg-3">
+<div class="container col-sm-12 col-md-8 col-lg-6">
+
+    <form action="/ubicaciones/buscar" method="post">
+        <div class="m-3">
+            <label class="form-label" for="buscar">Buscar ubicaciones de productos</label>
+            <input class="form-control" required
+            placeholder="Ingrese numero de parte, lote, fechas, observaciones" 
+            type="text" id="buscar" name="buscar">
+        </div>
+        <div class="m-3">
+            <button type="submit" class="btn btn-primary col-12">Buscar</button>
+        </div>
+    </form>
+
     <div class="m-3">
-        <a href="/ubicaciones/ubicar" class="btn btn-primary col-12">Ubicar</a>
+        <a href="{{url_for('ubicaciones.ubicaciones_agregar')}}" class="btn btn-success col-12">Agregar</a>
     </div>
     <div class="m-3">
-        <a href="/ubicaciones/buscar" class="btn btn-primary col-12">Buscar</a>
+        <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
+
     </div>
+    
 
 
 
 </div>
-
 {% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+<script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+<script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="row m-4 justify-content-center">
+        <input type="text" id="barcode_text" hidden value="{{etiquetado["numero_unico"]}}">
+        <svg id="barcode"></svg>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
+            <table id="descripcion" class="table-bordered col-12">
+                <tr>
+                    <th>Denominacion:</th>
+                    <td>{{etiquetado["den"]}}</td>
+                </tr>
+                <tr>
+                    <th>Numero único:</th>
+                    <td>{{etiquetado["numero_unico"]}}</td>
+                </tr>
+                <tr>
+                    <th>Fecha de Etiquetado:</th>
+                    <td class="fecha_elaboracion">{{etiquetado["fecha_etiquetado"].strftime('%Y-%m-%d %H:%M')}}</td>
+                </tr>
+                <tr>
+                    <th>Vencimiento:</th>
+                    <td hidden class="meses">{{etiquetado["meses"]}}</td>
+                    <td class="vencimiento"></td>
+                </tr>
+                <tr>
+                    <th>Lote:</th>
+                    <td>{{etiquetado["lote"]}}</td>
+                </tr>
+                <tr>
+                    <th>Cantidad:</th>
+                    <td>{{etiquetado["cantidad"]}}</td>
+                </tr>
+                <!-- <tr>
+                    <th>Observaciones:</th>
+                    <td>{{etiquetado["observacion"]}}</td>
+                </tr> -->
+                <tr>
+                    <th>Responsable:</th>
+                    <td>{{etiquetado["nombre"]}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="m-2 text-center">
+            <button class="btn btn-primary" id="print-barcode">Imprimir Código de Barras</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+            
+        </div>
+    </div>
+{% endblock %}

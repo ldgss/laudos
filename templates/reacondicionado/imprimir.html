@@ -1,0 +1,129 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+<script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+<script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="row m-4 justify-content-center">
+        <input type="text" id="barcode_text" hidden value="{{reacondicionado["reacondicionado"][0]["numero_unico"]}}">
+        <svg id="barcode"></svg>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
+            <!-- tabla para impresion -->
+            <table id="descripcion_reacondicionado" class="table-bordered col-12">
+                <tr>
+                    <td>Denominacion: {{reacondicionado["reacondicionado"][0]["nueva_den"]}}</td>
+                    <td>Cantidad Total: {{ reacondicionado["reacondicionado"] | map(attribute="cantidad") | map("int") | sum }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="background-color: #f0f0f0; height: 10px;"></td>
+                </tr>                
+
+                {% for r in reacondicionado["reacondicionado"]%}
+                {% if r["cantidad"]|int > 0 %}
+                <tr>
+                    <td>Numero único: {{r["numero_unico_original"]}}</td>
+                    <td>Cantidad: {{r["cantidad"]}}</td>
+                </tr>
+                
+                <tr>
+                    <td colspan="3" style="background-color: #f0f0f0; height: 5px;"></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+            <!-- tabla para mostrar -->
+            <table class="table-bordered col-12">
+                <tr>
+                    <th>Denominacion:</th>
+                    <td>{{reacondicionado["reacondicionado"][0]["nueva_den"]}}</td>
+                </tr>
+                <tr>
+                    <th>Tipo de reacondicionado:</th>
+                    <td>{{reacondicionado["reacondicionado"][0]["tipo_reacondicionado"]}}</td>
+                </tr>
+                <tr>
+                    <th>Cantidad Total:</th>
+                    <td>{{ reacondicionado["reacondicionado"] | map(attribute="cantidad") | map("int") | sum }}</td>
+                </tr>
+                <tr>
+                    <th>Observacion:</th>
+                    <td>{{ reacondicionado["reacondicionado"][0]["observaciones"]}}</td>
+                </tr>
+                
+
+                <tr>
+                    <td colspan="3" style="background-color: #f0f0f0; height: 5px;"></td>
+                </tr>                
+
+                {% for r in reacondicionado["reacondicionado"]%}
+                {% if r["cantidad"]|int > 0 %}
+                <tr>
+                    <th>Denominacion:</th>
+                    <td>{{r["den"]}}</td>
+                </tr>
+                <tr>
+                    <th>Numero único:</th>
+                    <td>{{r["numero_unico_original"]}}</td>
+                </tr>
+
+                {% if r["fecha_elaboracion"] %}
+                    <tr>
+                        <th>Fecha de Elaboración:</th>
+                        <td class="fecha_elaboracion">{{ r["fecha_elaboracion"].strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                {% elif r["fecha_etiquetado"] %}
+                    <tr>
+                        <th>Fecha de Etiquetado:</th>
+                        <td class="fecha_etiquetado">{{ r["fecha_etiquetado"].strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                {% elif r["fecha_encajonado"] %}
+                    <tr>
+                        <th>Fecha de Encajonado:</th>
+                        <td class="fecha_encajonado">{{ r["fecha_encajonado"].strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                {% endif %}
+
+
+                
+                <tr>
+                    <th>Vencimiento:</th>
+                    <td hidden class="meses">{{r["meses"]}}</td>
+                    <td class="vencimiento"></td>
+                </tr>
+                <tr>
+                    <th>Lote:</th>
+                    <td>{{r["lote"]}}</td>
+                </tr>
+                <tr>
+                    <th>Cantidad:</th>
+                    <td>{{r["cantidad"]}}</td>
+                </tr>
+                <tr>
+                    <th>Observaciones:</th>
+                    <td>{{r["observacion"]}}</td>
+                </tr>
+                <tr>
+                    <th>Responsable:</th>
+                    <td>{{r["nombre"]}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="background-color: #f0f0f0; height: 5px;"></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="m-2 text-center">
+            <button class="btn btn-primary" id="print-barcode">Imprimir Código de Barras</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+            
+        </div>
+    </div>
+{% endblock %}

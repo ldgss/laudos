@@ -8,6 +8,7 @@ from flask import flash
 from models import mod_login
 from utils import helpers
 from models import mod_mercaderia
+from routes import acceso
 
 
 login_bp = Blueprint('login', __name__)
@@ -27,13 +28,17 @@ def login_post():
     password = request.form["password"]
     user = mod_login.log_user(usuario, password)
     if user:
+        session.permanent = True  # Marca la sesión como permanente
         session.update(user)
+        acceso.guardar_login(request)
+        
         productos_arballon = mod_mercaderia.listar_productos_arballon()
         productos_dict = [
             {'cod_mae': cod_mae.strip(), 'den': den.strip(), 'cod_cls': cod_cls}
             for cod_mae, den, cod_cls in productos_arballon
         ]
         session["productos_arballon"] = productos_dict
+        
         return redirect(url_for("index.index"))
     else:
         flash("usuario o contraseña incorrecta")

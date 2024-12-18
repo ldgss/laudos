@@ -1,0 +1,19 @@
+[class*="-success"] {
+    color: white;
+    background: #50aa2e !important;
+}
+[class*="-primary"] {
+    color: white;
+    background: #264eaa !important;
+}
+[class*="-secondary"] {
+    color: white;
+    background: #6b7280 !important;
+}
+
+#descripcion_reacondicionado {
+    position: absolute;
+    left: -9999px; /* Fuera del viewport */
+    top: -9999px;
+    opacity: 0;    /* Invisible */
+}
