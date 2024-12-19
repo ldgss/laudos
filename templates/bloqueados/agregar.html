@@ -1,9 +1,124 @@
 {% extends "base/base.html" %}
 
 {% block header %}
-    <h1>{% block title %} {{title}} {% endblock %}</h1>
+<script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+<script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+
 {% endblock %}
 
 {% block content %}
-    <h2> {{body}} </h2>
+    <!-- <div class="row m-4 justify-content-center">
+        <input type="text" id="barcode_text" hidden value="{{hojalata["numero_unico"]}}">
+        <svg id="barcode"></svg>
+    </div> -->
+    <form action="agregarbloq" method="post">
+
+        <div class="row m-4 justify-content-center">
+            <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
+                <table id="descripcion" class="table-bordered col-12">
+                    <tr>
+                        <th>Denominacion:</th>
+                        <td>{{hojalata["den"]}}</td>
+                    </tr>
+                    <tr>
+                        <th>Numero único:</th>
+                        <td>
+                            <input type="text" readonly maxlength="13" name="id_unico"value="{{hojalata["numero_unico"]}}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Elaboracion:</th>
+                        <td class="fecha_elaboracion">{{hojalata["fecha_elaboracion"].strftime('%Y-%m-%d %H:%M')}}</td>
+                    </tr>
+                    <tr>
+                        <th>Vencimiento:</th>
+                        <td hidden class="meses">{{hojalata["meses"]}}</td>
+                        <td class="vencimiento"></td>
+                    </tr>
+                    <tr>
+                        <th>Lote:</th>
+                        <td>{{hojalata["lote"]}}</td>
+                    </tr>
+                    <tr>
+                        <th>Cantidad:</th>
+                        <td>{{hojalata["cantidad"]}}</td>
+                    </tr>
+                    <tr>
+                        <th>Observaciones:</th>
+                        <td>{{hojalata["observacion"]}}</td>
+                    </tr>
+                    <tr>
+                        <th>Responsable:</th>
+                        <td>{{hojalata["nombre"]}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row m-4 justify-content-center">
+            <label for="operario" class="col-sm-2 col-form-label">Responsable Bloqueo</label>
+            <div class="col-sm-5">
+                <input readonly maxlength="30" type="text" class="form-control" 
+                name="user_name" id="user_name" value="{{session["nombre"]}}">
+                <input type="hidden" id="user_id" name="user_id" value="{{session["id"]}}">
+            </div>
+        </div>
+
+        <div class="row m-4 justify-content-center">
+            <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+            <div class="col-sm-5">
+                <input required type="date" class="form-control" name="fecha" id="fecha">
+            </div>
+        </div>
+
+        <div class="row m-4 justify-content-center">
+            <label for="hora" class="col-sm-2 col-form-label">Hora</label>
+            <div class="col-sm-5">
+                <input required type="time" class="form-control" name="hora" id="hora">
+            </div>
+        </div>
+
+        <div class="row m-4 justify-content-center">
+            <label for="motivo" class="col-sm-2 col-form-label">Motivo</label>
+            <div class="col-sm-5">
+                <select class="form-select" id="inputGroupSelect01"name="Motivo">
+                    <option selected>Choose...</option>
+                    <option value="1">remache</option>
+                    <option value="2">envase</option>
+                    <option value="3">aspecto prod</option>
+                    <option value="4">sellado</option>
+                    <option value="5">ph alto </option>
+                    <option value="6">ph bajo </option>
+                    <option value="7">bajo brix </option>
+                    <option value="8">esterilizacion </option>
+                    <option value="9">codificado </option>
+                    <option value="10">tapado </option>
+                    <option value="11">otro </option>
+                  </select>
+                
+            </div>
+        </div>
+
+        <div class="row m-4 justify-content-center">
+            <label for="parte" class="col-sm-2 col-form-label">Numero de planilla</label>
+            <div class="col-sm-5">
+                <input required type="number" class="form-control" 
+                name="numero_planilla"
+                title="(Ej: 2024-T-000001)" >
+            </div>
+        </div>
+        <div class="row m-4 justify-content-center">
+            <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+            <div class="col-sm-5">
+                <textarea class="form-control" id="observaciones" name="observaciones" 
+                rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="m-2 text-center">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+                
+            </div>
+        </div>
+</form>
 {% endblock %}

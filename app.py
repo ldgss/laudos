@@ -11,6 +11,8 @@ from routes import ubicaciones
 from routes import extracto
 from routes import index
 from routes import errors
+from routes import bloqueos
+from routes import hojalata
 from db import db
 from datetime import timedelta
 from flask import session
@@ -51,4 +53,5 @@ app.register_blueprint(extracto.extracto_bp)
 app.register_blueprint(reacondicionado.reacondicionado_bp)
 app.register_blueprint(ubicaciones.ubicaciones_bp)
 app.register_blueprint(insumos.insumos_bp)
-
+app.register_blueprint(bloqueos.bloqueos_bp)
+app.register_blueprint(hojalata.hojalata_bp)

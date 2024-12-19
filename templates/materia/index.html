@@ -9,7 +9,7 @@
 
 <div class="container col-sm-12 col-md-8 col-lg-6">
 
-    <form action="/hojalata/buscar" method="post">
+    <form action="/materia/buscar" method="post">
         <div class="m-3">
             <label class="form-label" for="buscar">Buscar</label>
             <input class="form-control" required
@@ -22,31 +22,16 @@
     </form>
 
     <div class="m-3">
-        <a href="{{url_for('hojalata.hojalata_agregar')}}" class="btn btn-success col-12">Agregar</a>
+        <a href="{{url_for('materia.materia_agregar')}}" class="btn btn-success col-12">Agregar Ingreso</a>
     </div>
     <div class="m-3">
-        <a href="{{url_for('hojalata.hojalata_kpi')}}" class="btn btn-success col-12">KPI</a>
+        <a href="" class="btn btn-success col-12">Plan de Cosecha Arballon</a>
     </div>
     <div class="m-3">
         <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
 
     </div>
-    <div class="container mt-5">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover" id="listado_con_vto">
-                <thead>
-                    <tr>
-                        <th>Clase</th>
-                        <th>Producto</th>
-                        <th>Periodo</th>
-                        <th>Planificado</th>
-                        <th>Producido Arballon</th>
-                        <th>Produccion Actual</th>
-                        <th>Pendiente</th>
-                    </tr>
-                </thead>
-                <tbody>
-    </div>
+    
 
 </div>
 
