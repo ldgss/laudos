@@ -79,11 +79,11 @@ def etiquetado_listado(terminos_de_busqueda):
         # paginacion
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
-        
         resultado = mod_mercaderia.get_listado_etiquetado(terminos_de_busqueda, resultados_por_pagina, offset)
         title = "Etiquetado"
         section = "Etiquetado"
         return render_template("etiquetado/listado.html", 
+                               offset=offset,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,
                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])

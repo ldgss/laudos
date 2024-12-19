@@ -181,7 +181,9 @@ SELECT
 FROM ubicacion_con_row AS u
 LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
 LEFT JOIN usuario ON u.responsable = usuario.id
-WHERE u.rn = 1;
+WHERE u.rn = 1
+LIMIT :limit OFFSET :offset;
+;
 
 
 
@@ -189,9 +191,9 @@ WHERE u.rn = 1;
         resultados = db.db.session.execute(text(query_sql),
                     {"limit": resultados_por_pagina, "offset": offset})
     
-        # calculo el numero de paginas
-        total_resultados = f"""
-                                WITH ubicacion_con_row AS (
+        query_count_sql = f"""
+            
+WITH ubicacion_con_row AS (
     SELECT 
         u.*, 
         u_n.*, 
@@ -207,18 +209,23 @@ WHERE u.rn = 1;
     WHERE 
         {condicion_final_ilike}
 )
-SELECT COUNT(*)
-FROM (
-    SELECT *
-    FROM ubicacion_con_row
-    WHERE rn = 1
-) AS total_count;
+SELECT 
+    u.*, 
+    u_n.*, 
+    usuario.nombre
+FROM ubicacion_con_row AS u
+LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
+LEFT JOIN usuario ON u.responsable = usuario.id
+WHERE u.rn = 1;
 
-                            """
 
-        total_resultados_scalar = db.db.session.execute(text(total_resultados)).scalar()
-        total_paginas = total_resultados_scalar // resultados_por_pagina
-        if total_resultados_scalar % resultados_por_pagina != 0:
+
+        """
+
+        total_resultado = db.db.session.execute(text(query_count_sql))
+
+        total_paginas = total_resultado.rowcount // resultados_por_pagina
+        if total_resultado.rowcount % resultados_por_pagina != 0:
             total_paginas += 1
         return [resultados.fetchall(), total_paginas]
 

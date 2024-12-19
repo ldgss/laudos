@@ -11,6 +11,7 @@
         <table class="table table-striped table-hover" id="listado_con_vto">
             <thead>
                 <tr>
+                    <th>N°</th>
                     <th>Denominacion</th>
                     <th>Número Único</th>
                     <th>Fecha Etiquetado</th>
@@ -25,6 +26,9 @@
             <tbody>
                 {% for l in listado %}
                 <tr>
+                    <td>
+                        {{loop.index + offset}}
+                    </td>
                     <td>
                         {{l.den}}
                     </td>
