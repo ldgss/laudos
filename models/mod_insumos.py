@@ -98,6 +98,7 @@ def get_listado_insumos(terminos_de_busqueda, resultados_por_pagina, offset):
             FROM insumo_envase i_e
             JOIN usuario u ON i_e.responsable = u.id
             WHERE {condicion_final_ilike}
+            ORDER BY i_e.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),

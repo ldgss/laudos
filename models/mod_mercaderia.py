@@ -250,6 +250,7 @@ def get_envasado(numero_unico):
                     WHERE numero_unico = :numero_unico 
                     AND fecha_etiquetado IS NULL
                     AND fecha_encajonado IS NULL
+                    ORDER BY m.fecha_registro DESC
                 """
                 )
         
@@ -269,6 +270,7 @@ def get_etiquetado(numero_unico):
                     WHERE numero_unico = :numero_unico
                     AND fecha_elaboracion IS NULL
                     AND fecha_encajonado IS NULL
+                    ORDER BY m.fecha_registro DESC
                 """
                 )
         
@@ -288,6 +290,7 @@ def get_encajonado(numero_unico):
                     WHERE numero_unico = :numero_unico
                     AND fecha_elaboracion IS NULL
                     AND fecha_etiquetado IS NULL
+                    ORDER BY m.fecha_registro DESC
                 """
                 )
         
@@ -305,6 +308,7 @@ def get_extracto(numero_unico):
                     JOIN vencimiento v ON e.vto_meses = v.id
                     JOIN usuario u ON e.responsable = u.id
                     WHERE numero_unico = :numero_unico
+                    ORDER BY e.fecha_registro DESC
                 """
                 )
         
@@ -352,6 +356,7 @@ def get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset):
             WHERE {condicion_final_ilike}
             AND fecha_etiquetado IS NULL
             AND fecha_encajonado IS NULL
+            ORDER BY m.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),
@@ -419,6 +424,7 @@ def get_listado_etiquetado(terminos_de_busqueda, resultados_por_pagina, offset):
             WHERE {condicion_final_ilike}
             AND fecha_elaboracion IS NULL
             AND fecha_encajonado IS NULL
+            ORDER BY m.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),
@@ -486,6 +492,7 @@ def get_listado_encajonado(terminos_de_busqueda, resultados_por_pagina, offset):
             WHERE {condicion_final_ilike}
             AND fecha_elaboracion IS NULL
             AND fecha_etiquetado IS NULL
+            ORDER BY m.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),
@@ -552,6 +559,7 @@ def get_listado_extracto(terminos_de_busqueda, resultados_por_pagina, offset):
             JOIN usuario u ON e.responsable = u.id
             JOIN vencimiento v ON e.vto_meses = v.id
             WHERE {condicion_final_ilike}
+            ORDER BY e.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),

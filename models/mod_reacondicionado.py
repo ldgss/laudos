@@ -257,6 +257,7 @@ def get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, off
             LEFT JOIN vencimiento v ON v.id = m.vto
             WHERE {condicion_final_ilike}
             GROUP BY r.id, u.nombre
+            ORDER BY r.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
 
         """

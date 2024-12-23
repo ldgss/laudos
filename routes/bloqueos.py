@@ -18,8 +18,8 @@ resultados_por_pagina = 10
 @bloqueos_bp.get("/bloqueos")
 def bloqueos():
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
-        title = "bloqueo"
-        section = "bloqueo"
+        title = "Bloqueo"
+        section = "Bloqueo"
         return render_template("bloqueados/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
@@ -30,8 +30,8 @@ def bloqueos_agregar():
      if helpers.session_on() and helpers.authorized_to("bloqueo"):
         # hojalata = mod_hojalata.get_hojalata(numero_unico)
         
-        title = "bloqueados"
-        section = "bloqueados"
+        title = "Bloqueados"
+        section = "Bloqueados"
         return render_template("bloqueados/agregarid.html", 
                                title=title, section=section, 
                                productos_arballon = session["productos_arballon"])

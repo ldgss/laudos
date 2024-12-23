@@ -16,6 +16,7 @@
                     <th>Posicion</th>
                     <th>Sector</th>
                     <th>Responsable</th>
+                    <!-- <th>Fecha</th> -->
                     <th>Acción</th>
                 </tr>
             </thead>
@@ -37,6 +38,9 @@
                     <td>
                         {{l.nombre}}
                     </td>
+                    <!-- <td>
+                        {{l.fecha_registro.strftime('%Y-%m-%d %H:%M')}}
+                    </td> -->
                     <td>
                         <a href="{{ url_for('ubicaciones.ubicaciones_track', numero_unico=l.mercaderia or l.hojalata or l.extracto or l.insumo or l.reacondicionado) }}" 
                         class="btn btn-outline-primary">Ver</a>

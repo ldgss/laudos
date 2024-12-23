@@ -2,6 +2,10 @@
     color: white;
     background: #50aa2e !important;
 }
+/* [class*="-danger"] {
+    color: white;
+    background: #d71120 !important;
+} */
 [class*="-primary"] {
     color: white;
     background: #264eaa !important;
