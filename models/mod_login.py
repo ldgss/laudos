@@ -18,7 +18,8 @@ def log_user(usuario, password):
                     p.permiso, 
                     p.vencimiento, 
                     p.responsable, 
-                    p.fecha_registro
+                    p.fecha_registro,
+                    p.anulacion
                     FROM usuario u
                     INNER JOIN permiso p ON u.id = p.responsable
                     WHERE u.nombre ILIKE :usuario AND u.password = :password;
