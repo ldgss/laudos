@@ -84,6 +84,8 @@ def envasado_listado(terminos_de_busqueda):
         title = "Envasado"
         section = "Envasado"
         return render_template("envasado/listado.html", 
+                               max=max,
+                               min=min,
                                offset=offset,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,

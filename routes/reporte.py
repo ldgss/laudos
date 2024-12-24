@@ -9,6 +9,7 @@ from flask import session
 from models import mod_reporte
 from flask import send_file
 import pandas as pd
+from io import BytesIO
 
 reporte_bp = Blueprint("reporte", __name__)
 
@@ -50,27 +51,25 @@ def generar_reporte(file_path):
         # Leer el archivo CSV
         df = pd.read_csv(file_path)
 
-        # Convertir a XLSX
-        xlsx_path = file_path.replace(".csv", ".xlsx")
-        df.to_excel(xlsx_path, index=False)
+        # Convertir a Excel en un buffer de memoria
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False)
 
-        # Enviar el archivo XLSX como respuesta
+        # Preparar el buffer para ser leído por `send_file`
+        output.seek(0)
+
+        # Enviar el archivo Excel al cliente
         return send_file(
-            xlsx_path,
+            output,
             as_attachment=True,
-            download_name="reporte.xlsx",  # Cambiar la extensión a .xlsx
-            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"  # Tipo MIME para XLSX
+            download_name="reporte.xlsx",  # Nombre del archivo a descargar
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
     except FileNotFoundError:
         return "El archivo no se encontró.", 404
     except Exception as e:
-        return f"Ocurrió un error: {e}", 500
-    # try:
-    #     return send_file(
-    #         file_path,
-    #         as_attachment=True,
-    #         download_name="reporte.csv",  # Cambiar la extensión a .csv
-    #         mimetype="text/csv"  # Cambiar el tipo MIME a CSV
-    #     )
-    # except FileNotFoundError:
-    #     return "El archivo no se encontró.", 404
+        # return f"Error al generar el reporte: {str(e)}", 500
+        flash("Nada para mostrar")
+        return redirect(url_for("reporte.reporte"))
+    

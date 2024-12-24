@@ -87,6 +87,8 @@ def reacondicionado_listado(terminos_de_busqueda):
         title = "Reacondicionado"
         section = "Reacondicionado"
         return render_template("reacondicionado/listado.html", 
+                               max=max,
+                               min=min,
                                offset=offset,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,

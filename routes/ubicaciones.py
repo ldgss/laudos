@@ -79,6 +79,8 @@ def ubicaciones_listado(terminos_de_busqueda):
         title = "Ubicaciones"
         section = "Ubicaciones"
         return render_template("ubicaciones/listado.html", 
+                               max=max,
+                               min=min,
                                offset=offset,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,

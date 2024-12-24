@@ -84,6 +84,8 @@ def encajonado_listado(terminos_de_busqueda):
         title = "Encajonado"
         section = "Encajonado"
         return render_template("encajonado/listado.html", 
+                               max=max,
+                               min=min,
                                offset=offset,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,

@@ -71,6 +71,8 @@ def insumos_listado(terminos_de_busqueda):
         title = "insumos"
         section = "insumos"
         return render_template("insumos/listado.html", 
+                               max=max,
+                               min=min,
                                offset=offset,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,

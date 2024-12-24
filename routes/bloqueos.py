@@ -122,7 +122,9 @@ def bloqueados_listado(terminos_de_busqueda):
         resultado = mod_bloqueos.get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset)
         title = "Bloqueados"
         section = "Bloqueados"
-        return render_template("bloqueados/listado.html", 
+        return render_template("bloqueados/listado.html",
+                               max=max,
+                               min=min, 
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,
                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])

@@ -83,6 +83,8 @@ def etiquetado_listado(terminos_de_busqueda):
         title = "Etiquetado"
         section = "Etiquetado"
         return render_template("etiquetado/listado.html", 
+                               max=max,
+                               min=min,
                                offset=offset,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,
