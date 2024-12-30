@@ -183,7 +183,8 @@ WITH ubicacion_con_row AS (
         usuario.nombre,
         ROW_NUMBER() OVER (
             PARTITION BY 
-                u.mercaderia, u.reacondicionado
+                u.mercaderia, u.reacondicionado,
+                u.extracto
             ORDER BY u.fecha_registro DESC
         ) AS rn
     FROM ubicacion u
@@ -255,7 +256,8 @@ WITH ubicacion_con_row AS (
         usuario.nombre,
         ROW_NUMBER() OVER (
             PARTITION BY 
-                u.mercaderia, u.reacondicionado
+                u.mercaderia, u.reacondicionado,
+                u.extracto
             ORDER BY u.fecha_registro DESC
         ) AS rn
     FROM ubicacion u
