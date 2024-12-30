@@ -308,3 +308,22 @@ WHERE u.rn = 1;
     except Exception as e:
         print(f"Error: {e}")
         return None
+    
+def anular_ubicaciones():
+    # CUIDADO - DANGER - DELETE ZONE
+    try:
+        anulacion = text("""
+                    DELETE FROM ubicacion
+                    WHERE id=:id;
+                """
+                )
+        anulacion = db.db.session.execute(anulacion,
+                                            {
+                                                "id": request.form["id"]                                                
+                                            })
+        db.db.session.commit()
+        return True
+    except Exception as e:
+        db.db.session.rollback()
+        print(f"Error: {e}")
+        return None

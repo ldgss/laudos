@@ -3,6 +3,7 @@
 {% block header %}
 
 <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+<script defer src="{{url_for("static", filename="js/ubicaciones/track.js")}}"></script>
 
 <style>
 
@@ -52,6 +53,7 @@
                     <th>Profundidad</th>
                     <th>Altura</th>
                     <th>Responsable</th>
+                    <th>Accion</th>
                 </tr>
             </thead>
             <tbody>
@@ -64,6 +66,22 @@
                     <td>{{u["ubicacion_profundidad"]}}</td>
                     <td>{{u["ubicacion_altura"]}}</td>
                     <td>{{u["responsable_de_movimiento"]}}</td>
+                    <td>
+                        <button
+                            class="btn btn-danger btn-anular"
+                            data-id="{{ u['id'] }}"
+                            data-numero-unico="{{numero_unico}}"
+                            data-fecha="{{ u['fecha_registro'].strftime('%Y-%m-%d %H:%M') }}"
+                            data-sector="{{ u['sector'] }}"
+                            data-posicion="{{ u['posicion'] }}"
+                            data-profundidad="{{ u['ubicacion_profundidad'] }}"
+                            data-altura="{{ u['ubicacion_altura'] }}"
+                            data-responsable="{{ u['responsable_de_movimiento'] }}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#anularModal">
+                            Anular
+                        </button>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -72,6 +90,39 @@
     <div class="row justify-content-center">
         <div class="m-2 text-center">
             <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</div>
+
+<!-- modal para anular -->
+
+<div class="modal fade" id="anularModal" tabindex="-1" aria-labelledby="anularModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="anularForm" method="POST" action="/ubicaciones/anular">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="anularModalLabel">Confirmar Anulación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas anular el siguiente registro?</p>
+                    <ul>
+                        <li><strong>Fecha:</strong> <span id="modalFecha"></span></li>
+                        <li><strong>Sector:</strong> <span id="modalSector"></span></li>
+                        <li><strong>Posición:</strong> <span id="modalPosicion"></span></li>
+                        <li><strong>Profundidad:</strong> <span id="modalProfundidad"></span></li>
+                        <li><strong>Altura:</strong> <span id="modalAltura"></span></li>
+                        <li><strong>Responsable:</strong> <span id="modalResponsable"></span></li>
+                    </ul>
+                    <!-- Campo oculto para pasar el ID -->
+                    <input type="hidden" id="modalId" name="id">
+                    <input type="hidden" id="modal_numero_unico" name="numero_unico">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Confirmar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
