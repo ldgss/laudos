@@ -159,7 +159,12 @@
     <div class="p-2 mb-4 text-bg-success rounded-3">
       <div class="container-fluid py-3">
         {% if session["nombre"] %}
-          <p class="col-md-8 fs-4">Bienvenido/a, {{session["nombre"]}}</p>
+          <p class="col-md-8 fs-4">
+            Bienvenido/a, 
+            <span class="glow-text">
+              {{session["nombre"]}}
+            </span>
+          </p>
         {% else %}
           <p class="col-md-8 fs-4">Bienvenido/a!</p>
         {% endif %}

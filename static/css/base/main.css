@@ -21,3 +21,18 @@
     top: -9999px;
     opacity: 0;    /* Invisible */
 }
+
+.glow-text {
+    animation: blink 5.6s infinite; /* Ciclo total de 5.6 segundos (0.6s para 3 parpadeos + 5s de pausa) */
+}
+
+@keyframes blink {
+    0%, 5% { opacity: 0; }    /* Primer parpadeo encendido */
+    7%, 12% { opacity: 1; }   /* Primer parpadeo apagado */
+    14%, 19% { opacity: 0; }  /* Segundo parpadeo encendido */
+    21%, 26% { opacity: 1; }  /* Segundo parpadeo apagado */
+    28%, 33% { opacity: 0; }  /* Tercer parpadeo encendido */
+    35%, 100% { opacity: 1; } /* Tercer parpadeo apagado seguido de pausa */
+}
+
+

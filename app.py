@@ -43,7 +43,7 @@ else:
     }
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=8)
 db.db.init_app(app)
 app.register_blueprint(login.login_bp)
 app.register_blueprint(index.index_bp)
