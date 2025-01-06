@@ -2,7 +2,7 @@ from sqlalchemy.sql import text
 from db import db
 from flask import request
 from flask import session
-
+import shlex
     
 def guardar_anulacion():
     try:
@@ -53,7 +53,7 @@ def guardar_anulacion():
 def get_listado_anulacion(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:

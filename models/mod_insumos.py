@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import request
 from itertools import cycle
 from flask import session
+import shlex
 
 def get_buscar_insumo_para_guardar():
     # cambiar a sqlserver para llamar a arballon
@@ -71,7 +72,7 @@ def guardar_insumos():
 def get_listado_insumos(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:

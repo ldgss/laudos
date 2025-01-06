@@ -1,7 +1,7 @@
 from sqlalchemy.sql import text
 from db import db
 from datetime import datetime
-
+import shlex
 
 
 def insert_bloqueados_hojalata(form):
@@ -85,7 +85,7 @@ def get_bloqueados(id_unico):
 def get_listado_hojalata(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
@@ -148,7 +148,7 @@ def get_listado_hojalata(terminos_de_busqueda, resultados_por_pagina, offset):
 def get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:

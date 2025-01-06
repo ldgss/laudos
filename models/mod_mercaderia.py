@@ -1,6 +1,7 @@
 from sqlalchemy.sql import text
 from db import db
 from datetime import datetime
+import shlex
 
 def listar_productos_arballon():
     # cambiar a sqlserver para llamar a arballon
@@ -321,7 +322,7 @@ def get_extracto(numero_unico):
 def get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
@@ -389,7 +390,7 @@ def get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset):
 def get_listado_etiquetado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
@@ -457,7 +458,7 @@ def get_listado_etiquetado(terminos_de_busqueda, resultados_por_pagina, offset):
 def get_listado_encajonado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
@@ -525,7 +526,7 @@ def get_listado_encajonado(terminos_de_busqueda, resultados_por_pagina, offset):
 def get_listado_extracto(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:

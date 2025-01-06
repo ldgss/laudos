@@ -3,6 +3,7 @@ from db import db
 from datetime import datetime
 from flask import request
 from itertools import cycle
+import shlex
 
 def get_ultimo_id():
     try:
@@ -191,7 +192,7 @@ def get_reacondicionado(numero_unico):
 def get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
