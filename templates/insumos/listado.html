@@ -2,6 +2,7 @@
 
 {% block header %}
     <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/insumos/utils.js")}}"></script>
    
 {% endblock %}
 
@@ -19,6 +20,7 @@
                     <th>Fecha registro</th>
                     <th>Lote</th>
                     <th>Cantidad</th>
+                    <th>Accion</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,6 +49,15 @@
                     </td>
                     <td>
                         {{l.cantidad}}
+                    </td>
+                    <td>
+                        <button 
+                            class="btn btn-danger btn-anular" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modalConfirmarAnulacion" 
+                            data-id="{{ l.insumo_envase_id }}">
+                            Anular
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -103,5 +114,26 @@
 
 </div>
     
+<!-- Modal -->
+<div class="modal fade" id="modalConfirmarAnulacion" tabindex="-1" aria-labelledby="modalConfirmarAnulacionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="/insumos/anular">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConfirmarAnulacionLabel">Confirmar Anulación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro de que desea anular este registro?</p>
+                    <input type="hidden" name="insumo_envase_id" id="insumo_envase_id">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Anular</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

@@ -68,8 +68,8 @@ def insumos_listado(terminos_de_busqueda):
         offset = (pagina - 1) * resultados_por_pagina
         
         resultado = mod_insumos.get_listado_insumos(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "insumos"
-        section = "insumos"
+        title = "Insumos"
+        section = "Insumos"
         return render_template("insumos/listado.html", 
                                max=max,
                                min=min,
@@ -77,5 +77,18 @@ def insumos_listado(terminos_de_busqueda):
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,
                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
+    else:
+        return redirect(url_for("login.login_get"))
+    
+@insumos_bp.post("/insumos/anular")
+def insumos_anular_post():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        referer = request.headers.get('Referer', '/')
+        result = mod_insumos.anular_insumos()
+        if result:
+            return redirect(referer)
+        else:
+            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
+            return redirect(referer)
     else:
         return redirect(url_for("login.login_get"))
