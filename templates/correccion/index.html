@@ -1,0 +1,349 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/correccion/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container col-sm-12 col-md-8 col-lg-6">
+
+    <form action="/correccion/buscar" method="post">
+        <div class="m-3">
+            <label class="form-label" for="buscar">Buscar productos corregidos</label>
+            <input class="form-control" required
+            placeholder="Ingrese numero único, observaciones" 
+            type="text" id="buscar" name="buscar">
+        </div>
+        <div class="m-3">
+            <button type="submit" class="btn btn-primary col-12">Buscar</button>
+        </div>
+    </form>
+
+    <form id="form_buscar">
+        <div class="m-3">
+            <label class="form-label" for="numero_unico">Numero único a corregir</label>
+            <input class="form-control" required
+            placeholder="Ingrese numero único" 
+            title="(Ej: 2024-T1-000001, 2024-H1-000001, 2024-E1-000001)" 
+            pattern="^\d{4}-(T1|H1|E1)-\d{6}$"
+            type="text" id="numero_unico" name="numero_unico">
+        </div>
+        <div class="m-3">
+            <button type="submit" class="btn btn-primary col-12">Buscar</button>
+        </div>
+    </form>
+    
+    <div class="m-3">
+        <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
+    </div>
+</div>
+
+<!-- Modal 1 -->
+<div class="modal fade" id="modal1" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Corrección Tipo T1</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <!-- modal form mercaderia T1 -->
+                <form id="form_modal1" action="correccion/actualizar" method="post">
+                    <input type="hidden" id="id_modal1" name="id_modal1">
+                    <input type="hidden" id="numero_unico_modal1" name="numero_unico_modal1">
+                    <div class="row m-4 justify-content-center">
+                        <label for="denominacion" class="col-sm-4 col-form-label">Denominacion</label>
+                        <div class="col-sm-8">
+                            <input list="denominacion_opciones" required type="text" 
+                            class="form-control" name="denominacion_modal1" id="denominacion_modal1"
+                            onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
+                            <input type="hidden" id="cod_cls_modal1" name="cod_cls_modal1">
+                            <input type="hidden" id="cod_mae_modal1" name="cod_mae_modal1">
+                            <datalist id="denominacion_opciones">
+                                {% for p in productos_arballon %}
+                                        <option value="{{ p.den | trim }}" 
+                                                data-cod-cls="{{ p.cod_cls | trim }}" 
+                                                data-cod-mae="{{ p.cod_mae | trim }}">
+                                        </option>
+                                {% endfor %}
+                            </datalist>
+                        </div>
+                
+                    </div>
+                
+                    <div class="row m-4 justify-content-center">
+                        <label for="tipo_fecha" class="col-sm-4 col-form-label">Tipo de fecha</label>
+                        <div class="col-sm-8">
+                            <div class="form-check">
+                                <input required type="radio" class="form-check-input" name="tipo_fecha_modal1" id="tipo_fecha_modal1_opcion1" value="tipo_fecha_elaboracion">
+                                <label for="tipo_fecha_modal1_opcion1" class="form-check-label">Semielaborado</label>
+                            </div>
+                            <div class="form-check">
+                                <input required type="radio" class="form-check-input" name="tipo_fecha_modal1" id="tipo_fecha_modal1_opcion2" value="tipo_fecha_etiquetado">
+                                <label for="tipo_fecha_modal1_opcion2" class="form-check-label">Etiquetado de línea</label>
+                            </div>
+                            <div class="form-check">
+                                <input required type="radio" class="form-check-input" name="tipo_fecha_modal1" id="tipo_fecha_modal1_opcion3" value="tipo_fecha_encajonado">
+                                <label for="tipo_fecha_modal1_opcion3" class="form-check-label">Encajonado de línea</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row m-4 justify-content-center">
+                        <label for="fecha" class="col-sm-4 col-form-label">Fecha</label>
+                        <div class="col-sm-8">
+                            <input required type="date" class="form-control" name="fecha_modal1" id="fecha_modal1">
+                        </div>
+                    </div>
+                    
+                    <div class="row m-4 justify-content-center">
+                        <label for="hora" class="col-sm-4 col-form-label">Hora</label>
+                        <div class="col-sm-8">
+                            <input required type="time" class="form-control" name="hora_modal1" id="hora_modal1">
+                        </div>
+                    </div>
+                    
+                    <div class="row m-4 justify-content-center">
+                        <label for="lote_a" class="col-sm-4 col-form-label">
+                            Lote
+                        </label>
+                        <div class="col-sm-8 d-flex justify-content-between">
+                            <input required type="text" maxlength="1" class="form-control" style="width: 33%;" pattern="^[0-9]$"
+                            title="(Ej: 2024 -> 4, 2025 -> 5)"
+                            name="lote_a_modal1" id="lote_a_modal1"
+                            >
+                            <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
+                            title="(Ej: 000 - 999)"
+                            name="lote_b_modal1" id="lote_b_modal1"
+                            >
+                            <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
+                            title="(Ej: 30 de enero -> 030)"
+                            name="lote_c_modal1" id="lote_c_modal1"
+                            >
+                        </div>
+                    </div>
+                    
+                    <div class="row m-4 justify-content-center">
+                        <label for="cantidad" class="col-sm-4 col-form-label">Cantidad</label>
+                        <div class="col-sm-8">
+                            <input required type="number" min="1" max="1980" class="form-control" name="cantidad_modal1" id="cantidad_modal1">
+                        </div>
+                    </div>
+                
+                    <div class="row m-4 justify-content-center">
+                        <label for="observaciones" class="col-sm-4 col-form-label">Observaciones</label>
+                        <div class="col-sm-8">
+                            <textarea required class="form-control" id="observaciones_modal1" name="observaciones_modal1" 
+                            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+                        </div>
+                    </div>
+                
+                    <div class="row m-4 justify-content-center">
+                        <div class="m-2 text-center">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+                        </div>
+                    </div>
+                </form>
+                <!-- modal form mercaderia T1 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 2 -->
+<div class="modal fade" id="modal2" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Corrección Tipo H1</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- modal form hojalata H1 -->
+                <form id="form_modal2" action="correccion/actualizar" method="post">
+                    <input type="hidden" id="id_modal2" name="id_modal2">
+                    <input type="hidden" id="numero_unico_modal2" name="numero_unico_modal2">
+                    
+                
+                    <div class="row m-4 justify-content-center">
+                        <label for="denominacion" class="col-sm-2 col-form-label">Denominación</label>
+                        <div class="col-sm-5">
+                            <input list="denominacion_opciones_hojalata" required type="text" 
+                                   class="form-control" name="denominacion_modal2" id="denominacion_modal2"
+                                   onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
+                            <input type="hidden" id="cod_cls_modal2" name="cod_cls_modal2">
+                            <input type="hidden" id="cod_mae_modal2" name="cod_mae_modal2">
+                            <datalist id="denominacion_opciones">
+                                {% for p in productos_arballon_hojalata%}
+                                    <option value="{{ p.den }}" data-cod-cls="{{ p.cod_cls }}" data-cod-mae="{{ p.cod_mae }}"></option>
+                                {% endfor %}
+                            </datalist>
+                        </div>
+                    </div>
+                
+                    <div class="row m-4 justify-content-center">
+                        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+                        <div class="col-sm-5">
+                            <input required type="date" class="form-control" name="fecha_modal2" id="fecha_modal2">
+                        </div>
+                    </div>
+                    
+                    <div class="row m-4 justify-content-center">
+                        <label for="hora" class="col-sm-2 col-form-label">Hora</label>
+                        <div class="col-sm-5">
+                            <input required type="time" class="form-control" name="hora_modal2" id="hora_modal2">
+                        </div>
+                    </div>
+                    
+                    <div class="row m-4 justify-content-center">
+                        <label for="lote" class="col-sm-2 col-form-label">
+                            Lote
+                        </label>
+                        
+                        <div class="col-sm-5">
+                            <input required type="text" class="form-control" pattern="\d-\d{3}-\d{3}"
+                                title="(Ej: Año:24-Viaje:015-pallets:02-Color:R-Diametro:038)"
+                                name="lote_modal2" id="lote_modal2"
+                                >
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="row m-4 justify-content-center">
+                        <label for="cantidad" class="col-sm-2 col-form-label">Cantidad</label>
+                        <div class="col-sm-5">
+                            <input required type="number" min="1" max="15000" class="form-control" name="cantidad_modal2" id="cantidad_modal2">
+                        </div>
+                    </div>
+                
+                    <div class="row m-4 justify-content-center">
+                        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+                        <div class="col-sm-5">
+                            <textarea required class="form-control" id="observaciones_modal2" name="observaciones_modal2" 
+                            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+                        </div>
+                    </div>
+                
+                    <div class="row m-4 justify-content-center">
+                        <div class="m-2 text-center">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+                        </div>
+                    </div>
+                </form>
+                <!-- modal form hojalata H1 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 3 -->
+<div class="modal fade" id="modal3" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Corrección Tipo E1</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- modal form extracto E1 -->
+                <form id="form_modal3" action="correccion/actualizar" method="post">
+                    <input type="hidden" id="id_modal3" name="id_modal3">
+                    <input type="hidden" id="numero_unico_modal3" name="numero_unico_modal3">
+                    <div class="row m-4 justify-content-center">
+                        <label for="denominacion" class="col-sm-2 col-form-label">Denominacion</label>
+                        <div class="col-sm-5">
+                            <input list="denominacion_opciones" required type="text" 
+                            class="form-control" name="denominacion_modal3" id="denominacion_modal3"
+                            onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
+                            <input type="hidden" id="cod_cls_modal3" name="cod_cls_modal3">
+                            <input type="hidden" id="cod_mae_modal3" name="cod_mae_modal3">
+                            <datalist id="denominacion_opciones">
+                                {% for p in productos_arballon %}
+                                    {% if 'pasta' in (p.den | lower) or 'extracto' in (p.den | lower) %}
+                                        <option value="{{ p.den | trim }}" 
+                                                data-cod-cls="{{ p.cod_cls | trim }}" 
+                                                data-cod-mae="{{ p.cod_mae | trim }}">
+                                        </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </datalist>
+                        </div>
+                
+                    </div>
+                
+                    <div class="row m-4 justify-content-center">
+                        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+                        <div class="col-sm-5">
+                            <input required type="date" class="form-control" name="fecha_modal3" id="fecha_modal3">
+                        </div>
+                    </div>
+                    
+                    <div class="row m-4 justify-content-center">
+                        <label for="hora" class="col-sm-2 col-form-label">Hora</label>
+                        <div class="col-sm-5">
+                            <input required type="time" class="form-control" name="hora_modal3" id="hora_modal3">
+                        </div>
+                    </div>
+                    
+                    <div class="row m-4 justify-content-center">
+                            <label for="lote_a" class="col-sm-2 col-form-label">
+                                Lote
+                            </label>
+                            <div class="col-sm-5 d-flex justify-content-between">
+                                <input required type="text" maxlength="1" class="form-control" style="width: 33%;" pattern="^[0-9]$"
+                                title="(Ej: 2024 -> 4, 2025 -> 5)"
+                                name="lote_a_modal3" id="lote_a_modal3"
+                                >
+                                <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
+                                title="(Ej: 000 - 999)"
+                                name="lote_b_modal3" id="lote_b_modal3"
+                                >
+                                <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
+                                title="(Ej: 30 de enero -> 030)"
+                                name="lote_c_modal3" id="lote_c_modal3"
+                                >
+                            </div>
+                    </div>
+                    <div class="row m-4 justify-content-center">
+                        <label for="brix" class="col-sm-2 col-form-label">Brix</label>
+                        <div class="col-sm-5">
+                            <input type="number" step="0.01" min="0" max="9999.99" 
+                            class="form-control" name="brix_modal3" id="brix_modal3"
+                            placeholder="0.00" pattern="^\d{1,4}(\.\d{1,2})?$" 
+                            >
+                        </div>
+                    </div>
+                    <div class="row m-4 justify-content-center">
+                        <label for="numero_recipiente" class="col-sm-2 col-form-label">Nro. Recipiente</label>
+                        <div class="col-sm-5">
+                            <input required type="number" min="1" max="10000" class="form-control" name="numero_recipiente_modal3" id="numero_recipiente_modal3">
+                        </div>
+                    </div>
+                
+                    <div class="row m-4 justify-content-center">
+                        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+                        <div class="col-sm-5">
+                            <textarea required class="form-control" id="observaciones_modal3" name="observaciones_modal3" 
+                            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+                        </div>
+                    </div>
+                
+                    <div class="row m-4 justify-content-center">
+                        <div class="m-2 text-center">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+                        </div>
+                    </div>
+                </form>
+                <!-- modal form extracto E1 -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

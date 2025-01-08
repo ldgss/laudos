@@ -49,11 +49,12 @@ def get_ultimo_id():
             return f"{year}-T1-000000"
         else:
             # si ya existen pallets, aumentar el numero del id
-            prefijo = ultimo_id[:-6]
+            prefijo = str(datetime.now().year)
             sufijo = int(ultimo_id[-6:])
             nuevo_numero = sufijo + 1
             nuevo_numero_str = f"{nuevo_numero:06d}"
-            nuevo_codigo = prefijo + nuevo_numero_str
+            nuevo_codigo = f"{prefijo}-T1-{nuevo_numero_str}"
+
             return nuevo_codigo
     except Exception as e:
         print(f"Error: {e}")
@@ -80,11 +81,12 @@ def get_ultimo_id_extracto():
             return f"{year}-E1-000000"
         else:
             # si ya existen pallets, aumentar el numero del id
-            prefijo = ultimo_id[:-6]
+            prefijo = str(datetime.now().year)
             sufijo = int(ultimo_id[-6:])
             nuevo_numero = sufijo + 1
             nuevo_numero_str = f"{nuevo_numero:06d}"
-            nuevo_codigo = prefijo + nuevo_numero_str
+            nuevo_codigo = f"{prefijo}-E1-{nuevo_numero_str}"
+
             return nuevo_codigo
     except Exception as e:
         print(f"Error: {e}")

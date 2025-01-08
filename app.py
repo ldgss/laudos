@@ -15,6 +15,7 @@ from routes import bloqueos
 from routes import hojalata
 from routes import reporte
 from routes import anulacion
+from routes import correcion
 from db import db
 from datetime import timedelta
 from flask import session
@@ -59,3 +60,4 @@ app.register_blueprint(bloqueos.bloqueos_bp)
 app.register_blueprint(hojalata.hojalata_bp)
 app.register_blueprint(reporte.reporte_bp)
 app.register_blueprint(anulacion.anulacion_bp)
+app.register_blueprint(correcion.correccion_bp)

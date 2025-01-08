@@ -63,6 +63,11 @@
                     <a class="dropdown-item" href="/anulacion">Anulacion</a>
                   </li>
                 {% endif %}
+                {% if session["correccion"] %}
+                  <li class="">
+                    <a class="dropdown-item" href="/correccion">Correccion</a>
+                  </li>
+                {% endif %}
               </ul>
             </li>
 

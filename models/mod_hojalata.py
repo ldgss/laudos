@@ -46,14 +46,14 @@ def get_ultimo_id():
         if not ultimo_id:
             # si es el primer pallet
             year = datetime.now().year
-            return f"{year}-H-000000"
+            return f"{year}-H1-000000"
         else:
             # si ya existen pallets, aumentar el numero del id
-            prefijo = ultimo_id[:-6]
+            prefijo = str(datetime.now().year)
             sufijo = int(ultimo_id[-6:])
             nuevo_numero = sufijo + 1
             nuevo_numero_str = f"{nuevo_numero:06d}"
-            nuevo_codigo = prefijo + nuevo_numero_str
+            nuevo_codigo = f"{prefijo}-H1-{nuevo_numero_str}"
             return nuevo_codigo
     except Exception as e:
         print(f"Error: {e}")
