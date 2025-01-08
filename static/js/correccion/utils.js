@@ -106,42 +106,42 @@ document.getElementById('form_buscar').addEventListener('submit', async function
 
         if (modalId === 'modal2') {
             // Popular el nombre de usuario y su ID
-            document.getElementById('user_name').value = data['nombre'] || '';
-            document.getElementById('user_id').value = data['id'] || '';
+            // document.getElementById('user_name').value = data['nombre'] || '';
+            // document.getElementById('user_id').value = data['id'] || '';
         
             // Popular la denominación
-            document.getElementById('denominacion').value = data['den'] || '';
-            document.getElementById('cod_cls').value = data['cod_cls'] || '';
-            document.getElementById('cod_mae').value = data['cod_mae'] || '';
+            document.getElementById('denominacion_modal2').value = data['den'] || '';
+            document.getElementById('cod_cls_modal2').value = data['cod_cls'] || '';
+            document.getElementById('cod_mae_modal2').value = data['cod_mae'] || '';
         
             // Manejo de la fecha
             const fechaHora = data['fecha_elaboracion'] || '';
             if (fechaHora) {
                 const fechaObj = new Date(fechaHora); // Convertir la fecha al objeto Date
                 if (!isNaN(fechaObj)) {
-                    document.getElementById('fecha').value = fechaObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-                    document.getElementById('hora').value = fechaObj.toTimeString().split(' ')[0].slice(0, 5); // HH:MM
+                    document.getElementById('fecha_modal2').value = fechaObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+                    document.getElementById('hora_modal2').value = fechaObj.toTimeString().split(' ')[0].slice(0, 5); // HH:MM
                 }
             } else {
-                document.getElementById('fecha').value = '';
-                document.getElementById('hora').value = '';
+                document.getElementById('fecha_modal2').value = '';
+                document.getElementById('hora_modal2').value = '';
             }
         
             // Manejo del lote
             const lote = data['lote'] || '';
-            document.getElementById('lote').value = lote;
+            document.getElementById('lote_modal2').value = lote;
         
             // Número único
-            document.getElementById('numero_unico').value = data['numero_unico'] || '';
+            document.getElementById('numero_unico_modal2').value = data['numero_unico'] || '';
         
             // Antecedentes
-            document.getElementById('antecedentes').value = data['antecedentes'] || '';
+            document.getElementById('antecedentes_modal2').value = data['antecedentes'] || '';
         
             // Cantidad
-            document.getElementById('cantidad').value = data['cantidad'] || '';
+            document.getElementById('cantidad_modal2').value = data['cantidad'] || '';
         
             // Observaciones
-            document.getElementById('observaciones').value = data['observacion'] || '';
+            document.getElementById('observaciones_modal2').value = data['observacion'] || '';
         }
         
 
@@ -185,8 +185,8 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             document.getElementById('numero_recipiente_modal3').value = data['numero_recipiente'] || '';
 
             // Manejo de observaciones
-            document.getElementById('observaciones_modal3').value = data['observacion'] || '';
-
+            document.getElementById('observaciones_modal3').value = data['observaciones'] || '';
+            
             // Popular campos ocultos si existen en los datos
             document.getElementById('cod_cls_modal3').value = data['cod_cls'] || '';
             document.getElementById('cod_mae_modal3').value = data['producto'] || '';
