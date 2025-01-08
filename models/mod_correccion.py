@@ -3,12 +3,16 @@ from db import db
 from flask import request
 from flask import session
 import shlex
+import traceback
     
 def guardar_correccion():
-    print(request.form)
+    numero_unico_modal1 = request.form.get("numero_unico_modal1")
+    numero_unico_modal2 = request.form.get("numero_unico_modal2")
+    numero_unico_modal3 = request.form.get("numero_unico_modal3")
+
     try:
         sql = ""
-        if 'T1' in request.form["numero_unico_modal1"]:
+        if numero_unico_modal1 and 'T1' in numero_unico_modal1:
             sql = text(""" 
                         UPDATE mercaderia
                         SET 
@@ -36,7 +40,7 @@ def guardar_correccion():
                                                 "den":request.form["denominacion_modal1"],
                                                 "numero_unico":request.form["numero_unico_modal1"]
                                             })
-        elif 'H1' in request.form["numero_unico_modal2"]:
+        elif numero_unico_modal2 and 'H1' in numero_unico_modal2:
             sql = text(""" 
                         UPDATE hojalata
                         SET 
@@ -64,12 +68,12 @@ def guardar_correccion():
                                                 "den":request.form["denominacion_modal2"],
                                                 "numero_unico":request.form["numero_unico_modal2"],
                                             })
-        elif 'E1' in request.form["numero_unico_modal3"]:
+        if numero_unico_modal3 and 'E1' in numero_unico_modal3:
             sql = text(""" 
                         UPDATE extracto
                         SET 
                             producto=:producto, 
-                            observacion=:observacion, 
+                            observaciones=:observacion, 
                             fecha_elaboracion=:fecha_elaboracion, 
                             lote=:lote, 
                             brix=:brix,
@@ -113,7 +117,8 @@ def guardar_correccion():
         return True
     except Exception as e:
         db.db.session.rollback()
-        print(f"Error: {e}")
+        error_message = traceback.format_exc()  # Obtiene la traza completa del error
+        print(f"Error: {error_message}")  # Imprime toda la información
         return None
     
 def get_para_corregir(numero_unico):
