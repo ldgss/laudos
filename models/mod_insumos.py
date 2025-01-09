@@ -52,7 +52,7 @@ def guardar_insumos():
                     :lote_insumo, :cantidad)
                 """
                 )
-        print(request.form)
+        
         reacondicionado = db.db.session.execute(reacondicionado,
                                             {
                                                 "insumo": request.form["den_fac"],

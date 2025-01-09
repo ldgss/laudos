@@ -81,7 +81,7 @@ def guardar_ubicaciones():
                     :responsable, CURRENT_TIMESTAMP, :insumo_envase, :ubicacion_profundidad, :ubicacion_altura, :reacondicionado)
                 """
                 )
-        print(request.form)
+        
         reacondicionado = db.db.session.execute(reacondicionado,
                                             {
                                                 "ubicacion_fila": request.form["id_ubicacion"],
