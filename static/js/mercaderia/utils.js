@@ -58,6 +58,7 @@ function rellenarCantidad() {
     // Obtener el valor de cualquier input cuyo id comience con "cod_cls"
     const clase = document.querySelector("[id^='cod_cls']").value;
     const cantidadInputs = document.querySelectorAll("[id^='cantidad']"); // Selecciona todos los ids que comienzan con 'cantidad'
+    const denominacion = document.getElementById("denominacion").value
 
     cantidadInputs.forEach(cantidadInput => {
         switch (clase) {
@@ -90,6 +91,17 @@ function rellenarCantidad() {
                 break;
             case 'Tritur':
                 cantidadInput.value = "";
+                break;
+            default:
+                console.log("La cantidad no está definida");
+                break;
+        }
+    });
+
+    cantidadInputs.forEach(cantidadInput => {
+        switch (denominacion) {
+            case 'MI TT Botella 910 CUISUINE & CO T.OFF':
+                cantidadInput.value = 672;
                 break;
             default:
                 console.log("La cantidad no está definida");

@@ -34,9 +34,9 @@ def guardar_correccion():
                                                 "observacion":request.form["observaciones_modal1"],
                                                 "cantidad":request.form["cantidad_modal1"],
                                                 "lote": f"{request.form["lote_a_modal1"]}-{request.form["lote_b_modal1"]}-{request.form["lote_c_modal1"]}",
-                                                "fecha_elaboracion": f"{request.form["fecha_modal1"]} {request.form["hora_modal1"]}" if 'elaborado' in request.form["tipo_fecha_modal1"] else None,
-                                                "fecha_etiquetado":f"{request.form["fecha_modal1"]} {request.form["hora_modal1"]}" if 'etiquetado' in request.form["tipo_fecha_modal1"] else None,
-                                                "fecha_encajonado":f"{request.form["fecha_modal1"]} {request.form["hora_modal1"]}" if 'encajonado' in request.form["tipo_fecha_modal1"] else None,
+                                                "fecha_elaboracion": f"{request.form["fecha_modal1"]} {request.form["hora_modal1"]}" if 'tipo_fecha_elaboracion' in request.form["tipo_fecha_modal1"] else None,
+                                                "fecha_etiquetado":f"{request.form["fecha_modal1"]} {request.form["hora_modal1"]}" if 'tipo_fecha_etiquetado' in request.form["tipo_fecha_modal1"] else None,
+                                                "fecha_encajonado":f"{request.form["fecha_modal1"]} {request.form["hora_modal1"]}" if 'tipo_fecha_encajonado' in request.form["tipo_fecha_modal1"] else None,
                                                 "den":request.form["denominacion_modal1"],
                                                 "numero_unico":request.form["numero_unico_modal1"]
                                             })

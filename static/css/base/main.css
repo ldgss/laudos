@@ -26,6 +26,18 @@
     animation: blink 5.6s infinite; /* Ciclo total de 5.6 segundos (0.6s para 3 parpadeos + 5s de pausa) */
 }
 
+table th,
+table td {
+    white-space: nowrap; /* Por defecto, no permite ajuste de líneas */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.observacion_listado {
+    white-space: normal; /* Permite ajuste de líneas solo para la columna Observación */
+    word-wrap: break-word; /* Divide las palabras largas si es necesario */
+}
+
 @keyframes blink {
     0%, 5% { opacity: 0; }    /* Primer parpadeo encendido */
     7%, 12% { opacity: 1; }   /* Primer parpadeo apagado */
