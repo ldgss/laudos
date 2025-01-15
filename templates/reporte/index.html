@@ -30,11 +30,11 @@
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#insumoModal">Insumos</button>
         </div>
     {% endif %}
-    <!-- {% if session["ubicacion"] %}
+    {% if session["ubicacion"] %}
         <div class="m-3">
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#ubicacionModal">Ubicaciones</button>
         </div>
-    {% endif %} -->
+    {% endif %}
     <div class="m-3">
         <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
     </div>
@@ -310,8 +310,8 @@
                 <label class="col-form-label" for="responsable">Responsable</label>
                 <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
                 
-                <label class="col-form-label" for="producto">Producto</label>
-                <input class="form-control" type="text" maxlength="20" name="producto" id="producto">
+                <label class="col-form-label" for="denominacion">Denominacion</label>
+                <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
 
                 <div class="row m-3">
                     <button type="submit" class="form-control btn btn-success">Exportar reporte</button>

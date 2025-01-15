@@ -318,26 +318,56 @@ def get_insumo():
         return None
     
 def get_ubicacion():
-    # todo
+    
     try:
         sql = text("""
-                    
-                    ;
+            SELECT 
+                m.den AS mercaderia_den,
+                h.den AS hojalata_den,
+                e.den AS extracto_den,
+                r.nueva_den AS reacondicionado_den,
+                ub.mercaderia,
+                ub.hojalata,
+                ub.extracto,
+                ub.reacondicionado,
+                un.posicion,
+                un.sector,
+                ub.ubicacion_profundidad,
+                ub.ubicacion_altura,
+                ub.fecha_registro,
+                us.nombre AS responsable
+            FROM ubicacion ub
+            LEFT JOIN ubicacion_nombre un ON ub.ubicacion_fila = un.id
+            LEFT JOIN usuario us ON ub.responsable = us.id
+            LEFT JOIN mercaderia m ON ub.mercaderia = m.numero_unico
+            LEFT JOIN hojalata h ON ub.hojalata = h.numero_unico
+            LEFT JOIN extracto e ON ub.extracto = e.numero_unico
+            LEFT JOIN reacondicionado r ON ub.reacondicionado = r.numero_unico
+            WHERE 
+                (:fecha_inicial IS NULL OR ub.fecha_registro >= :fecha_inicial) AND
+                (:fecha_final IS NULL OR ub.fecha_registro <= :fecha_final) AND
+                (:responsable IS NULL OR us.nombre ILIKE '%' || :responsable || '%') AND
+                (:denominacion IS NULL OR 
+                    m.den ILIKE '%' || :denominacion || '%' OR 
+                    h.den ILIKE '%' || :denominacion || '%' OR 
+                    e.den ILIKE '%' || :denominacion || '%' OR 
+                    r.nueva_den ILIKE '%' || :denominacion || '%')
+            ORDER BY ub.fecha_registro DESC;
+        """)
 
-                """
-                )
-        envasado = db.db.session.execute(sql,
-                                         {
-                                            "fecha_inicial": request.form["fecha_inicial"],
-                                            "fecha_final": request.form["fecha_final"],
-                                            "responsable": request.form["responsable"],
-                                            "denominacion": request.form["denominacion"],
-                                            "lote_inicial": request.form["lote_inicial"],
-                                            "lote_final": request.form["lote_final"],
-                                          }
-                                         ).fetchall()
-        # Crear un DataFrame a partir de envasado, las columnas se infieren automáticamente
-        df = pd.DataFrame(envasado)
+        # Ejecutar la consulta
+        sql_params = db.db.session.execute(
+            sql,
+            {
+                "fecha_inicial": request.form.get("fecha_inicial") or None,
+                "fecha_final": request.form.get("fecha_final") or None,
+                "responsable": request.form.get("responsable") or None,
+                "denominacion": request.form.get("denominacion") or None,
+            }
+        ).fetchall()
+
+        # Crear un DataFrame a partir de sql_params, las columnas se infieren automáticamente
+        df = pd.DataFrame(sql_params)
         # Crear un archivo CSV en memoria
         output = BytesIO()
         df.to_csv(output, index=False)
