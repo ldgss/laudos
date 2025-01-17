@@ -11,9 +11,9 @@
 
     <form action="/materia/buscar" method="post">
         <div class="m-3">
-            <label class="form-label" for="buscar">Buscar</label>
+            <label class="form-label" for="buscar">Buscar IPM/s</label>
             <input class="form-control" required
-            placeholder="Ingrese numero de parte, lote, fechas, observaciones" 
+            placeholder="Ingrese términos de búsqueda" 
             type="text" id="buscar" name="buscar">
         </div>
         <div class="m-3">
@@ -22,10 +22,7 @@
     </form>
 
     <div class="m-3">
-        <a href="{{url_for('materia.materia_agregar')}}" class="btn btn-success col-12">Agregar Ingreso</a>
-    </div>
-    <div class="m-3">
-        <a href="" class="btn btn-success col-12">Plan de Cosecha Arballon</a>
+        <a href="{{url_for('materia.materia_agregar')}}" class="btn btn-success col-12">Agregar</a>
     </div>
     <div class="m-3">
         <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
@@ -33,6 +30,7 @@
     </div>
     
 
-</div>
 
+
+</div>
 {% endblock %}
