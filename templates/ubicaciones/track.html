@@ -1,0 +1,129 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+
+<script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+<script defer src="{{url_for("static", filename="js/ubicaciones/track.js")}}"></script>
+
+<style>
+
+#track-table, #track-container, #track-table-responsive {
+    overflow: visible; /* Permite que los elementos sobresalgan */
+}
+    /* Estilo para el punto de seguimiento */
+#track-table .tracking-point {
+    width: 20px; /* Ajusta el ancho del punto según prefieras */
+    height: 20px; /* Ajusta el ancho del punto según prefieras */
+    border-left: 4px dashed #50aa2e; /* Línea punteada entre los puntos */
+    position: relative;
+}
+
+#track-table .tracking-point::before {
+    content: "";
+    position: absolute;
+    /* left: 50%;
+    top: 50%; */
+    transform: translateX(-100%) translateY(-50%);
+    width: 20px; /* Tamaño del punto */
+    height: 20px;
+    background-color: #50aa2e; /* Color del punto */
+    border-radius: 50%;
+    z-index: 1000;
+}
+
+
+</style>
+
+
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center h4">
+        {{numero_unico}}
+</div>
+<div class="container mt-5" id="track-container">
+    <div class="table-responsive" id="track-table-responsive">
+        <table class="table table-hover" id="track-table">
+            <thead>
+                <tr>
+                    <th></th> <!-- Columna para el punto de seguimiento -->
+                    <th>Fecha</th>
+                    <th>Sector</th>
+                    <th>Ubicacion</th>
+                    <th>Profundidad</th>
+                    <th>Altura</th>
+                    <th>Responsable</th>
+                    <th>Accion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in ubicaciones%}
+                <tr>
+                    <td class="tracking-point"></td> <!-- Columna para el punto -->
+                    <td class="fecha_elaboracion">{{u["fecha_registro"].strftime('%Y-%m-%d %H:%M')}}</td>
+                    <td>{{u["sector"]}}</td>
+                    <td>{{u["posicion"]}}</td>
+                    <td>{{u["ubicacion_profundidad"]}}</td>
+                    <td>{{u["ubicacion_altura"]}}</td>
+                    <td>{{u["responsable_de_movimiento"]}}</td>
+                    <td>
+                        <button
+                            class="btn btn-danger btn-anular"
+                            data-id="{{ u['id'] }}"
+                            data-numero-unico="{{numero_unico}}"
+                            data-fecha="{{ u['fecha_registro'].strftime('%Y-%m-%d %H:%M') }}"
+                            data-sector="{{ u['sector'] }}"
+                            data-posicion="{{ u['posicion'] }}"
+                            data-profundidad="{{ u['ubicacion_profundidad'] }}"
+                            data-altura="{{ u['ubicacion_altura'] }}"
+                            data-responsable="{{ u['responsable_de_movimiento'] }}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#anularModal">
+                            Anular
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="row justify-content-center">
+        <div class="m-2 text-center">
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</div>
+
+<!-- modal para anular -->
+
+<div class="modal fade" id="anularModal" tabindex="-1" aria-labelledby="anularModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="anularForm" method="POST" action="/ubicaciones/anular">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="anularModalLabel">Confirmar Anulación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas anular el siguiente registro?</p>
+                    <ul>
+                        <li><strong>Fecha:</strong> <span id="modalFecha"></span></li>
+                        <li><strong>Sector:</strong> <span id="modalSector"></span></li>
+                        <li><strong>Posición:</strong> <span id="modalPosicion"></span></li>
+                        <li><strong>Profundidad:</strong> <span id="modalProfundidad"></span></li>
+                        <li><strong>Altura:</strong> <span id="modalAltura"></span></li>
+                        <li><strong>Responsable:</strong> <span id="modalResponsable"></span></li>
+                    </ul>
+                    <!-- Campo oculto para pasar el ID -->
+                    <input type="hidden" id="modalId" name="id">
+                    <input type="hidden" id="modal_numero_unico" name="numero_unico">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

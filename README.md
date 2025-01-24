@@ -6,16 +6,19 @@ sistema de laudos para mercaderia y hojalata
 - visual studio code
 - python
 - postgresql
+- msodbcsql (instalar el driver para conectar con sql-server)
 
 ## instalacion
+
+### primer uso
+
 1. crear carpeta local donde ubicar el proyecto
+
 2. ejecutar el siguiente comando:
 
         git clone https://github.com/laureano934/laudos.git
 
-3. conceder acceso a github a traves del navegador
-4. instaslar la extension "python" en visual studio code
-5. configurar git:
+3. configurar git si fuera necesario:
 
 - configurar un nombre de usuario
 
@@ -29,6 +32,10 @@ sistema de laudos para mercaderia y hojalata
 
         git config --global color.ui auto
 
+4. conceder acceso a github a traves del navegador
+
+5. instaslar la extension "python" en visual studio code
+
 6. antes de empezar a hacer cambios, crear un rama para no trabajar en la principal; ejemplos de nombre podrian incluir:
 
         desarrollo
@@ -36,6 +43,22 @@ sistema de laudos para mercaderia y hojalata
         rutas
         login
         etc...
+
+### usos posteriores
+
+8. para retomar el trabajo, actualizar cambios de los demas
+        
+        git pull
+
+7. para ver todas las ramas
+
+        git branch -a
+
+9. restaurar la base de datos en caso de que hubiera una version nueva,
+la misma se encuentra en la carpeta db en dos versiones;
+
+        custom o backup de posgresql, el archivo no lleva extension
+        plain o sql, el archivo termina en extension sql
 
 ## comandos y uso de git
 
@@ -99,3 +122,33 @@ sistema de laudos para mercaderia y hojalata
 
         git pull
 
+### Asignacion de tareas para desarrollo
+
+Se trabajara horizontalmente, realizando para cada seccion la vista, el controlador y el modelo.
+Recordar que antes que nada hay que chequear que el usuario este logueado y tenga autorizacion para estar en cada seccion.
+
+#### laureano
+
+        index
+        login
+        base
+        mercaderia
+        extracto
+        insumos
+        ubicaciones
+
+#### luciano
+
+        accesos
+        ayuda
+        sugerencias
+        despachos
+        vencimientos
+
+#### silvio
+
+        bloqueados
+        motivos_bloqueo
+        hojalata
+        permisos
+        usuarios

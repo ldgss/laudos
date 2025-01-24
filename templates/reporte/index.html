@@ -1,0 +1,326 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/reporte/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container col-sm-12 col-md-8 col-lg-6">
+    {% if session["mercaderia"] %}
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#envasadoModal">Semielaborado</button>
+        </div>
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#etiquetadoModal">Etiquetado</button>
+        </div>
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#encajonadoModal">Encajonado</button>
+        </div>
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#reacondicionadoModal">Reacondicionado</button>
+        </div>
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#extractoModal">Extracto</button>
+        </div>
+    {% endif %}
+    {% if session["insumo"] %}
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#insumoModal">Insumos</button>
+        </div>
+    {% endif %}
+    {% if session["ubicacion"] %}
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#ubicacionModal">Ubicaciones</button>
+        </div>
+    {% endif %}
+    <div class="m-3">
+        <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
+    </div>
+</div>
+
+<!-- Modales -->
+<!-- Modal Envasado -->
+<div class="modal fade" id="envasadoModal" tabindex="-1" aria-labelledby="envasadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="envasadoModalLabel">Semielaborado</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+          <form method="POST" action="/reporte/exportar/envasado">
+            <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+            <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+        
+            <label class="col-form-label" for="fecha_final">Fecha final</label>
+            <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+        
+            <label class="col-form-label" for="responsable">Responsable</label>
+            <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+            
+            <label class="col-form-label" for="denominacion">Denominacion</label>
+            <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
+            
+            <label class="col-form-label" for="lote_inicial">Lote inicial</label>
+            <input class="form-control" type="text" maxlength="20" name="lote_inicial" id="lote_inicial">
+            
+            <label class="col-form-label" for="lote_final">Lote final</label>
+            <input class="form-control" type="text" maxlength="20" name="lote_final" id="lote_final">
+
+            <div class="row m-3">
+                <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+            </div>
+        </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Etiquetado -->
+  <div class="modal fade" id="etiquetadoModal" tabindex="-1" aria-labelledby="etiquetadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="etiquetadoModalLabel">Etiquetado</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+          <form method="POST" action="/reporte/exportar/etiquetado">
+            <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+            <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+        
+            <label class="col-form-label" for="fecha_final">Fecha final</label>
+            <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+        
+            <label class="col-form-label" for="responsable">Responsable</label>
+            <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+            
+            <label class="col-form-label" for="denominacion">Denominacion</label>
+            <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
+            
+            <label class="col-form-label" for="lote_inicial">Lote inicial</label>
+            <input class="form-control" type="text" maxlength="20" name="lote_inicial" id="lote_inicial">
+            
+            <label class="col-form-label" for="lote_final">Lote final</label>
+            <input class="form-control" type="text" maxlength="20" name="lote_final" id="lote_final">
+
+            <div class="row m-3">
+                <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+            </div>
+        </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Encajonado -->
+  <div class="modal fade" id="encajonadoModal" tabindex="-1" aria-labelledby="encajonadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="encajonadoModalLabel">Encajonado</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+          <form method="POST" action="/reporte/exportar/encajonado">
+            <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+            <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+        
+            <label class="col-form-label" for="fecha_final">Fecha final</label>
+            <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+        
+            <label class="col-form-label" for="responsable">Responsable</label>
+            <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+            
+            <label class="col-form-label" for="denominacion">Denominacion</label>
+            <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
+            
+            <label class="col-form-label" for="lote_inicial">Lote inicial</label>
+            <input class="form-control" type="text" maxlength="20" name="lote_inicial" id="lote_inicial">
+            
+            <label class="col-form-label" for="lote_final">Lote final</label>
+            <input class="form-control" type="text" maxlength="20" name="lote_final" id="lote_final">
+
+            <div class="row m-3">
+                <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+            </div>
+        </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Reacondicionado -->
+  <div class="modal fade" id="reacondicionadoModal" tabindex="-1" aria-labelledby="reacondicionadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reacondicionadoModalLabel">Reacondicionado</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+          <form method="POST" action="/reporte/exportar/reacondicionado">
+            <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+            <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+        
+            <label class="col-form-label" for="fecha_final">Fecha final</label>
+            <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+        
+            <label class="col-form-label" for="responsable">Responsable</label>
+            <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+            
+            <label class="col-form-label" for="denominacion">Denominacion</label>
+            <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
+            
+            <label class="col-form-label" for="tipo_reacondicionado">Tipo de reacondicionado</label>
+            <select class="form-control" name="tipo_reacondicionado" id="tipo_reacondicionado">
+                <option value="">-</option>
+                <option value="reacondicionado">Reacondicionado</option>
+                <option value="etiquetado">Etiquetado</option>
+                <option value="encajonado">Encajonado</option>
+                <option value="reproceso">Reproceso</option>
+            </select>
+            
+            <label class="col-form-label" for="lote_inicial">Lote inicial</label>
+            <input class="form-control" type="text" maxlength="20" name="lote_inicial" id="lote_inicial">
+            
+            <label class="col-form-label" for="lote_final">Lote final</label>
+            <input class="form-control" type="text" maxlength="20" name="lote_final" id="lote_final">
+
+            <div class="row m-3">
+                <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+            </div>
+        </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Extracto -->
+  <div class="modal fade" id="extractoModal" tabindex="-1" aria-labelledby="extractoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="extractoModalLabel">Extracto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+            <form method="POST" action="/reporte/exportar/extracto">
+                <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+                <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+            
+                <label class="col-form-label" for="fecha_final">Fecha final</label>
+                <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+            
+                <label class="col-form-label" for="responsable">Responsable</label>
+                <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+                
+                <label class="col-form-label" for="denominacion">Denominacion</label>
+                <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
+                
+                <label class="col-form-label" for="brix_inicial">Brix minimo</label>
+                <input class="form-control" type="number" step="0.01" min="0" max="9999.99" name="brix_inicial" id="brix_inicial">
+                
+                <label class="col-form-label" for="brix_final">Brix maximo</label>
+                <input class="form-control" type="number" step="0.01" min="0" max="9999.99" name="brix_final" id="brix_final">
+                
+                <label class="col-form-label" for="lote_inicial">Lote inicial</label>
+                <input class="form-control" type="text" maxlength="20" name="lote_inicial" id="lote_inicial">
+                
+                <label class="col-form-label" for="lote_final">Lote final</label>
+                <input class="form-control" type="text" maxlength="20" name="lote_final" id="lote_final">
+
+                <div class="row m-3">
+                    <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+                </div>
+            </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Insumo -->
+  <div class="modal fade" id="insumoModal" tabindex="-1" aria-labelledby="insumoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="insumoModalLabel">Insumos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+            <form method="POST" action="/reporte/exportar/insumo">
+                <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+                <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+            
+                <label class="col-form-label" for="fecha_final">Fecha final</label>
+                <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+            
+                <label class="col-form-label" for="responsable">Responsable</label>
+                <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+                
+                <label class="col-form-label" for="insumo">Insumo</label>
+                <input class="form-control" type="text" maxlength="20" name="insumo" id="insumo">
+                
+                <label class="col-form-label" for="codigo">Codigo</label>
+                <input class="form-control" type="text" maxlength="20" name="codigo" id="codigo">
+                
+                <label class="col-form-label" for="lote">Lote</label>
+                <input class="form-control" type="text" maxlength="20" name="lote" id="lote">
+
+                <div class="row m-3">
+                    <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+                </div>
+            </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Ubicaciones -->
+  <div class="modal fade" id="ubicacionModal" tabindex="-1" aria-labelledby="ubicacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ubicacionModalLabel">Ubicaciones</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+            <form method="POST" action="/reporte/exportar/ubicacion">
+                <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+                <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+            
+                <label class="col-form-label" for="fecha_final">Fecha final</label>
+                <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+            
+                <label class="col-form-label" for="responsable">Responsable</label>
+                <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+                
+                <label class="col-form-label" for="denominacion">Denominacion</label>
+                <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
+
+                <div class="row m-3">
+                    <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+                </div>
+            </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

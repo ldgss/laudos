@@ -1,0 +1,117 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/insumos/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<form id="buscar_insumo">
+    
+    <div class="row m-4 justify-content-center">
+        <label for="cta_alm_buscar" class="col-sm-2 col-form-label">Codigo Insumo</label>
+        <div class="col-sm-5">
+            <input required type="text" class="form-control" 
+            name="cta_alm_buscar" id="cta_alm_buscar" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="cod_lot_buscar" class="col-sm-2 col-form-label">Lote Insumo</label>
+        <div class="col-sm-5">
+            <input required type="text" class="form-control" 
+            name="cod_lot_buscar" id="cod_lot_buscar" maxlength="20">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <hr class="col-7">
+    </div>
+</form>
+
+<form action="agregar" method="post">
+    <div class="row m-4 justify-content-center">
+        <label for="cta_alm" class="col-sm-2 col-form-label">Codigo Insumo</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="cta_alm" id="cta_alm" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="cod_lot" class="col-sm-2 col-form-label">Lote Insumo</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="cod_lot" id="cod_lot" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="den_fac" class="col-sm-2 col-form-label">Insumo</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="den_fac" id="den_fac" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="can" class="col-sm-2 col-form-label">Cantidad</label>
+        <div class="col-sm-5">
+            <input required type="number" class="form-control" 
+            name="can" id="can" min="1" max="100000">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="fecha_hora" class="col-sm-2 col-form-label">Fecha y hora</label>
+        <div class="col-sm-5">
+            <input required type="datetime-local" class="form-control" 
+            name="fecha_hora" id="fecha_hora">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+<!-- modal -->
+
+<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="resultModalLabel">Seleccionar Insumo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Codigo insumo</th>
+                <th>Lote insumo</th>
+                <th>Insumo</th>
+                <!-- <th>Cantidad</th> -->
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="resultTableBody">
+              <!-- Aquí se llenarán los resultados -->
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+{% endblock %}

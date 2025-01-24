@@ -1,0 +1,107 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+
+<form action="agregar" method="post">
+
+    <div class="row m-4 justify-content-center">
+        <label for="operario" class="col-sm-2 col-form-label">Operario</label>
+        <div class="col-sm-5">
+            <input readonly maxlength="30" type="text" class="form-control" 
+            name="user_name" id="user_name" value="{{session["nombre"]}}">
+            <input type="hidden" id="user_id" name="user_id" value="{{session["id"]}}">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="denominacion" class="col-sm-2 col-form-label">Denominacion</label>
+        <div class="col-sm-5">
+            <input list="denominacion_opciones" required type="text" 
+            class="form-control" name="denominacion" id="denominacion"
+            onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
+            <input type="hidden" id="cod_cls" name="cod_cls">
+            <input type="hidden" id="cod_mae" name="cod_mae">
+            <datalist id="denominacion_opciones">
+                {% for p in productos_arballon %}
+                    {% if 'semi' in (p.den | lower) or 'rep' in (p.den | lower) or 'abo' in (p.den | lower) %}
+                        <option value="{{ p.den | trim }}" 
+                                data-cod-cls="{{ p.cod_cls | trim }}" 
+                                data-cod-mae="{{ p.cod_mae | trim }}">
+                        </option>
+                    {% endif %}
+                {% endfor %}
+            </datalist>
+        </div>
+
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+        <div class="col-sm-5">
+            <input required type="date" class="form-control" name="fecha" id="fecha">
+        </div>
+    </div>
+    
+    <div class="row m-4 justify-content-center">
+        <label for="hora" class="col-sm-2 col-form-label">Hora</label>
+        <div class="col-sm-5">
+            <input required type="time" class="form-control" name="hora" id="hora">
+        </div>
+    </div>
+    
+    <div class="row m-4 justify-content-center">
+        <label for="lote_a" class="col-sm-2 col-form-label">
+            Lote
+        </label>
+        <div class="col-sm-5 d-flex justify-content-between">
+            <input required type="text" maxlength="1" class="form-control" style="width: 33%;" pattern="^[0-9]$"
+            title="(Ej: 2024 -> 4, 2025 -> 5)"
+            name="lote_a" id="lote_a"
+            >
+            <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
+            title="(Ej: 000 - 999)"
+            name="lote_b" id="lote_b"
+            >
+            <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
+            title="(Ej: 30 de enero -> 030)"
+            name="lote_c" id="lote_c"
+            >
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="parte" class="col-sm-2 col-form-label">Numero de parte</label>
+        <div class="col-sm-5">
+            <input required type="text" class="form-control" 
+            value="{{ proximo_id }}"
+            name="numero_unico" id="numero_unico"
+            title="(Ej: 2024-T-000001)" pattern="^\d{4}-(T1|T2)-\d{6}$">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="cantidad" class="col-sm-2 col-form-label">Cantidad</label>
+        <div class="col-sm-5">
+            <input required type="number" min="1" max="1980" class="form-control" name="cantidad" id="cantidad">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+        <div class="col-sm-5">
+            <textarea class="form-control" id="observaciones" name="observaciones" 
+            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

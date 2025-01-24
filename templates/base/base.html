@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <link rel="shortcut icon" href="{{url_for("static", filename="img/fav-small.png")}}" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script defer src="{{url_for("static", filename="js/base/utils.js")}}"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link href="{{url_for("static", filename="css/base/main.css")}}" rel="stylesheet">
+  </head>
+  <body>
+
+    <!-- nav -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+          <img style="max-width: 270px;" src="{{url_for("static", filename="img/logo6.png")}}" alt="logo de solvencia">
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Inicio</a>
+            </li>
+            
+            
+            
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Productos
+              </a>
+              <ul class="dropdown-menu">
+                <li class="">
+                  <a class="dropdown-item" href="/envasado">Semielaborado (línea)</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/etiquetado">Etiquetado (línea)</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/encajonado">Encajonado (línea)</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/extracto">Extracto</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/reacondicionado">Reacondicionado</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/hojalata">Hojalata</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/insumos">Insumos</a>
+                </li>
+                {% if session["anulacion"] %}
+                  <li class="">
+                    <a class="dropdown-item" href="/anulacion">Anulacion</a>
+                  </li>
+                {% endif %}
+                {% if session["correccion"] %}
+                  <li class="">
+                    <a class="dropdown-item" href="/correccion">Correccion</a>
+                  </li>
+                {% endif %}
+              </ul>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Calidad
+              </a>
+              <ul class="dropdown-menu">
+                <li class="">
+                  <a class="dropdown-item" href="/bloqueos">Bloqueos</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/motivosbloqueo">Motivos de bloqueo</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/vencimientos">Vencimientos</a>
+                </li>
+              </ul>
+            </li>
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/ubicaciones">Ubicaciones</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/reporte">Reportes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/despachos">Despachos</a>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Administracion
+              </a>
+              <ul class="dropdown-menu">
+                <li class="">
+                  <a class="dropdown-item" href="/accesos">Accesos</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/permisos">Permisos</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/usuarios">Usuarios</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Ayuda
+              </a>
+              <ul class="dropdown-menu">
+                <li class="">
+                  <a class="dropdown-item" href="/ayuda">Ayuda</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/sugerencias">Sugerencias</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Queue
+              </a>
+              <ul class="dropdown-menu">
+                <li class="">
+                  <a class="dropdown-item" href="/nodered">NodeRed</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/materia">Materia Prima</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item">
+              {% if session["nombre"] %}
+                <a class="nav-link" href="/logout">Salir</a>
+              {% else %}
+                <a class="nav-link" href="/login">Iniciar Sesion</a>
+              {% endif %}
+            
+            </li>
+
+          </ul>
+          
+        </div>
+      </div>
+    </nav>
+    <!-- endnav -->
+
+    <!-- jt -->
+
+    <div class="p-2 mb-4 text-bg-success rounded-3">
+      <div class="container-fluid py-3">
+        {% if session["nombre"] %}
+          <p class="col-md-8 fs-4">
+            Bienvenido/a, 
+            <span class="glow-text">
+              {{session["nombre"]}}
+            </span>
+          </p>
+        {% else %}
+          <p class="col-md-8 fs-4">Bienvenido/a!</p>
+        {% endif %}
+          <h4 class="">{{section}}</h4>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        
+            {% for message in messages %}
+            <p class="alert alert-warning alert-dismissible fade show">{{ message }}</p>
+            {% endfor %}
+        
+        {% endif %}
+        {% endwith %}
+      </div>
+    </div>
+
+    <!-- endjt -->
+    
+    {% block header %} {% endblock %}
+    
+    <div id="loading" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+        <img src="{{ url_for('static', filename='img/loading.gif') }}" alt="Cargando...">
+    </div>
+    
+    <div class="container">
+
+      {% block content %} 
+      {% endblock %}
+      
+    </div>
+    
+
+</body>
+</html>

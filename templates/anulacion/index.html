@@ -1,0 +1,54 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container col-sm-12 col-md-8 col-lg-6">
+
+    <form action="/anulacion/buscar" method="post">
+        <div class="m-3">
+            <label class="form-label" for="buscar">Buscar productos anulados</label>
+            <input class="form-control" required
+            placeholder="Ingrese numero único, observaciones" 
+            type="text" id="buscar" name="buscar">
+        </div>
+        <div class="m-3">
+            <button type="submit" class="btn btn-primary col-12">Buscar</button>
+        </div>
+    </form>
+
+    <form action="/anulacion/agregar" method="post">
+        <div class="m-3">
+            <label class="form-label" for="numero_unico">Numero único a anular</label>
+            <input class="form-control" required
+            placeholder="Ingrese numero único" 
+            title="(Ej: 2024-T1-000001, 2024-H1-000001, 2024-E1-000001)" 
+            pattern="^\d{4}-(T1|H1|E1)-\d{6}$"
+            type="text" id="numero_unico" name="numero_unico">
+        </div>
+        <div class="m-3">
+            <label class="form-label" for="observaciones">Observaciones</label>
+            <textarea maxlength="300" class="form-control" 
+            rows="4" cols="50" required placeholder="Describa el motivo de la anulacion" 
+            id="observaciones" name="observaciones"></textarea>
+        </div>
+        <div class="m-3">
+            <button type="submit" class="btn btn-danger col-12">Anular</button>
+        </div>
+    </form>
+
+    
+    <div class="m-3">
+        <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
+
+    </div>
+    
+
+
+
+</div>
+{% endblock %}

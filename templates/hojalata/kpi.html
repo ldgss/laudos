@@ -1,0 +1,23 @@
+
+
+{% extends "base/base.html" %}
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/graficas/grafica.js")}}"></script>
+{% endblock %}
+
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gráfico con D3.js</title>
+    <script src="https://d3js.org/d3.v6.min.js" defer></script>
+    
+</head>
+<body>
+    <div id="grafico-container"></div>
+</body>
+</html>
+
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/materia/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+
+<form id="materia" action="agregar" method="post">
+    <!-- productor -->
+    <!-- <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Productor codigo</label>
+        <div class="col-sm-5">
+        </div>
+    </div> -->
+    <input required type="hidden" class="form-control" name="productor_codigo" id="productor_codigo">
+    <div class="row m-4 justify-content-center">
+        <label for="denominacion" class="col-sm-2 col-form-label">Productor razon social</label>
+        <div class="col-sm-5">
+            <input list="productor_razon_social_lista" required type="text" 
+            onblur="validar_productor_razon_social()"
+            class="form-control" name="productor_razon_social" id="productor_razon_social">
+            <datalist id="productor_razon_social_lista">
+                {% for p in productores %}
+                        <option value="{{ p.den | trim }}" 
+                                data-cod-cls="{{ p.cod_cls | trim }}" 
+                                data-cod-mae="{{ p.cod_mae | trim }}">
+                        </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="hora" class="col-sm-2 col-form-label">Zona</label>
+        <div class="col-sm-5">
+            <input required list="productor_zona_lista" type="text" 
+            onblur="validar_productor_zona()"
+            class="form-control" name="productor_zona" id="productor_zona">
+            <datalist id="productor_zona_lista">
+                        <option value="La Rioja"></option>
+                        <option value="Norte"></option>
+                        <option value="San Carlos"></option>
+                        <option value="San Juan"></option>
+            </datalist>
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="hora" class="col-sm-2 col-form-label">Tipo de cosecha</label>
+        <div class="col-sm-5">
+            <input required list="producto_tipo_cosecha_lista" type="text" 
+            onblur="validar_productor_tipo_cosecha()"
+            class="form-control" name="productor_tipo_cosecha" id="productor_tipo_cosecha">
+            <datalist id="producto_tipo_cosecha_lista">
+                <option value="Manual"></option>
+                <option value="Mecanica Agrobida"></option>
+                <option value="Mecanica Particular"></option>
+                <option value="Ver en remito"></option>
+            </datalist>
+        </div>
+    </div>
+    
+    <!-- fletero -->
+    <!-- <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Fletero codigo</label>
+        <div class="col-sm-5">
+        </div>
+    </div> -->
+    <input required type="hidden" class="form-control" name="fletero_codigo" id="fletero_codigo">
+    <div class="row m-4 justify-content-center">
+        <label for="denominacion" class="col-sm-2 col-form-label">Fletero nombre</label>
+        <div class="col-sm-5">
+            <input list="fletero_nombre_lista" required type="text" 
+            onblur="validar_fletero_nombre()"
+            class="form-control" name="fletero_nombre" id="fletero_nombre">
+            <datalist id="fletero_nombre_lista">
+                {% for f in fleteros %}
+                        <option value="{{ f.den | trim }}" 
+                                data-cod-cls="{{ f.cod_cls | trim }}" 
+                                data-cod-mae="{{ f.cod_mae | trim }}">
+                        </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Patente camion</label>
+        <div class="col-sm-5">
+            <input required type="text" 
+            pattern="[A-Z]{3} [0-9]{3}" title="El formato debe ser ABC 123 (tres letras y tres números separados por un espacio)"
+            class="form-control" name="fletero_patente_camion" id="fletero_patente_camion">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Patente acoplado</label>
+        <div class="col-sm-5">
+            <input required type="text" 
+            pattern="[A-Z]{3} [0-9]{3}" title="El formato debe ser ABC 123 (tres letras y tres números separados por un espacio)"
+            class="form-control" name="fletero_patente_acoplado" id="fletero_patente_acoplado">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Chofer</label>
+        <div class="col-sm-5">
+            <input required type="text" maxlength="40" class="form-control" name="fletero_chofer" id="fletero_chofer">
+        </div>
+    </div>
+    <!-- variedad -->
+    <!-- <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Variedad codigo</label>
+        <div class="col-sm-5">
+        </div>
+    </div> -->
+    <input required type="hidden" class="form-control" name="variedad_codigo" id="variedad_codigo">
+    <div class="row m-4 justify-content-center">
+        <label for="denominacion" class="col-sm-2 col-form-label">Variedad nombre</label>
+        <div class="col-sm-5">
+            <input list="variedad_nombre_lista" required type="text" 
+            onblur="validar_variedad_nombre()"
+            class="form-control" name="variedad_nombre" id="variedad_nombre">
+            <datalist id="variedad_nombre_lista">
+                {% for v in variedades %}
+                        <option value="{{ v.den | trim }}" 
+                                data-cod-cls="{{ v.cod_cls | trim }}" 
+                                data-cod-mae="{{ v.cod_mae | trim }}">
+                        </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+    <!-- <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Variedad codigo acoplado</label>
+        <div class="col-sm-5">
+        </div>
+    </div> -->
+    <input required type="hidden" class="form-control" name="variedad_codigo_acoplado" id="variedad_codigo_acoplado">
+    <div class="row m-4 justify-content-center">
+        <label for="denominacion" class="col-sm-2 col-form-label">Variedad nombre acoplado</label>
+        <div class="col-sm-5">
+            <input list="variedad_nombre_acoplado_lista" required type="text" 
+            onblur="validar_variedad_nombre_acoplado()"
+            class="form-control" name="variedad_nombre_acoplado" id="variedad_nombre_acoplado">
+            <datalist id="variedad_nombre_acoplado_lista">
+                {% for v in variedades %}
+                        <option value="{{ v.den | trim }}" 
+                                data-cod-cls="{{ v.cod_cls | trim }}" 
+                                data-cod-mae="{{ v.cod_mae | trim }}">
+                        </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+        <div class="col-sm-5">
+            <input required type="datetime-local" class="form-control" name="fecha" id="fecha">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+        <div class="col-sm-5">
+            <textarea class="form-control" id="observacion" name="observacion" 
+            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
