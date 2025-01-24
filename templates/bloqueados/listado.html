@@ -54,7 +54,7 @@
                         {{l.nombre}}
                     </td>
                     <td>
-                        <a href="" class="btn btn-outline-primary">Ver</a >
+                        <a href="{{url_for('envasado.envasado_imprimir', numero_unico=l.numero_unico)}}" class="btn btn-outline-primary">Ver</a >
                     </td>
                     <td>
                         <a href="{{url_for('bloqueos.bloqueos_agregar_id', numero_unico=l.numero_unico)}}" class="btn btn-danger">Bloquear</a >
@@ -81,17 +81,17 @@
         <ul class="pagination justify-content-center">
         {% if pagina_actual > 1 %}
             <li class="page-item">
-            <a class="page-link" href="">Anterior</a>
+            <a class="page-link" href="{{ url_for('bloqueos.bloqueados_listado', terminos_de_busqueda=terminos_de_busqueda,page=pagina_actual - 1) }}">Anterior</a>
             </li>
         {% endif %}
         {% for i in range(1, total_paginas + 1) %}
             <li class="page-item {% if i == pagina_actual %}active{% endif %}">
-            <a class="page-link" href="">{{ i }}</a>
+            <a class="page-link" href="{{ url_for('bloqueos.bloqueados_listado', terminos_de_busqueda=terminos_de_busqueda,page=i) }}">{{ i }}</a>
             </li>
         {% endfor %}
         {% if pagina_actual < total_paginas %}
             <li class="page-item">
-            <a class="page-link" href="">Siguiente</a>
+            <a class="page-link" href="{{ url_for('bloqueos.bloqueados_listado', terminos_de_busqueda=terminos_de_busqueda,page=pagina_actual + 1) }}">Siguiente</a>
             </li>
         {% endif %}
         </ul>
@@ -103,6 +103,6 @@
     
 
 </div>
-    
+
 
 {% endblock %}

@@ -26,7 +26,7 @@ if app.debug:
     print("modo de base de datos: desarrollo")
     user = tokens.development_user
     password = tokens.development_pass
-    app.config["SQLALCHEMY_DATABASE_URI"] = f'postgresql://{user}:{password}@leo.solvencia.local:5432/laudosdb'
+    app.config["SQLALCHEMY_DATABASE_URI"] = f'postgresql://{user}:{password}@leo.solvencia.local:5432/laudosdb?client_encoding=utf8'
     app.config['SQLALCHEMY_BINDS'] = {
         'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+17+for+SQL+Server'
     }

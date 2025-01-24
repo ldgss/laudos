@@ -11,7 +11,7 @@
 
     <form action="/bloqueos/buscar" method="post">
         <div class="m-3">
-            <label class="form-label" for="buscar">Buscar</label>
+            <label class="form-label" for="buscar">Buscar produccion</label>
             <input class="form-control" required
             placeholder="Ingrese numero de parte, lote, fechas, observaciones" 
             type="text" id="buscar" name="buscar">
@@ -22,7 +22,12 @@
     </form>
 
     <form action="/bloqueos/buscarbloqueados" method="post">
-        
+        <div class="m-3">
+            <label class="form-label" for="buscar">Buscar Bloqueados</label>
+            <input class="form-control" required
+            placeholder="Ingrese numero de parte, lote, fechas, observaciones" 
+            type="text" id="buscar" name="buscarbloqueados">
+        </div>
         <div class="m-3">
             <button type="submit" class="btn btn-warning col-12">Buscar Bloqueados</button>
         </div>
