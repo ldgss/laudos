@@ -58,6 +58,16 @@
                 <li class="">
                   <a class="dropdown-item" href="/insumos">Insumos</a>
                 </li>
+                {% if session["anulacion"] %}
+                  <li class="">
+                    <a class="dropdown-item" href="/anulacion">Anulacion</a>
+                  </li>
+                {% endif %}
+                {% if session["correccion"] %}
+                  <li class="">
+                    <a class="dropdown-item" href="/correccion">Correccion</a>
+                  </li>
+                {% endif %}
               </ul>
             </li>
 
@@ -83,6 +93,9 @@
           
             <li class="nav-item">
               <a class="nav-link" href="/ubicaciones">Ubicaciones</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/reporte">Reportes</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/despachos">Despachos</a>
@@ -154,7 +167,12 @@
     <div class="p-2 mb-4 text-bg-success rounded-3">
       <div class="container-fluid py-3">
         {% if session["nombre"] %}
-          <p class="col-md-8 fs-4">Bienvenido/a, {{session["nombre"]}}</p>
+          <p class="col-md-8 fs-4">
+            Bienvenido/a, 
+            <span class="glow-text">
+              {{session["nombre"]}}
+            </span>
+          </p>
         {% else %}
           <p class="col-md-8 fs-4">Bienvenido/a!</p>
         {% endif %}

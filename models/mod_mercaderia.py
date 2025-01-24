@@ -1,6 +1,7 @@
 from sqlalchemy.sql import text
 from db import db
 from datetime import datetime
+import shlex
 
 def listar_productos_arballon():
     # cambiar a sqlserver para llamar a arballon
@@ -48,11 +49,12 @@ def get_ultimo_id():
             return f"{year}-T1-000000"
         else:
             # si ya existen pallets, aumentar el numero del id
-            prefijo = ultimo_id[:-6]
+            prefijo = str(datetime.now().year)
             sufijo = int(ultimo_id[-6:])
             nuevo_numero = sufijo + 1
             nuevo_numero_str = f"{nuevo_numero:06d}"
-            nuevo_codigo = prefijo + nuevo_numero_str
+            nuevo_codigo = f"{prefijo}-T1-{nuevo_numero_str}"
+
             return nuevo_codigo
     except Exception as e:
         print(f"Error: {e}")
@@ -79,11 +81,12 @@ def get_ultimo_id_extracto():
             return f"{year}-E1-000000"
         else:
             # si ya existen pallets, aumentar el numero del id
-            prefijo = ultimo_id[:-6]
+            prefijo = str(datetime.now().year)
             sufijo = int(ultimo_id[-6:])
             nuevo_numero = sufijo + 1
             nuevo_numero_str = f"{nuevo_numero:06d}"
-            nuevo_codigo = prefijo + nuevo_numero_str
+            nuevo_codigo = f"{prefijo}-E1-{nuevo_numero_str}"
+
             return nuevo_codigo
     except Exception as e:
         print(f"Error: {e}")
@@ -250,6 +253,7 @@ def get_envasado(numero_unico):
                     WHERE numero_unico = :numero_unico 
                     AND fecha_etiquetado IS NULL
                     AND fecha_encajonado IS NULL
+                    ORDER BY m.fecha_registro DESC
                 """
                 )
         
@@ -269,6 +273,7 @@ def get_etiquetado(numero_unico):
                     WHERE numero_unico = :numero_unico
                     AND fecha_elaboracion IS NULL
                     AND fecha_encajonado IS NULL
+                    ORDER BY m.fecha_registro DESC
                 """
                 )
         
@@ -288,6 +293,7 @@ def get_encajonado(numero_unico):
                     WHERE numero_unico = :numero_unico
                     AND fecha_elaboracion IS NULL
                     AND fecha_etiquetado IS NULL
+                    ORDER BY m.fecha_registro DESC
                 """
                 )
         
@@ -305,6 +311,7 @@ def get_extracto(numero_unico):
                     JOIN vencimiento v ON e.vto_meses = v.id
                     JOIN usuario u ON e.responsable = u.id
                     WHERE numero_unico = :numero_unico
+                    ORDER BY e.fecha_registro DESC
                 """
                 )
         
@@ -317,7 +324,7 @@ def get_extracto(numero_unico):
 def get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
@@ -352,6 +359,7 @@ def get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset):
             WHERE {condicion_final_ilike}
             AND fecha_etiquetado IS NULL
             AND fecha_encajonado IS NULL
+            ORDER BY m.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),
@@ -384,7 +392,7 @@ def get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset):
 def get_listado_etiquetado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
@@ -419,6 +427,7 @@ def get_listado_etiquetado(terminos_de_busqueda, resultados_por_pagina, offset):
             WHERE {condicion_final_ilike}
             AND fecha_elaboracion IS NULL
             AND fecha_encajonado IS NULL
+            ORDER BY m.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),
@@ -451,7 +460,7 @@ def get_listado_etiquetado(terminos_de_busqueda, resultados_por_pagina, offset):
 def get_listado_encajonado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
@@ -486,6 +495,7 @@ def get_listado_encajonado(terminos_de_busqueda, resultados_por_pagina, offset):
             WHERE {condicion_final_ilike}
             AND fecha_elaboracion IS NULL
             AND fecha_etiquetado IS NULL
+            ORDER BY m.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),
@@ -518,7 +528,7 @@ def get_listado_encajonado(terminos_de_busqueda, resultados_por_pagina, offset):
 def get_listado_extracto(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
@@ -552,6 +562,7 @@ def get_listado_extracto(terminos_de_busqueda, resultados_por_pagina, offset):
             JOIN usuario u ON e.responsable = u.id
             JOIN vencimiento v ON e.vto_meses = v.id
             WHERE {condicion_final_ilike}
+            ORDER BY e.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),

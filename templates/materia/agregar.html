@@ -1,91 +1,166 @@
 {% extends "base/base.html" %}
 
 {% block header %}
+    <script defer src="{{url_for("static", filename="js/materia/utils.js")}}"></script>
     <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
 {% endblock %}
 
 {% block content %}
 
-<form action="agregar" method="post">
-
-    <div class="row m-4 justify-content-center">
-        <label for="operario" class="col-sm-2 col-form-label">Portero</label>
+<form id="materia" action="agregar" method="post">
+    <!-- productor -->
+    <!-- <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Productor codigo</label>
         <div class="col-sm-5">
-            <input readonly maxlength="30" type="text" class="form-control" 
-            name="user_name" id="user_name" value="{{session["nombre"]}}">
-            <input type="hidden" id="user_id" name="user_id" value="{{session["id"]}}">
         </div>
-    </div>
-
+    </div> -->
+    <input required type="hidden" class="form-control" name="productor_codigo" id="productor_codigo">
     <div class="row m-4 justify-content-center">
-        <label for="denominacion" class="col-sm-2 col-form-label">Denominación</label>
+        <label for="denominacion" class="col-sm-2 col-form-label">Productor razon social</label>
         <div class="col-sm-5">
-            <input list="denominacion_opciones" required type="text" 
-                   class="form-control" name="denominacion" id="denominacion"
-                   onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
-            <input type="hidden" id="cod_cls" name="cod_cls">
-            <input type="hidden" id="cod_mae" name="cod_mae">
-            <datalist id="denominacion_opciones">
-                {% for p in productos_arballon %}
-                    <option value="{{ p.den }}" data-cod-cls="{{ p.cod_cls }}" data-cod-mae="{{ p.cod_mae }}"></option>
+            <input list="productor_razon_social_lista" required type="text" 
+            onblur="validar_productor_razon_social()"
+            class="form-control" name="productor_razon_social" id="productor_razon_social">
+            <datalist id="productor_razon_social_lista">
+                {% for p in productores %}
+                        <option value="{{ p.den | trim }}" 
+                                data-cod-cls="{{ p.cod_cls | trim }}" 
+                                data-cod-mae="{{ p.cod_mae | trim }}">
+                        </option>
                 {% endfor %}
             </datalist>
         </div>
     </div>
-
+    <div class="row m-4 justify-content-center">
+        <label for="hora" class="col-sm-2 col-form-label">Zona</label>
+        <div class="col-sm-5">
+            <input required list="productor_zona_lista" type="text" 
+            onblur="validar_productor_zona()"
+            class="form-control" name="productor_zona" id="productor_zona">
+            <datalist id="productor_zona_lista">
+                        <option value="La Rioja"></option>
+                        <option value="Norte"></option>
+                        <option value="San Carlos"></option>
+                        <option value="San Juan"></option>
+            </datalist>
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="hora" class="col-sm-2 col-form-label">Tipo de cosecha</label>
+        <div class="col-sm-5">
+            <input required list="producto_tipo_cosecha_lista" type="text" 
+            onblur="validar_productor_tipo_cosecha()"
+            class="form-control" name="productor_tipo_cosecha" id="productor_tipo_cosecha">
+            <datalist id="producto_tipo_cosecha_lista">
+                <option value="Manual"></option>
+                <option value="Mecanica Agrobida"></option>
+                <option value="Mecanica Particular"></option>
+                <option value="Ver en remito"></option>
+            </datalist>
+        </div>
+    </div>
+    
+    <!-- fletero -->
+    <!-- <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Fletero codigo</label>
+        <div class="col-sm-5">
+        </div>
+    </div> -->
+    <input required type="hidden" class="form-control" name="fletero_codigo" id="fletero_codigo">
+    <div class="row m-4 justify-content-center">
+        <label for="denominacion" class="col-sm-2 col-form-label">Fletero nombre</label>
+        <div class="col-sm-5">
+            <input list="fletero_nombre_lista" required type="text" 
+            onblur="validar_fletero_nombre()"
+            class="form-control" name="fletero_nombre" id="fletero_nombre">
+            <datalist id="fletero_nombre_lista">
+                {% for f in fleteros %}
+                        <option value="{{ f.den | trim }}" 
+                                data-cod-cls="{{ f.cod_cls | trim }}" 
+                                data-cod-mae="{{ f.cod_mae | trim }}">
+                        </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Patente camion</label>
+        <div class="col-sm-5">
+            <input required type="text" 
+            pattern="[A-Z]{3} [0-9]{3}" title="El formato debe ser ABC 123 (tres letras y tres números separados por un espacio)"
+            class="form-control" name="fletero_patente_camion" id="fletero_patente_camion">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Patente acoplado</label>
+        <div class="col-sm-5">
+            <input required type="text" 
+            pattern="[A-Z]{3} [0-9]{3}" title="El formato debe ser ABC 123 (tres letras y tres números separados por un espacio)"
+            class="form-control" name="fletero_patente_acoplado" id="fletero_patente_acoplado">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Chofer</label>
+        <div class="col-sm-5">
+            <input required type="text" maxlength="40" class="form-control" name="fletero_chofer" id="fletero_chofer">
+        </div>
+    </div>
+    <!-- variedad -->
+    <!-- <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Variedad codigo</label>
+        <div class="col-sm-5">
+        </div>
+    </div> -->
+    <input required type="hidden" class="form-control" name="variedad_codigo" id="variedad_codigo">
+    <div class="row m-4 justify-content-center">
+        <label for="denominacion" class="col-sm-2 col-form-label">Variedad nombre</label>
+        <div class="col-sm-5">
+            <input list="variedad_nombre_lista" required type="text" 
+            onblur="validar_variedad_nombre()"
+            class="form-control" name="variedad_nombre" id="variedad_nombre">
+            <datalist id="variedad_nombre_lista">
+                {% for v in variedades %}
+                        <option value="{{ v.den | trim }}" 
+                                data-cod-cls="{{ v.cod_cls | trim }}" 
+                                data-cod-mae="{{ v.cod_mae | trim }}">
+                        </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+    <!-- <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Variedad codigo acoplado</label>
+        <div class="col-sm-5">
+        </div>
+    </div> -->
+    <input required type="hidden" class="form-control" name="variedad_codigo_acoplado" id="variedad_codigo_acoplado">
+    <div class="row m-4 justify-content-center">
+        <label for="denominacion" class="col-sm-2 col-form-label">Variedad nombre acoplado</label>
+        <div class="col-sm-5">
+            <input list="variedad_nombre_acoplado_lista" required type="text" 
+            onblur="validar_variedad_nombre_acoplado()"
+            class="form-control" name="variedad_nombre_acoplado" id="variedad_nombre_acoplado">
+            <datalist id="variedad_nombre_acoplado_lista">
+                {% for v in variedades %}
+                        <option value="{{ v.den | trim }}" 
+                                data-cod-cls="{{ v.cod_cls | trim }}" 
+                                data-cod-mae="{{ v.cod_mae | trim }}">
+                        </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
     <div class="row m-4 justify-content-center">
         <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
         <div class="col-sm-5">
-            <input required type="date" class="form-control" name="fecha" id="fecha">
-        </div>
-    </div>
-    
-    <div class="row m-4 justify-content-center">
-        <label for="hora" class="col-sm-2 col-form-label">Hora</label>
-        <div class="col-sm-5">
-            <input required type="time" class="form-control" name="hora" id="hora">
-        </div>
-    </div>
-    
-    <div class="row m-4 justify-content-center">
-        <label for="lote" class="col-sm-2 col-form-label">
-            Lote
-        </label>
-        
-        <div class="col-sm-5">
-            <input required type="text" class="form-control" pattern="\d-\d{3}-\d{3}"
-                title="(Ej: Año:24-Viaje:015-pallets:02-Color:R-Diametro:038)"
-                name="lote" id="lote"
-                >
-        </div>
-    </div>
-    <div class="row m-4 justify-content-center">
-        <label for="parte" class="col-sm-2 col-form-label">Numero de parte</label>
-        <div class="col-sm-5">
-            <input required type="text" class="form-control" 
-            value="{{ proximo_id }}"
-            name="numero_unico" id="numero_unico"
-            title="(Ej: 2024-T-000001)" pattern="^\d{4}-(T|H)-\d{6}$">
-        </div>
-    </div>
-    <div class="row m-4 justify-content-center">
-        <label for="antecedentes" class="col-sm-2 col-form-label">N° de parte de antecedentes</label>
-        <div class="col-sm-5">
-            <input type="text" class="form-control" name="antecedentes" id="antecedentes"
-                title="(Ej: 2024-T-000001,2024-T-000002 ... No use espacios entre las comas)" pattern="^\d{4}-(T|H)-\d{6}(,\d{4}-(T|H)-\d{6})*$">
-        </div>
-    </div>
-    <div class="row m-4 justify-content-center">
-        <label for="cantidad" class="col-sm-2 col-form-label">Cantidad</label>
-        <div class="col-sm-5">
-            <input required type="number" min="1" max="5000" class="form-control" name="cantidad" id="cantidad">
+            <input required type="datetime-local" class="form-control" name="fecha" id="fecha">
         </div>
     </div>
 
     <div class="row m-4 justify-content-center">
         <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
         <div class="col-sm-5">
-            <textarea class="form-control" id="observaciones" name="observaciones" 
+            <textarea class="form-control" id="observacion" name="observacion" 
             rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
         </div>
     </div>

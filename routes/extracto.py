@@ -84,6 +84,8 @@ def extracto_listado(terminos_de_busqueda):
         title = "Extracto"
         section = "Extracto"
         return render_template("extracto/listado.html", 
+                               max=max,
+                               min=min,
                                offset=offset,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,

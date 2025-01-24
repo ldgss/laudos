@@ -13,6 +13,10 @@ from routes import index
 from routes import errors
 from routes import bloqueos
 from routes import hojalata
+from routes import reporte
+from routes import anulacion
+from routes import correcion
+from routes import materia
 from db import db
 from datetime import timedelta
 from flask import session
@@ -34,14 +38,14 @@ else:
     print("modo de base de datos: produccion")
     user = tokens.production_user
     password = tokens.production_pass
-    app.config["SQLALCHEMY_DATABASE_URI"] = f'postgresql://{user}:{password}@leo.solvencia.local:5432/laudosdb'
+    app.config["SQLALCHEMY_DATABASE_URI"] = f'postgresql://{user}:{password}@leo.solvencia.local:5432/laudosdb?client_encoding=utf8'
     app.config['SQLALCHEMY_BINDS'] = {
         # 'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+18+for+SQL+Server'
         'sqlserver': 'mssql+pyodbc://arballon_RO:SolArb2024@Sql-server.solvencia.local/arballon?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes'
     }
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=8)
 db.db.init_app(app)
 app.register_blueprint(login.login_bp)
 app.register_blueprint(index.index_bp)
@@ -55,3 +59,7 @@ app.register_blueprint(ubicaciones.ubicaciones_bp)
 app.register_blueprint(insumos.insumos_bp)
 app.register_blueprint(bloqueos.bloqueos_bp)
 app.register_blueprint(hojalata.hojalata_bp)
+app.register_blueprint(reporte.reporte_bp)
+app.register_blueprint(anulacion.anulacion_bp)
+app.register_blueprint(correcion.correccion_bp)
+app.register_blueprint(materia.materia_bp)

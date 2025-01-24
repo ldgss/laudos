@@ -19,8 +19,8 @@ resultados_por_pagina = 20
 @bloqueos_bp.get("/bloqueos_produccion")
 def bloqueos():
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
-        title = "bloqueo"
-        section = "bloqueo"
+        title = "Bloqueo"
+        section = "Bloqueo"
         return render_template("bloqueados/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
@@ -31,6 +31,7 @@ def bloqueos():
 #      if helpers.session_on() and helpers.authorized_to("bloqueo"):
 #         # hojalata = mod_hojalata.get_hojalata(numero_unico)
         
+<<<<<<< HEAD
 #         title = "bloqueados"
 #         section = "bloqueados"
 #         return render_template("bloqueados/agregar.html", 
@@ -38,6 +39,15 @@ def bloqueos():
 #                                productos_arballon = session["productos_arballon"])
 #      else:
 #         return redirect(url_for("login.login_get"))
+=======
+        title = "Bloqueados"
+        section = "Bloqueados"
+        return render_template("bloqueados/agregarid.html", 
+                               title=title, section=section, 
+                               productos_arballon = session["productos_arballon"])
+     else:
+        return redirect(url_for("login.login_get"))
+>>>>>>> df675bf8361a19b09a1f48095171872cb434912b
 
 @bloqueos_bp.post("/bloqueos/agregar/agregarbloq")
 def bloqueos_agregar_post():
@@ -123,7 +133,12 @@ def bloqueados_listado(terminos_de_busqueda):
         title = "Bloqueados"
         section = "Bloqueados"
         return render_template("bloqueados/listado.html",
+<<<<<<< HEAD
                                offset=offset, 
+=======
+                               max=max,
+                               min=min, 
+>>>>>>> df675bf8361a19b09a1f48095171872cb434912b
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,
                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])

@@ -1,6 +1,7 @@
 from sqlalchemy.sql import text
 from db import db
 from datetime import datetime
+import shlex
 
 def listar_productos_arballon_hojalata():
     # cambiar a sqlserver para llamar a arballon
@@ -45,14 +46,14 @@ def get_ultimo_id():
         if not ultimo_id:
             # si es el primer pallet
             year = datetime.now().year
-            return f"{year}-H-000000"
+            return f"{year}-H1-000000"
         else:
             # si ya existen pallets, aumentar el numero del id
-            prefijo = ultimo_id[:-6]
+            prefijo = str(datetime.now().year)
             sufijo = int(ultimo_id[-6:])
             nuevo_numero = sufijo + 1
             nuevo_numero_str = f"{nuevo_numero:06d}"
-            nuevo_codigo = prefijo + nuevo_numero_str
+            nuevo_codigo = f"{prefijo}-H1-{nuevo_numero_str}"
             return nuevo_codigo
     except Exception as e:
         print(f"Error: {e}")
@@ -143,7 +144,7 @@ def get_hojalata(numero_unico):
 def get_listado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:

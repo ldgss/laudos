@@ -19,8 +19,8 @@ resultados_por_pagina = 10
 @hojalata_bp.get("/hojalata")
 def hojalata():
     if helpers.session_on() and helpers.authorized_to("hojalata"):
-        title = "hojalata"
-        section = "hojalata"
+        title = "Hojalata"
+        section = "Hojalata"
         return render_template("hojalata/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
@@ -41,9 +41,11 @@ def hojalata_listado(terminos_de_busqueda):
         offset = (pagina - 1) * resultados_por_pagina
       
         resultado = mod_hojalata.get_listado(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "hojalata"
-        section = "hojalata"
+        title = "Hojalata"
+        section = "Hojalata"
         return render_template("hojalata/listado.html", 
+                               max=max,
+                               min=min,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,
                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
@@ -54,8 +56,8 @@ def hojalata_listado(terminos_de_busqueda):
 def hojalata_agregar():
     if helpers.session_on() and helpers.authorized_to("hojalata"):
         proximo_id = mod_hojalata.get_ultimo_id()
-        title = "hojalata"
-        section = "hojalata"
+        title = "Hojalata"
+        section = "Hojalata"
         return render_template("hojalata/agregar.html", 
                                title=title, section=section, 
                                proximo_id=proximo_id,
@@ -70,8 +72,8 @@ def hojalata_agregar_post():
         vto = mod_mercaderia.get_vencimiento(request.form)
         # el insert devuelve True si todo salio bien
         barcode = mod_hojalata.insert_mercaderia(request.form, vto)
-        title = "hojalata"
-        section = "hojalata"
+        title = "Hojalata"
+        section = "Hojalata"
         if barcode:
             # enviar a imprimir/detalle el producto recien creado
             return redirect(url_for("hojalata.hojalata_imprimir", numero_unico=request.form["numero_unico"]))
@@ -83,8 +85,8 @@ def hojalata_agregar_post():
 def hojalata_imprimir(numero_unico):
     if helpers.session_on() and helpers.authorized_to("hojalata"):
         hojalata = mod_hojalata.get_hojalata(numero_unico)
-        title = "hojalata"
-        section = "hojalata"
+        title = "Hojalata"
+        section = "Hojalata"
         return render_template("hojalata/imprimir.html", 
                                title=title, section=section, 
                                hojalata=hojalata)
@@ -94,8 +96,8 @@ def hojalata_imprimir(numero_unico):
 @hojalata_bp.get("/hojalata/kpi")
 def hojalata_kpi():
     if helpers.session_on() and helpers.authorized_to("hojalata"):
-        title = "hojalata"
-        section = "hojalata"
+        title = "Hojalata"
+        section = "Hojalata"
         return render_template("hojalata/kpi.html", 
                                title=title, section=section,)
     else:

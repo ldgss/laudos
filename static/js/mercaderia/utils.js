@@ -1,12 +1,33 @@
 function validarMarca() {
-    const denominacionInput = document.getElementById('denominacion');
-    const denominacion_opciones = document.getElementById('denominacion_opciones');
-    const opciones = Array.from(denominacion_opciones.options).map(option => option.value);
+    // Seleccionar todos los elementos cuyo id comienza con "denominacion"
+    const denominacionInputs = document.querySelectorAll('[id^="denominacion"]');
+    
+    // Capturar el elemento fijo "denominacion_opciones"
+    const denominacionOpciones = document.getElementById('denominacion_opciones');
+    
+    // Validar que el elemento de opciones exista
+    if (!denominacionOpciones) return;
 
-    if (!opciones.includes(denominacionInput.value)) {
-        denominacionInput.value = '';
-    }
+    // Obtener las opciones como un array
+    const opciones = Array.from(denominacionOpciones.options).map(option => option.value);
+
+    // Validar cada input cuyo id comienza con "denominacion"
+    denominacionInputs.forEach(input => {
+        if (!opciones.includes(input.value)) {
+            input.value = '';
+        }
+    });
 }
+
+// function validarMarca() {
+//     const denominacionInput = document.querySelector('[id^="denominacion"]');
+//     const denominacion_opciones = document.getElementById('denominacion_opciones');
+//     const opciones = Array.from(denominacion_opciones.options).map(option => option.value);
+
+//     if (!opciones.includes(denominacionInput.value)) {
+//         denominacionInput.value = '';
+//     }
+// }
 
 function validarTipoDeReacondicionado() {
     const denominacionInput = document.getElementById('tipo_reacondicionado');
@@ -34,55 +55,128 @@ function actualizarFechaYHora() {
 }
 
 function rellenarCantidad() {
-    const clase = document.getElementById("cod_cls").value;
-    const cantidadInput = document.getElementById("cantidad");
-    switch (clase) {
-        case 'Extrac':
-            break;
-        case 'Pas500':
-            cantidadInput.value = 1080;
-            break;
-        case 'Pelado':
-            cantidadInput.value = 294;
-            break;
-        case 'Pulpa':
-            console.log("Defina si la pulpa es Lata 8 o Botella 500");
-            break;
-        case 'Pure':
-            cantidadInput.value = 1980;
-            break;
-        case 'Tri500':
-            cantidadInput.value = 1080;
-            break;
-        case 'Tri8':
-            cantidadInput.value = 115;
-            break; 
-        case 'Tri910':
-            cantidadInput.value = 840;
-            break;
-        case 'Tri950':
-            cantidadInput.value = 840;
-            break;
-        case 'Tritur':
-            break; 
-        default:
-            console.log("La cantidad no esta definida")
-            break;
-    }
+    // Obtener el valor de cualquier input cuyo id comience con "cod_cls"
+    const clase = document.querySelector("[id^='cod_cls']").value;
+    const cantidadInputs = document.querySelectorAll("[id^='cantidad']"); // Selecciona todos los ids que comienzan con 'cantidad'
+    const denominacion = document.getElementById("denominacion").value
+
+    cantidadInputs.forEach(cantidadInput => {
+        switch (clase) {
+            case 'Extrac':
+                cantidadInput.value = "";
+                break;
+            case 'Pas500':
+                cantidadInput.value = 1080;
+                break;
+            case 'Pelado':
+                cantidadInput.value = 294;
+                break;
+            case 'Pulpa':
+                console.log("Defina si la pulpa es Lata 8 o Botella 500");
+                break;
+            case 'Pure':
+                cantidadInput.value = 1980;
+                break;
+            case 'Tri500':
+                cantidadInput.value = 1080;
+                break;
+            case 'Tri8':
+                cantidadInput.value = 115;
+                break;
+            case 'Tri910':
+                cantidadInput.value = 840;
+                break;
+            case 'Tri950':
+                cantidadInput.value = 840;
+                break;
+            case 'Tritur':
+                cantidadInput.value = "";
+                break;
+            default:
+                console.log("La cantidad no está definida");
+                break;
+        }
+    });
+
+    cantidadInputs.forEach(cantidadInput => {
+        switch (denominacion) {
+            case 'MI TT Botella 910 CUISUINE & CO T.OFF':
+                cantidadInput.value = 672;
+                break;
+            default:
+                console.log("La cantidad no está definida");
+                break;
+        }
+    });
 }
+
 
 function actualizarValoresOcultos() {
-    const input = document.getElementById("denominacion");
-    const options = document.getElementById("denominacion_opciones").options;
+    // Seleccionar todos los inputs cuyo id comienza con "denominacion"
+    const denominacionInputs = document.querySelectorAll('[id^="denominacion"]');
+    // Capturar el elemento fijo "denominacion_opciones"
+    const denominacionOpciones = document.getElementById("denominacion_opciones");
+    // Validar que el elemento de opciones exista
+    if (!denominacionOpciones) return;
+    const options = denominacionOpciones.options;
 
-    for (let option of options) {
-        if (option.value === input.value) {
-            document.getElementById("cod_cls").value = option.getAttribute("data-cod-cls");
-            document.getElementById("cod_mae").value = option.getAttribute("data-cod-mae");
-            break; 
+    // Seleccionar todos los elementos cuyo id comienza con "cod_cls" o "cod_mae"
+    const codClsInputs = document.querySelectorAll('[id^="cod_cls"]');
+    const codMaeInputs = document.querySelectorAll('[id^="cod_mae"]');
+
+    // Iterar sobre cada input que comienza con "denominacion"
+    denominacionInputs.forEach(input => {
+        for (let option of options) {
+            if (option.value === input.value) {
+                // Actualizar todos los valores ocultos "cod_cls"
+                codClsInputs.forEach(clsInput => {
+                    clsInput.value = option.getAttribute("data-cod-cls");
+                });
+                // Actualizar todos los valores ocultos "cod_mae"
+                codMaeInputs.forEach(maeInput => {
+                    maeInput.value = option.getAttribute("data-cod-mae");
+                });
+                break;
+            }
         }
-    }
+    });
 }
+
+
+// function actualizarValoresOcultos() {
+//     // Seleccionar todos los inputs cuyo id comienza con "denominacion"
+//     const denominacionInputs = document.querySelectorAll('[id^="denominacion"]');
+//     // Capturar el elemento fijo "denominacion_opciones"
+//     const denominacionOpciones = document.getElementById("denominacion_opciones");
+//     // Validar que el elemento de opciones exista
+//     if (!denominacionOpciones) return;
+//     const options = denominacionOpciones.options;
+//     // Iterar sobre cada input que comienza con "denominacion"
+//     denominacionInputs.forEach(input => {
+//         for (let option of options) {
+//             if (option.value === input.value) {
+//                 // Actualizar valores ocultos basados en los atributos del option
+//                 document.getElementById("cod_cls").value = option.getAttribute("data-cod-cls");
+//                 document.getElementById("cod_mae").value = option.getAttribute("data-cod-mae");
+//                 break;
+//             }
+//         }
+//     });
+// }
+
+
+// function actualizarValoresOcultos() {
+//     const input = document.querySelector('[id^="denominacion"]');
+//     const options = document.getElementById("denominacion_opciones").options;
+
+//     for (let option of options) {
+//         if (option.value === input.value) {
+//             document.getElementById("cod_cls").value = option.getAttribute("data-cod-cls");
+//             document.getElementById("cod_mae").value = option.getAttribute("data-cod-mae");
+//             break; 
+//         }
+//     }
+// }
 
 function lote_a_automatico(){
     const lote_a = document.getElementById("lote_a");

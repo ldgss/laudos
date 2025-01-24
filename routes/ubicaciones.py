@@ -79,9 +79,24 @@ def ubicaciones_listado(terminos_de_busqueda):
         title = "Ubicaciones"
         section = "Ubicaciones"
         return render_template("ubicaciones/listado.html", 
+                               max=max,
+                               min=min,
                                offset=offset,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,
                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
+    else:
+        return redirect(url_for("login.login_get"))
+
+@ubicaciones_bp.post("/ubicaciones/anular")
+def ubicaciones_anular_post():
+    if helpers.session_on() and helpers.authorized_to("ubicacion"):
+        result = mod_ubicaciones.anular_ubicaciones()
+        if result:
+            return redirect(url_for("ubicaciones.ubicaciones_track", numero_unico=request.form["numero_unico"]))
+        else:
+            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
+            return redirect(url_for("ubicaciones.ubicaciones_track", numero_unico=request.form["numero_unico"]))
+
     else:
         return redirect(url_for("login.login_get"))

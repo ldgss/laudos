@@ -27,10 +27,12 @@
             <input type="hidden" id="cod_mae" name="cod_mae">
             <datalist id="denominacion_opciones">
                 {% for p in productos_arballon %}
-                <option value="{{ p.den | trim }}" 
-                data-cod-cls="{{ p.cod_cls | trim }}" 
-                data-cod-mae="{{ p.cod_mae | trim }}">
-                </option>
+                    {% if 'semi' in (p.den | lower) or 'rep' in (p.den | lower) or 'abo' in (p.den | lower) %}
+                        <option value="{{ p.den | trim }}" 
+                                data-cod-cls="{{ p.cod_cls | trim }}" 
+                                data-cod-mae="{{ p.cod_mae | trim }}">
+                        </option>
+                    {% endif %}
                 {% endfor %}
             </datalist>
         </div>

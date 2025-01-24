@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import request
 from itertools import cycle
 from flask import session
+import shlex
 
 def get_ultimo_id():
     try:
@@ -80,7 +81,7 @@ def guardar_ubicaciones():
                     :responsable, CURRENT_TIMESTAMP, :insumo_envase, :ubicacion_profundidad, :ubicacion_altura, :reacondicionado)
                 """
                 )
-        print(request.form)
+        
         reacondicionado = db.db.session.execute(reacondicionado,
                                             {
                                                 "ubicacion_fila": request.form["id_ubicacion"],
@@ -128,27 +129,30 @@ def get_ubicaciones(numero_unico):
 def get_listado_ubicaciones(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
             subcondicion = []
             # chequear cada termino en cada columna de ubicacion
+            subcondicion.append(f"u.responsable::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"u.ubicacion_fila::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"u.mercaderia::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.den::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"u.hojalata::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"h.den::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"u.extracto::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.den::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"u.fecha_registro::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"u.insumo_envase::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"u.ubicacion_profundidad::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"u.ubicacion_altura::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"u.reacondicionado::TEXT ILIKE '%{termino}%'")
-            
-            # chequear cada termino en cada columna de ubicacion_nombre
+            subcondicion.append(f"u_n.id::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"u_n.posicion::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"u_n.sector::TEXT ILIKE '%{termino}%'")
-            
-            # chequear cada termino en cada columna de usuario
             subcondicion.append(f"usuario.nombre::TEXT ILIKE '%{termino}%'")
+            
 
             condiciones_ilike.append(f"({' OR '.join(subcondicion)})")
 
@@ -160,30 +164,68 @@ def get_listado_ubicaciones(terminos_de_busqueda, resultados_por_pagina, offset)
             
 WITH ubicacion_con_row AS (
     SELECT 
-        u.*, 
-        u_n.*, 
+    	u.responsable,
+        u.ubicacion_fila,
+        u.mercaderia,
+        m.den as mden,
+        u.hojalata,
+        h.den as hden,
+        u.extracto,
+        e.den as eden,
+        u.fecha_registro,
+        u.insumo_envase,
+        u.ubicacion_profundidad,
+        u.ubicacion_altura,
+        u.reacondicionado,
+        u_n.id as ubicacion_fila_2,
+        u_n.posicion,
+        u_n.sector,
+        usuario.id as usuario_id,
         usuario.nombre,
         ROW_NUMBER() OVER (
             PARTITION BY 
-                u.mercaderia, u.reacondicionado
+                u.mercaderia, u.reacondicionado,
+                u.extracto
             ORDER BY u.fecha_registro DESC
         ) AS rn
     FROM ubicacion u
     LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
     LEFT JOIN usuario ON u.responsable = usuario.id
+    left join mercaderia m on m.numero_unico = u.mercaderia
+    left join hojalata h on h.numero_unico = u.hojalata
+    left join extracto e on e.numero_unico = u.extracto
     WHERE 
         {condicion_final_ilike}
 )
 SELECT 
-    u.*, 
-    u_n.*, 
-    usuario.nombre
+		u.responsable,
+        u.ubicacion_fila,
+        u.mercaderia,
+        m.den as mden,
+        u.hojalata,
+        h.den as hden,
+        u.extracto,
+        e.den as eden,
+        u.fecha_registro,
+        u.insumo_envase,
+        u.ubicacion_profundidad,
+        u.ubicacion_altura,
+        u.reacondicionado,
+        u_n.id as ubicacion_fila_2,
+        u_n.posicion,
+        u_n.sector,
+        usuario.id as usuario_id,
+        usuario.nombre
 FROM ubicacion_con_row AS u
 LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
 LEFT JOIN usuario ON u.responsable = usuario.id
+left join mercaderia m on m.numero_unico = u.mercaderia
+left join hojalata h on h.numero_unico = u.hojalata
+left join extracto e on e.numero_unico = u.extracto
 WHERE u.rn = 1
+ORDER BY u.fecha_registro DESC
 LIMIT :limit OFFSET :offset;
-;
+
 
 
 
@@ -195,27 +237,64 @@ LIMIT :limit OFFSET :offset;
             
 WITH ubicacion_con_row AS (
     SELECT 
-        u.*, 
-        u_n.*, 
+    	u.responsable,
+        u.ubicacion_fila,
+        u.mercaderia,
+        m.den,
+        u.hojalata,
+        h.den,
+        u.extracto,
+        e.den,
+        u.fecha_registro,
+        u.insumo_envase,
+        u.ubicacion_profundidad,
+        u.ubicacion_altura,
+        u.reacondicionado,
+        u_n.id as ubicacion_fila_2,
+        u_n.posicion,
+        u_n.sector,
+        usuario.id as usuario_id,
         usuario.nombre,
         ROW_NUMBER() OVER (
             PARTITION BY 
-                u.mercaderia, u.reacondicionado
+                u.mercaderia, u.reacondicionado,
+                u.extracto
             ORDER BY u.fecha_registro DESC
         ) AS rn
     FROM ubicacion u
     LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
     LEFT JOIN usuario ON u.responsable = usuario.id
+    left join mercaderia m on m.numero_unico = u.mercaderia
+    left join hojalata h on h.numero_unico = u.hojalata
+    left join extracto e on e.numero_unico = u.extracto
     WHERE 
         {condicion_final_ilike}
 )
 SELECT 
-    u.*, 
-    u_n.*, 
-    usuario.nombre
+		u.responsable,
+        u.ubicacion_fila,
+        u.mercaderia,
+        m.den,
+        u.hojalata,
+        h.den,
+        u.extracto,
+        e.den,
+        u.fecha_registro,
+        u.insumo_envase,
+        u.ubicacion_profundidad,
+        u.ubicacion_altura,
+        u.reacondicionado,
+        u_n.id as ubicacion_fila_2,
+        u_n.posicion,
+        u_n.sector,
+        usuario.id as usuario_id,
+        usuario.nombre
 FROM ubicacion_con_row AS u
 LEFT JOIN ubicacion_nombre u_n ON u.ubicacion_fila = u_n.id
 LEFT JOIN usuario ON u.responsable = usuario.id
+left join mercaderia m on m.numero_unico = u.mercaderia
+left join hojalata h on h.numero_unico = u.hojalata
+left join extracto e on e.numero_unico = u.extracto
 WHERE u.rn = 1;
 
 
@@ -230,5 +309,24 @@ WHERE u.rn = 1;
         return [resultados.fetchall(), total_paginas]
 
     except Exception as e:
+        print(f"Error: {e}")
+        return None
+    
+def anular_ubicaciones():
+    # CUIDADO - DANGER - DELETE ZONE
+    try:
+        anulacion = text("""
+                    DELETE FROM ubicacion
+                    WHERE id=:id;
+                """
+                )
+        anulacion = db.db.session.execute(anulacion,
+                                            {
+                                                "id": request.form["id"]                                                
+                                            })
+        db.db.session.commit()
+        return True
+    except Exception as e:
+        db.db.session.rollback()
         print(f"Error: {e}")
         return None

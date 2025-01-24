@@ -3,6 +3,7 @@ from db import db
 from datetime import datetime
 from flask import request
 from itertools import cycle
+import shlex
 
 def get_ultimo_id():
     try:
@@ -25,11 +26,12 @@ def get_ultimo_id():
             return f"{year}-T2-000000"
         else:
             # si ya existen pallets, aumentar el numero del id
-            prefijo = ultimo_id[:-6]
+            prefijo = str(datetime.now().year)
             sufijo = int(ultimo_id[-6:])
             nuevo_numero = sufijo + 1
             nuevo_numero_str = f"{nuevo_numero:06d}"
-            nuevo_codigo = prefijo + nuevo_numero_str
+            nuevo_codigo = f"{prefijo}-T2-{nuevo_numero_str}"
+
             return nuevo_codigo
     except Exception as e:
         print(f"Error: {e}")
@@ -191,7 +193,7 @@ def get_reacondicionado(numero_unico):
 def get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
-        terminos_de_busqueda = terminos_de_busqueda.split()
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
         for termino in terminos_de_busqueda:
@@ -257,6 +259,7 @@ def get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, off
             LEFT JOIN vencimiento v ON v.id = m.vto
             WHERE {condicion_final_ilike}
             GROUP BY r.id, u.nombre
+            ORDER BY r.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
 
         """
