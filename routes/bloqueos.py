@@ -25,7 +25,7 @@ def bloqueos():
     else:
         return redirect(url_for("login.login_get"))
     
-@bloqueos_bp.post("/bloqueos/agregar/agregarbloq")
+@bloqueos_bp.post("/bloqueos_produccion/agregar/agregarbloq")
 def bloqueos_agregar_post():
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
         # obtenemos el id solo del vencimiento necesario
@@ -45,11 +45,12 @@ def bloqueos_agregar_post():
     else:
         return redirect(url_for("login.login_get"))
     
-@bloqueos_bp.get("/bloqueos/imprimir/<id_unico>")
+@bloqueos_bp.get("/bloqueos_produccion/imprimir/<id_unico>")
 def bloqueados_imprimir(id_unico):
     print(id_unico)
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
         bloqueados = mod_bloqueos.get_bloqueados(id_unico)
+        print(bloqueados)
         title = "Bloqueados"
         section = "Bloqueados"
         return render_template("bloqueados/imprimir.html", 
@@ -58,7 +59,7 @@ def bloqueados_imprimir(id_unico):
     else:
         return redirect(url_for("login.login_get"))
 
-@bloqueos_bp.get("/bloqueos/agregar/<numero_unico>")
+@bloqueos_bp.get("/bloqueos_produccion/agregar/<numero_unico>")
 def bloqueos_agregar_id(numero_unico):
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
         hojalata = mod_mercaderia.get_envasado(numero_unico)
@@ -73,7 +74,7 @@ def bloqueos_agregar_id(numero_unico):
     else:
         return redirect(url_for("login.login_get"))
     
-@bloqueos_bp.get("/bloqueos/agregarmultiple")
+@bloqueos_bp.get("/bloqueos_produccion/agregarmultiple")
 def bloqueos_agregar_multiple():
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
         proximo_id = mod_hojalata.get_ultimo_id()
@@ -86,7 +87,7 @@ def bloqueos_agregar_multiple():
     else:
         return redirect(url_for("login.login_get"))
     
-@bloqueos_bp.post("/bloqueos/buscar")
+@bloqueos_bp.post("/bloqueos_produccion/buscar")
 def bloqueos_buscar():
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
         return redirect(url_for("bloqueos.bloqueados_listado", terminos_de_busqueda=request.form["buscar"]))
@@ -96,7 +97,7 @@ def bloqueos_buscar():
 
     
 
-@bloqueos_bp.get("/bloqueos/listado/<terminos_de_busqueda>")
+@bloqueos_bp.get("/bloqueos_produccion/listado/<terminos_de_busqueda>")
 def bloqueados_listado(terminos_de_busqueda):
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
         # paginacion
@@ -116,14 +117,14 @@ def bloqueados_listado(terminos_de_busqueda):
     else:
         return redirect(url_for("login.login_get"))
     
-@bloqueos_bp.post("/bloqueos/buscarbloqueados")
+@bloqueos_bp.post("/bloqueos_produccion/buscarbloqueados")
 def bloqueos_buscarbloqueados():
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
         return redirect(url_for("bloqueos.bloqueados_listado_bloqueados", terminos_de_busqueda=request.form["buscarbloqueados"]))
     else:
         return redirect(url_for("login.login_get"))
     
-@bloqueos_bp.get("/bloqueos/listadobloqueados/<terminos_de_busqueda>")
+@bloqueos_bp.get("/bloqueos_produccion/listadobloqueados/<terminos_de_busqueda>")
 def bloqueados_listado_bloqueados(terminos_de_busqueda):
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
         # paginacion

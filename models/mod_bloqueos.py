@@ -102,10 +102,12 @@ def insert_liberacion(data):
 def get_bloqueados(id_unico):
     try:
         sql = text("""
-                    SELECT b.*, u.*
+                    SELECT b.mercaderia AS bloqueado_mercaderia, u.*, mb.*, m.*
                     FROM bloqueado b
                     JOIN usuario u ON b.responsable = u.id
-                    WHERE hojalata = :id_unico
+                    JOIN motivo_bloqueo mb ON b.motivo = mb.id
+                    JOIN mercaderia m ON b.mercaderia = m.numero_unico
+                    WHERE b.mercaderia = :id_unico
                 """
                 )
         

@@ -46,7 +46,7 @@
                         {{l.nombre}}
                     </td>
                     <td>
-                        <a href="" class="btn btn-outline-primary">Ver</a >
+                        <a href="{{url_for('bloqueos.bloqueados_imprimir', id_unico=l.mercaderia)}}" class="btn btn-outline-primary">Ver</a >
                     </td>
                     <td>
                         <button type="button" class="btn btn-success boton_liberar_modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
