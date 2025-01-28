@@ -25,20 +25,6 @@ def bloqueos():
     else:
         return redirect(url_for("login.login_get"))
     
-
-# @bloqueos_bp.get("/bloqueos/agregar")
-# def bloqueos_agregar():
-#      if helpers.session_on() and helpers.authorized_to("bloqueo"):
-#         # hojalata = mod_hojalata.get_hojalata(numero_unico)
-        
-#         title = "bloqueados"
-#         section = "bloqueados"
-#         return render_template("bloqueados/agregar.html", 
-#                                title=title, section=section, 
-#                                productos_arballon = session["productos_arballon"])
-#      else:
-#         return redirect(url_for("login.login_get"))
-
 @bloqueos_bp.post("/bloqueos/agregar/agregarbloq")
 def bloqueos_agregar_post():
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
@@ -52,9 +38,7 @@ def bloqueos_agregar_post():
         if barcode:
             # enviar a imprimir/detalle el producto recien creado
             return redirect(url_for("bloqueos.bloqueados_imprimir", id_unico=request.form["id_unico"]))
-        
-         
-            
+                
         else:
             flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
             return redirect(url_for("bloqueos.bloqueos"))
@@ -123,12 +107,9 @@ def bloqueados_listado(terminos_de_busqueda):
         title = "Bloqueados"
         section = "Bloqueados"
         return render_template("bloqueados/listado.html",
-<<<<<<< HEAD
                                offset=offset, 
-=======
                                max=max,
                                min=min, 
->>>>>>> df675bf8361a19b09a1f48095171872cb434912b
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,
                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
