@@ -386,17 +386,20 @@ def get_despacho():
             SELECT 
                 d.mercaderia,
                 m.den as mercaderia_den,
+                m.lote as mercaderia_lote,
                 d.hojalata,
                 h.den as hojalata_den,
+                h.lote as hojalata_lote,
                 d.extracto,
                 e.den as extracto_den,
+                e.lote as extracto_lote,
                 d.reacondicionado,
                 r.nueva_den as reacondicionado_den,
                 d.fletero_codigo,
                 d.fletero_nombre,
                 d.observaciones,
                 u.nombre,
-                d.fecha_registro 
+                d.fecha_registro
             FROM despacho d
             LEFT JOIN usuario u ON d.responsable = u.id
             LEFT JOIN mercaderia m ON d.mercaderia = m.numero_unico
@@ -404,18 +407,30 @@ def get_despacho():
             LEFT JOIN extracto e ON d.extracto = e.numero_unico
             LEFT JOIN reacondicionado r ON d.reacondicionado = r.numero_unico
             WHERE 
-                (:fecha_inicial IS NULL OR d.fecha_registro >= :fecha_inicial) AND
-                (:fecha_final IS NULL OR d.fecha_registro <= :fecha_final) AND
-                (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%') and
-                (:observaciones IS NULL OR d.observaciones ILIKE '%' || :observaciones || '%') and
-                (:fletero_codigo IS NULL OR d.fletero_codigo ILIKE '%' || :fletero_codigo || '%') and
-                (:fletero_nombre IS NULL OR d.fletero_nombre ILIKE '%' || :fletero_nombre || '%') AND
-                (:denominacion IS NULL OR 
-                    m.den ILIKE '%' || :denominacion || '%' OR 
-                    h.den ILIKE '%' || :denominacion || '%' OR 
-                    e.den ILIKE '%' || :denominacion || '%' OR 
-                    r.nueva_den ILIKE '%' || :denominacion || '%')
-            ORDER BY d.fecha_registro DESC;
+			    (:fecha_inicial IS NULL OR d.fecha_registro >= :fecha_inicial) AND
+			    (:fecha_final IS NULL OR d.fecha_registro <= :fecha_final) AND
+			    
+			    (
+			        (:lote_inicial IS NULL OR m.lote >= :lote_inicial) OR
+			        (:lote_inicial IS NULL OR h.lote >= :lote_inicial) OR
+			        (:lote_inicial IS NULL OR e.lote >= :lote_inicial)
+			    ) AND
+			    (
+			        (:lote_final IS NULL OR m.lote <= :lote_final) OR
+			        (:lote_final IS NULL OR h.lote <= :lote_final) OR
+			        (:lote_final IS NULL OR e.lote <= :lote_final)
+			    ) AND
+			    
+			    (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%') AND
+			    (:observaciones IS NULL OR d.observaciones ILIKE '%' || :observaciones || '%') AND
+			    (:fletero_codigo IS NULL OR d.fletero_codigo ILIKE '%' || :fletero_codigo || '%') AND
+			    (:fletero_nombre IS NULL OR d.fletero_nombre ILIKE '%' || :fletero_nombre || '%') AND
+			    (:denominacion IS NULL OR 
+			        m.den ILIKE '%' || :denominacion || '%' OR 
+			        h.den ILIKE '%' || :denominacion || '%' OR 
+			        e.den ILIKE '%' || :denominacion || '%' OR 
+			        r.nueva_den ILIKE '%' || :denominacion || '%')
+			ORDER BY d.fecha_registro DESC;
                     """)
 
         # Ejecutar la consulta
@@ -428,6 +443,8 @@ def get_despacho():
                 "observaciones": request.form.get("observaciones") or None,
                 "fletero_codigo": request.form.get("fletero_codigo") or None,
                 "fletero_nombre": request.form.get("fletero_nombre") or None,
+                "lote_inicial": request.form.get("lote_inicial") or None,
+                "lote_final": request.form.get("lote_final") or None,
                 "denominacion": request.form.get("denominacion") or None,
             }
         ).fetchall()
