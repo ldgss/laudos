@@ -35,6 +35,11 @@
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#ubicacionModal">Ubicaciones</button>
         </div>
     {% endif %}
+    {% if session["despacho"] %}
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#despachoModal">Despachos</button>
+        </div>
+    {% endif %}
     <div class="m-3">
         <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
     </div>
@@ -323,4 +328,45 @@
     </div>
   </div>
 
+  <!-- Modal despachos -->
+  <div class="modal fade" id="despachoModal" tabindex="-1" aria-labelledby="despachoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="despachoModalLabel">Despachos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+            <form method="POST" action="/reporte/exportar/despacho">
+                <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+                <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+            
+                <label class="col-form-label" for="fecha_final">Fecha final</label>
+                <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+            
+                <label class="col-form-label" for="responsable">Responsable</label>
+                <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+                
+                <label class="col-form-label" for="fletero_codigo">Fletero codigo</label>
+                <input class="form-control" type="text" maxlength="20" name="fletero_codigo" id="fletero_codigo">
+                
+                <label class="col-form-label" for="fletero_nombre">Fletero nombre</label>
+                <input class="form-control" type="text" maxlength="20" name="fletero_nombre" id="fletero_nombre">
+                
+                <label class="col-form-label" for="observaciones">Observaciones</label>
+                <input class="form-control" type="text" maxlength="200" name="observaciones" id="observaciones">
+                
+                <label class="col-form-label" for="denominacion">Denominacion</label>
+                <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
+
+                <div class="row m-3">
+                    <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+                </div>
+            </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

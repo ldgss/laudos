@@ -378,3 +378,69 @@ def get_ubicacion():
     except Exception as e:
         print(f"Error: {e}")
         return None
+    
+def get_despacho():
+    
+    try:
+        sql = text("""
+            SELECT 
+                d.mercaderia,
+                m.den as mercaderia_den,
+                d.hojalata,
+                h.den as hojalata_den,
+                d.extracto,
+                e.den as extracto_den,
+                d.reacondicionado,
+                r.nueva_den as reacondicionado_den,
+                d.fletero_codigo,
+                d.fletero_nombre,
+                d.observaciones,
+                u.nombre,
+                d.fecha_registro 
+            FROM despacho d
+            LEFT JOIN usuario u ON d.responsable = u.id
+            LEFT JOIN mercaderia m ON d.mercaderia = m.numero_unico
+            LEFT JOIN hojalata h ON d.hojalata = h.numero_unico
+            LEFT JOIN extracto e ON d.extracto = e.numero_unico
+            LEFT JOIN reacondicionado r ON d.reacondicionado = r.numero_unico
+            WHERE 
+                (:fecha_inicial IS NULL OR d.fecha_registro >= :fecha_inicial) AND
+                (:fecha_final IS NULL OR d.fecha_registro <= :fecha_final) AND
+                (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%') and
+                (:observaciones IS NULL OR d.observaciones ILIKE '%' || :observaciones || '%') and
+                (:fletero_codigo IS NULL OR d.fletero_codigo ILIKE '%' || :fletero_codigo || '%') and
+                (:fletero_nombre IS NULL OR d.fletero_nombre ILIKE '%' || :fletero_nombre || '%') AND
+                (:denominacion IS NULL OR 
+                    m.den ILIKE '%' || :denominacion || '%' OR 
+                    h.den ILIKE '%' || :denominacion || '%' OR 
+                    e.den ILIKE '%' || :denominacion || '%' OR 
+                    r.nueva_den ILIKE '%' || :denominacion || '%')
+            ORDER BY d.fecha_registro DESC;
+                    """)
+
+        # Ejecutar la consulta
+        sql_params = db.db.session.execute(
+            sql,
+            {
+                "fecha_inicial": request.form.get("fecha_inicial") or None,
+                "fecha_final": request.form.get("fecha_final") or None,
+                "responsable": request.form.get("responsable") or None,
+                "observaciones": request.form.get("observaciones") or None,
+                "fletero_codigo": request.form.get("fletero_codigo") or None,
+                "fletero_nombre": request.form.get("fletero_nombre") or None,
+                "denominacion": request.form.get("denominacion") or None,
+            }
+        ).fetchall()
+
+        # Crear un DataFrame a partir de sql_params, las columnas se infieren automáticamente
+        df = pd.DataFrame(sql_params)
+        # Crear un archivo CSV en memoria
+        output = BytesIO()
+        df.to_csv(output, index=False)
+
+        output.seek(0)  # Mover el puntero al inicio del archivo
+
+        return output
+    except Exception as e:
+        print(f"Error: {e}")
+        return None

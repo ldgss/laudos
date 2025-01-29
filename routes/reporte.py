@@ -41,6 +41,8 @@ def reporte_exportar(modulo):
                 return generar_reporte(mod_reporte.get_insumo())
             case "ubicacion":
                 return generar_reporte(mod_reporte.get_ubicacion())
+            case "despacho":
+                return generar_reporte(mod_reporte.get_despacho())
             case _:
                 return redirect(url_for("reporte.reporte"))
     else:
