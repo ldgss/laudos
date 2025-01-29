@@ -323,8 +323,11 @@ def get_ubicacion():
         sql = text("""
             SELECT 
                 m.den AS mercaderia_den,
+                m.lote as mercaderia_lote,
                 h.den AS hojalata_den,
+                h.lote as hojalata_lote,
                 e.den AS extracto_den,
+                e.lote as extracto_lote,
                 r.nueva_den AS reacondicionado_den,
                 ub.mercaderia,
                 ub.hojalata,
@@ -344,8 +347,19 @@ def get_ubicacion():
             LEFT JOIN extracto e ON ub.extracto = e.numero_unico
             LEFT JOIN reacondicionado r ON ub.reacondicionado = r.numero_unico
             WHERE 
-                (:fecha_inicial IS NULL OR ub.fecha_registro >= :fecha_inicial) AND
-                (:fecha_final IS NULL OR ub.fecha_registro <= :fecha_final) AND
+               (:fecha_inicial IS NULL OR ub.fecha_registro >= :fecha_inicial) AND
+			    (:fecha_final IS NULL OR ub.fecha_registro <= :fecha_final) AND
+			    
+			    (
+			        (:lote_inicial IS NULL OR m.lote >= :lote_inicial) OR
+			        (:lote_inicial IS NULL OR h.lote >= :lote_inicial) OR
+			        (:lote_inicial IS NULL OR e.lote >= :lote_inicial)
+			    ) AND
+			    (
+			        (:lote_final IS NULL OR m.lote <= :lote_final) OR
+			        (:lote_final IS NULL OR h.lote <= :lote_final) OR
+			        (:lote_final IS NULL OR e.lote <= :lote_final)
+			    ) AND
                 (:responsable IS NULL OR us.nombre ILIKE '%' || :responsable || '%') AND
                 (:denominacion IS NULL OR 
                     m.den ILIKE '%' || :denominacion || '%' OR 
@@ -361,6 +375,8 @@ def get_ubicacion():
             {
                 "fecha_inicial": request.form.get("fecha_inicial") or None,
                 "fecha_final": request.form.get("fecha_final") or None,
+                "lote_inicial": request.form.get("lote_inicial") or None,
+                "lote_final": request.form.get("lote_final") or None,
                 "responsable": request.form.get("responsable") or None,
                 "denominacion": request.form.get("denominacion") or None,
             }
