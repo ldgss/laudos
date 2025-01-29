@@ -23,27 +23,24 @@ def guardar_anulacion():
                                             })
         db.db.session.commit()
 
-        # CUIDADO - DANGER - DELETE ZONE
-        if 'T1' in request.form["numero_unico"]:
+        numero_unico = request.form.get("numero_unico")
+
+        if numero_unico and 'T1' in numero_unico:
             deletion_sql = text("""DELETE FROM mercaderia WHERE numero_unico=:numero_unico""")
             print(f"anulando mercaderia: {request.form["numero_unico"]}")
-        elif 'H1' in request.form["numero_unico"]:
+        elif numero_unico and 'H1' in numero_unico:
             deletion_sql = text("""DELETE FROM hojalata WHERE numero_unico=:numero_unico""")
             print(f"anulando hojalata: {request.form["numero_unico"]}")
-        elif 'E1' in request.form["numero_unico"]:
+        elif numero_unico and 'E1' in numero_unico:
             deletion_sql = text("""DELETE FROM extracto WHERE numero_unico=:numero_unico""")
             print(f"anulando extracto: {request.form["numero_unico"]}")
-        elif 'I1' in request.form["numero_unico"]:
-            deletion_sql = text("""DELETE FROM insumo_envase WHERE numero_unico=:numero_unico""")
-            print(f"anulando insumo: {request.form["numero_unico"]}")
         
         deletion_params = db.db.session.execute(deletion_sql, 
-                                                {"numero_unico": request.form["numero_unico"]
-                                                })
+                                                {
+                                                    "numero_unico": request.form["numero_unico"]
+                                                }
+                                                )
         db.db.session.commit()
-        
-        # CUIDADO - DANGER - DELETE ZONE
-
         return True
     except Exception as e:
         db.db.session.rollback()

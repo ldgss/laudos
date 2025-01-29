@@ -1,0 +1,92 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <style>
+        #interactive {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+        }
+        canvas, video {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/despacho/utils.js")}}"></script>
+    
+{% endblock %}
+
+{% block content %}
+
+<form action="agregar" method="post" id="formulario">
+    <input required type="hidden" class="form-control" name="fletero_codigo" id="fletero_codigo">
+    
+    <!-- Sección Fletero Nombre -->
+    <div class="row m-4 justify-content-center">
+        <label for="denominacion" class="col-sm-2 col-form-label">Fletero nombre</label>
+        <div class="col-sm-5">
+            <input list="fletero_nombre_lista" required type="text" 
+            onblur="validar_fletero_nombre()" oninput="actualizarFleteroCodigo()"
+            class="form-control" name="fletero_nombre" id="fletero_nombre">
+            <datalist id="fletero_nombre_lista">
+                {% for f in fleteros %}
+                        <option value="{{ f.den | trim }}" 
+                                data-cod-cls="{{ f.cod_cls | trim }}" 
+                                data-cod-mae="{{ f.cod_mae | trim }}">
+                        </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+
+    <!-- Vista de la cámara -->
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-7">
+            <div id="interactive"></div>
+        </div>
+    </div>
+
+    <!-- agregar numero_unico -->
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <div class="btn btn-success" id="agregar">Agregar</div>
+        </div>
+    </div>
+
+    <!-- escaneo -->
+    <div class="row m-4 justify-content-center">
+        <label for="denominacion" class="col-sm-2 col-form-label">Escaneo actual</label>
+        <div class="col-sm-5">
+            <input type="text" class="form-control" 
+            name="escaneo" id="escaneo"
+            title="(Ej: 2024-T1-000001, 2024-T2-000001, 2024-H1-000001, 2024-E1-000001)" pattern="^\d{4}-(T1|T2|H1|E1|I1)-\d{6}$">
+        </div>
+    </div>
+    
+    <!-- Contenedor de inputs dinámicos -->
+    <div class="row m-4 justify-content-center" id="lista_numero_unico">
+    </div>
+
+    <!-- Observaciones -->
+    <div class="row m-4 justify-content-center">
+        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+        <div class="col-sm-5">
+            <textarea class="form-control" id="observaciones" name="observaciones" 
+            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+        </div>
+    </div>
+
+    <!-- Botones de guardar y volver -->
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
