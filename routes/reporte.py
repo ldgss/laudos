@@ -10,11 +10,35 @@ from models import mod_reporte
 from flask import send_file
 import pandas as pd
 from io import BytesIO
+from flask import current_app as app
 
 reporte_bp = Blueprint("reporte", __name__)
 
 @reporte_bp.get("/reporte")
 def reporte():
+    """
+    Obtener reporte por módulo.
+    ---
+    parameters:
+      - name: module_id
+        in: query
+        type: integer
+        required: true
+        description: ID del módulo para generar el reporte.
+      - name: format
+        in: query
+        type: string
+        required: false
+        description: Formato del reporte (ej. "xlsx", "csv").
+    responses:
+      200:
+        description: Archivo de la planilla de cálculo generado.
+    """
+    app.logger.info("info reportes")
+    app.logger.debug("debug reportes")
+    app.logger.warning ("warning reportes")
+    app.logger.critical("critical reportes")
+    app.logger.error("error reportes")
     if helpers.session_on():
         title = "Reporte"
         section = "Reporte"

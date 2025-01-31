@@ -1,5 +1,8 @@
 
 from flask import Flask
+from flask_swagger import swagger
+import logging
+from logging.handlers import RotatingFileHandler
 import secrets
 from routes import login
 from routes import envasado
@@ -26,6 +29,31 @@ from utils import tokens
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex()
+
+# logging
+
+log_format = (
+    "%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(funcName)s() - %(message)s"
+)
+logging.basicConfig(
+    level=logging.DEBUG,  # Nivel más detallado
+    format=log_format,
+)
+
+file_handler = RotatingFileHandler("app.log", maxBytes=10 * 1024 * 1024, backupCount=5)
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(logging.Formatter(log_format))
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+console_handler.setFormatter(logging.Formatter(log_format))
+
+app.logger.addHandler(file_handler)
+app.logger.addHandler(console_handler)
+
+app.logger.debug("app started...")
+
+# modes
 
 if app.debug:
     print("modo de base de datos: desarrollo")
@@ -65,3 +93,16 @@ app.register_blueprint(anulacion.anulacion_bp)
 app.register_blueprint(correcion.correccion_bp)
 app.register_blueprint(materia.materia_bp)
 app.register_blueprint(despacho.despacho_bp)
+
+# swagger
+
+@app.route("/spec")
+def spec():
+    """
+    Endpoint para obtener la documentación Swagger.
+    ---
+    responses:
+      200:
+        description: Devuelve la documentación de Swagger.
+    """
+    return swagger(app)
