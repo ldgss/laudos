@@ -17,15 +17,17 @@ def get_envasado():
                         m.vto, 
                         m.fecha_registro, 
                         m.den,
-                        u.nombre
+                        u.nombre,
+                        d.fecha_registro as fecha_despacho
                     FROM mercaderia m
                     INNER JOIN usuario u
                         ON m.responsable = u.id
+                    LEFT JOIN despacho d ON m.numero_unico = d.mercaderia
                     WHERE 
                         (:fecha_inicial IS NULL OR m.fecha_elaboracion >= :fecha_inicial)
                         AND (:fecha_final IS NULL OR m.fecha_elaboracion <= :fecha_final)
-                        and (m.fecha_etiquetado is null)
-                        and (m.fecha_encajonado is null)
+                        AND (m.fecha_etiquetado is null)
+                        AND (m.fecha_encajonado is null)
                         AND (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%')
                         AND (:denominacion IS NULL OR m.den ILIKE '%' || :denominacion || '%')
                         AND (:lote_inicial IS NULL OR m.lote >= :lote_inicial)
@@ -72,15 +74,17 @@ def get_etiquetado():
                         m.vto, 
                         m.fecha_registro, 
                         m.den,
-                        u.nombre
+                        u.nombre,
+                        d.fecha_registro as fecha_despacho
                     FROM mercaderia m
                     INNER JOIN usuario u
                         ON m.responsable = u.id
+                    LEFT JOIN despacho d ON m.numero_unico = d.mercaderia
                     WHERE 
                         (:fecha_inicial IS NULL OR m.fecha_etiquetado >= :fecha_inicial)
                         AND (:fecha_final IS NULL OR m.fecha_etiquetado <= :fecha_final)
-                        and (m.fecha_elaboracion IS NULL)
-                        and (m.fecha_encajonado IS NULL)
+                        AND (m.fecha_elaboracion IS NULL)
+                        AND (m.fecha_encajonado IS NULL)
                         AND (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%')
                         AND (:denominacion IS NULL OR m.den ILIKE '%' || :denominacion || '%')
                         AND (:lote_inicial IS NULL OR m.lote >= :lote_inicial)
@@ -126,15 +130,17 @@ def get_encajonado():
                         m.vto, 
                         m.fecha_registro, 
                         m.den,
-                        u.nombre
+                        u.nombre,
+                        d.fecha_registro as fecha_despacho
                     FROM mercaderia m
                     INNER JOIN usuario u
                         ON m.responsable = u.id
+                    LEFT JOIN despacho d ON m.numero_unico = d.mercaderia
                     WHERE 
                         (:fecha_inicial IS NULL OR m.fecha_encajonado >= :fecha_inicial)
                         AND (:fecha_final IS NULL OR m.fecha_encajonado <= :fecha_final)
-                        and (m.fecha_elaboracion IS NULL)
-                        and (m.fecha_etiquetado IS NULL)
+                        AND (m.fecha_elaboracion IS NULL)
+                        AND (m.fecha_etiquetado IS NULL)
                         AND (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%')
                         AND (:denominacion IS NULL OR m.den ILIKE '%' || :denominacion || '%')
                         AND (:lote_inicial IS NULL OR m.lote >= :lote_inicial)
@@ -170,29 +176,31 @@ def get_encajonado():
 def get_reacondicionado():
     try:
         sql = text("""
-                    SELECT 
-                        r.numero_unico, 
-                        u.nombre, 
-                        r.fecha_registro, 
-                        r.nueva_den, 
-                        r.observaciones, 
-                        r.tipo_reacondicionado,
-                        m.lote 
-                    FROM reacondicionado r
-                    inner join usuario u on r.responsable = u.id	
-                    inner join reacondicionado_detalle rd on r.id  = rd.reacondicionado
-                    inner join mercaderia m on rd.mercaderia_original = m.id 
-                    where 
-                    (:fecha_inicial IS NULL OR r.fecha_registro >= :fecha_inicial) and
-                    (:fecha_final IS NULL OR r.fecha_registro <= :fecha_final) and
-                    (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%') and
-                    (:denominacion IS NULL OR r.nueva_den ILIKE '%' || :denominacion || '%') and
-                    (:lote_inicial IS NULL OR m.lote >= :lote_inicial) and
-                    (:lote_final IS NULL OR m.lote <= :lote_final)
-                    order by r.fecha_registro DESC
-                    ;
-
-                """
+                        SELECT 
+                            r.numero_unico, 
+                            r.nueva_den, 
+                            r.observaciones, 
+                            r.tipo_reacondicionado,
+                            m.lote,
+                            m.numero_unico,
+                            rd.cantidad,
+                            u.nombre as nombre_responsable, 
+                            r.fecha_registro,
+                            d.fecha_registro as fecha_despacho
+                        FROM reacondicionado r
+                        inner join usuario u on r.responsable = u.id	
+                        inner join reacondicionado_detalle rd on r.id  = rd.reacondicionado
+                        inner join mercaderia m on rd.mercaderia_original = m.id 
+                        left join despacho d on d.reacondicionado = r.numero_unico 
+                        where 
+                        (:fecha_inicial IS NULL OR r.fecha_registro >= :fecha_inicial) and
+                        (:fecha_final IS NULL OR r.fecha_registro <= :fecha_final) and
+                        (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%') and
+                        (:denominacion IS NULL OR r.nueva_den ILIKE '%' || :denominacion || '%') and
+                        (:lote_inicial IS NULL OR m.lote >= :lote_inicial) and
+                        (:lote_final IS NULL OR m.lote <= :lote_final)
+                        order by r.fecha_registro DESC;
+                    """
                 )
         envasado = db.db.session.execute(sql,
                                          {
@@ -220,31 +228,33 @@ def get_reacondicionado():
 def get_extracto():
     try:
         sql = text("""
-                    SELECT 
-                        e.numero_unico, 
-                        e.producto, 
-                        e.fecha_elaboracion, 
-                        e.lote, 
-                        e.brix, 
-                        e.numero_recipiente, 
-                        e.observaciones, 
-                        e.vto_meses, 
-                        u.nombre,
-                        e.fecha_registro, 
-                        e.den
-                    FROM extracto e
-                    inner join usuario u on e.responsable = u.id
-                    where 
-                        (:fecha_inicial IS NULL OR e.fecha_registro >= :fecha_inicial) and
-                        (:fecha_final IS NULL OR e.fecha_registro <= :fecha_final) and
-                        (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%') and
-                        (:denominacion IS NULL OR e.den ILIKE '%' || :denominacion || '%') and
-                        (:brix_inicial IS NULL OR e.brix >= :brix_inicial) and
-                        (:brix_final IS NULL OR e.brix <= :brix_final) and
-                        (:lote_inicial IS NULL OR e.lote >= :lote_inicial) and
-                        (:lote_final IS NULL OR e.lote <= :lote_final)
-                    order by e.fecha_elaboracion DESC;
-                """
+                        SELECT 
+                            e.numero_unico, 
+                            e.producto, 
+                            e.fecha_elaboracion, 
+                            e.lote, 
+                            e.brix, 
+                            e.numero_recipiente, 
+                            e.observaciones, 
+                            e.vto_meses, 
+                            u.nombre,
+                            e.fecha_registro, 
+                            e.den,
+                            d.fecha_registro as fecha_despacho
+                        FROM extracto e
+                        inner join usuario u on e.responsable = u.id
+                        left join despacho d on d.extracto = e.numero_unico 
+                        where 
+                            (:fecha_inicial IS NULL OR e.fecha_registro >= :fecha_inicial) and
+                            (:fecha_final IS NULL OR e.fecha_registro <= :fecha_final) and
+                            (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%') and
+                            (:denominacion IS NULL OR e.den ILIKE '%' || :denominacion || '%') and
+                            (:brix_inicial IS NULL OR e.brix >= :brix_inicial) and
+                            (:brix_final IS NULL OR e.brix <= :brix_final) and
+                            (:lote_inicial IS NULL OR e.lote >= :lote_inicial) and
+                            (:lote_final IS NULL OR e.lote <= :lote_final)
+                        order by e.fecha_elaboracion DESC;
+                    """
                 )
         envasado = db.db.session.execute(sql,
                                          {
@@ -338,7 +348,8 @@ def get_ubicacion():
                 ub.ubicacion_profundidad,
                 ub.ubicacion_altura,
                 ub.fecha_registro,
-                us.nombre AS responsable
+                us.nombre AS responsable,
+                d.fecha_registro as fecha_despacho
             FROM ubicacion ub
             LEFT JOIN ubicacion_nombre un ON ub.ubicacion_fila = un.id
             LEFT JOIN usuario us ON ub.responsable = us.id
@@ -346,6 +357,13 @@ def get_ubicacion():
             LEFT JOIN hojalata h ON ub.hojalata = h.numero_unico
             LEFT JOIN extracto e ON ub.extracto = e.numero_unico
             LEFT JOIN reacondicionado r ON ub.reacondicionado = r.numero_unico
+            left join despacho d on 
+            	(
+            		(d.mercaderia = ub.mercaderia) or
+            		(d.hojalata = ub.hojalata) or
+            		(d.extracto = ub.extracto) or
+            		(d.reacondicionado = ub.reacondicionado)
+            	)
             WHERE 
                (:fecha_inicial IS NULL OR ub.fecha_registro >= :fecha_inicial) AND
 			    (:fecha_final IS NULL OR ub.fecha_registro <= :fecha_final) AND
