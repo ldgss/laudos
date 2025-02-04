@@ -28,11 +28,14 @@ def anulacion_agregar():
         
         resultado = mod_anulacion.guardar_anulacion()
         if resultado:
-            flash("El producto se anulo con exito")
+            flash("Anulacion guardada con exito")
             return redirect(url_for("anulacion.anulacion"))
         else:
-            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
-            return redirect(url_for("anulacion.anulacion_agregar"))
+            flash("""
+                    Se ha producido un error en la anulacion.
+                    Revise que el pallet indicado no tenga ubicaciones asignadas.
+                  """)
+            return redirect(url_for("anulacion.anulacion"))
     else:
         return redirect(url_for("login.login_get"))
     

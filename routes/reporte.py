@@ -34,11 +34,7 @@ def reporte():
       200:
         description: Archivo de la planilla de cálculo generado.
     """
-    app.logger.info("info reportes")
-    app.logger.debug("debug reportes")
-    app.logger.warning ("warning reportes")
-    app.logger.critical("critical reportes")
-    app.logger.error("error reportes")
+    app.logger.info("route: /reportes")
     if helpers.session_on():
         title = "Reporte"
         section = "Reporte"

@@ -3,10 +3,12 @@ from db import db
 from flask import request
 from flask import session
 import shlex
+from flask import current_app as app
+import traceback
     
 def guardar_anulacion():
     try:
-        sql = text("""
+        insertion_sql = text("""
                     INSERT INTO
                     anulacion
                     (numero_unico, observaciones, responsable, fecha_registro)
@@ -14,37 +16,38 @@ def guardar_anulacion():
                     (:numero_unico, :observaciones, :responsable, CURRENT_TIMESTAMP)
                 """
                 )
+        insertion_params =  {
+                                "numero_unico": request.form["numero_unico"],
+                                "observaciones": request.form["observaciones"],
+                                "responsable": session["id"]
+                            }
         
-        envasado = db.db.session.execute(sql,
-                                            {
-                                                "numero_unico": request.form["numero_unico"],
-                                                "observaciones": request.form["observaciones"],
-                                                "responsable": session["id"]
-                                            })
-        db.db.session.commit()
 
         numero_unico = request.form.get("numero_unico")
 
         if numero_unico and 'T1' in numero_unico:
             deletion_sql = text("""DELETE FROM mercaderia WHERE numero_unico=:numero_unico""")
-            print(f"anulando mercaderia: {request.form["numero_unico"]}")
         elif numero_unico and 'H1' in numero_unico:
             deletion_sql = text("""DELETE FROM hojalata WHERE numero_unico=:numero_unico""")
-            print(f"anulando hojalata: {request.form["numero_unico"]}")
         elif numero_unico and 'E1' in numero_unico:
             deletion_sql = text("""DELETE FROM extracto WHERE numero_unico=:numero_unico""")
-            print(f"anulando extracto: {request.form["numero_unico"]}")
         
-        deletion_params = db.db.session.execute(deletion_sql, 
-                                                {
-                                                    "numero_unico": request.form["numero_unico"]
-                                                }
-                                                )
+        deletion_params =   {
+                                "numero_unico": request.form["numero_unico"]
+                            }
+
+        db.db.session.execute(deletion_sql, deletion_params)
+        db.db.session.execute(insertion_sql, insertion_params)
         db.db.session.commit()
+        
         return True
     except Exception as e:
         db.db.session.rollback()
-        print(f"Error: {e}")
+        error_traceback = traceback.format_exc()
+        print(f"e: {e}")
+        print(f"tb: {error_traceback}")
+        app.logger.debug(f"e: {e}")
+        app.logger.debug(f"tb: {traceback}")
         return None
     
 def get_listado_anulacion(terminos_de_busqueda, resultados_por_pagina, offset):
