@@ -8,19 +8,34 @@
 
 {% block content %}
     <div class="row m-4 justify-content-center">
-        <input type="text" id="barcode_text" hidden value="{{bloqueados["hojalata"]}}">
+        <input type="text" id="barcode_text" hidden value="{{bloqueados["bloqueado_mercaderia"]}}">
         <svg id="barcode"></svg>
     </div>
+    
     <div class="row m-4 justify-content-center">
         <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
             <table id="descripcion" class="table-bordered col-12">
                 
                 <tr>
-                    <th>Numero único:</th>
-                    <td>{{bloqueados["hojalata"]}}</td>
+                    <th>Denominacion:</th>
+                    <td>{{bloqueados["den"]}}</td>
                 </tr>
-               
-               
+
+                <tr>
+                    <th>Lote</th>
+                    <td>{{bloqueados["lote"]}}</td>
+                </tr>
+                <tr>
+                    <th>Fecha Bloqueo</th>
+                    <td class="fecha_registro">{{bloqueados["fecha_registro"].strftime('%Y-%m-%d %H:%M')}}</td>
+                </tr>
+                
+                <tr>
+                    <th>Numero único:</th>
+                    <td>{{bloqueados["bloqueado_mercaderia"]}}</td>
+                </tr>
+                
+                
                 
                
                 

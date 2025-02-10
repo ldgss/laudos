@@ -75,7 +75,7 @@
             <input list="lista_motivos" required type="text" class="form-control" name="motivo" id="motivo" 
             onblur="validarMotivo()" oninput="actualizarValoresOcultos()">
             <input type="hidden" id="id_motivo" name="id_motivo">
-            <!-- <pre>{{motivo_bloqueo}}</pre> -->
+            <pre>{{motivo_bloqueo}}</pre>
             <datalist id="lista_motivos">
                 {% for p in motivo_bloqueo %}
                 <option value="{{ p[1] | trim }}"

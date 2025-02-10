@@ -41,7 +41,7 @@ def etiquetado_agregar_post():
         # obtenemos el id solo del vencimiento necesario
         vto = mod_mercaderia.get_vencimiento(request.form)
         # ensamblo el lote
-        lote = f"{request.form["lote_a"]}-{request.form["lote_b"]}-{request.form["lote_c"]}"
+        lote = f"{request.form['lote_a']}-{request.form['lote_b']}-{request.form['lote_c']}"
         barcode = mod_mercaderia.guardar_etiquetado(request.form, vto, lote)
         title = "Etiquetado"
         section = "Etiquetado"
