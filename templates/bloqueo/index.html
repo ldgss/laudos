@@ -9,27 +9,17 @@
 
 <div class="container col-sm-12 col-md-8 col-lg-6">
 
-    <form action="/bloqueos/buscar" method="post">
+    <form action="/bloqueo/buscar" method="post">
         <div class="m-3">
-            <label class="form-label" for="buscar">Buscar</label>
+            <label class="form-label" for="buscar">Buscar para bloquear o liberar</label>
             <input class="form-control" required
             placeholder="Ingrese numero de parte, lote, fechas, observaciones" 
             type="text" id="buscar" name="buscar">
         </div>
         <div class="m-3">
-            <button type="submit" class="btn btn-primary col-12">Buscar Produccion</button>
+            <button type="submit" class="btn btn-primary col-12">Buscar</button>
         </div>
     </form>
-
-    <form action="/bloqueos/buscarbloqueados" method="post">
-        
-        <div class="m-3">
-            <button type="submit" class="btn btn-warning col-12">Buscar Bloqueados</button>
-        </div>
-    </form>
-
-    
-    
     <div class="m-3">
         <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
 
