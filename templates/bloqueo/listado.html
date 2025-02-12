@@ -20,7 +20,8 @@
                     <th>Motivo</th>
                     <th>Observaciones</th>
                     <th>Responsable</th>
-                    <th>Fecha de Bloq/Lib</th>
+                    <th>Fecha</th>
+                    <th>Registro</th>
                     <th>Selección</th>
                 </tr>
             </thead>
@@ -50,6 +51,9 @@
                     </td>
                     <td>
                         {{l.nombre or '-'}}
+                    </td>
+                    <td>
+                        {{l.fecha_cambio.strftime('%Y-%m-%d %H:%M') if l.fecha_registro else '-'}}
                     </td>
                     <td>
                         {{l.fecha_registro.strftime('%Y-%m-%d %H:%M') if l.fecha_registro else '-'}}
@@ -100,6 +104,10 @@
                             <input class="form-check-input" type="checkbox" id="modalEstado" name="estado" role="switch" onclick="return false">
                             <label class="form-check-label">Bloqueado</label>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de bloqueo</label>
+                        <input required type="datetime-local" name="fecha_cambio" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Número de Planilla</label>

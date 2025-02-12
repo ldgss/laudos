@@ -63,11 +63,11 @@ def cambiar_bloqueo():
                     INSERT INTO bloqueado
                     (mercaderia, hojalata, extracto, 
                     estado, numero_planilla, motivo, 
-                    observaciones, responsable, fecha_registro)
+                    observaciones, responsable, fecha_registro, fecha_cambio)
                     VALUES
                     (:mercaderia, :hojalata, :extracto, 
                     :estado, :numero_planilla, :motivo, 
-                    :observaciones, :responsable, CURRENT_TIMESTAMP);
+                    :observaciones, :responsable, CURRENT_TIMESTAMP, :fecha_cambio);
                 """
                 )
         
@@ -80,7 +80,8 @@ def cambiar_bloqueo():
                                                 "numero_planilla" : request.form.get("numero_planilla"),
                                                 "motivo" : request.form.get("motivo"),
                                                 "observaciones" : request.form.get("observaciones"),
-                                                "responsable" : session["id"]
+                                                "responsable" : session["id"],
+                                                "fecha_cambio" : request.form.get("fecha_cambio"),
                                             })
         db.db.session.commit()
         return True
@@ -103,6 +104,7 @@ def get_listado_bloqueo(terminos_de_busqueda, resultados_por_pagina, offset):
             subcondicion.append(f"b.numero_planilla::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"b.observaciones::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"b.fecha_registro::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"b.fecha_cambio::TEXT ILIKE '%{termino}%'")
             
             # chequear cada termino en nombre usuario
             subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
@@ -146,7 +148,8 @@ def get_listado_bloqueo(terminos_de_busqueda, resultados_por_pagina, offset):
                 mb.motivo,
                 b.observaciones,
                 u.nombre,
-                b.fecha_registro
+                b.fecha_registro,
+                b.fecha_cambio
             FROM bloqueado b
             FULL OUTER JOIN mercaderia m ON b.mercaderia = m.numero_unico 
             FULL OUTER JOIN hojalata h ON b.hojalata = h.numero_unico

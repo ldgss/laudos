@@ -16,8 +16,8 @@ resultados_por_pagina = 20
 @bloqueo_bp.get("/bloqueo")
 def bloqueo():
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
-        title = "bloqueo"
-        section = "bloqueo"
+        title = "Bloqueo"
+        section = "Bloqueo"
         return render_template("bloqueo/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
@@ -27,8 +27,8 @@ def bloqueo_cambiar_post():
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
         referer = request.headers.get('Referer', '/')
         cambio = mod_bloqueo.cambiar_bloqueo()
-        title = "bloqueo"
-        section = "bloqueo"
+        title = "Bloqueo"
+        section = "Bloqueo"
         if cambio:
             flash("Los cambios se han guardado correctamente")
             return redirect(referer)
@@ -43,8 +43,8 @@ def bloqueo_cambiar_post():
 def bloqueo_imprimir(numero_unico):
     if helpers.session_on() and helpers.authorized_to("bloqueo"):
         bloqueo = mod_bloqueo.get_bloqueo(numero_unico)
-        title = "bloqueo"
-        section = "bloqueo"
+        title = "Bloqueo"
+        section = "Bloqueo"
         return render_template("bloqueo/imprimir.html", 
                                title=title, section=section, 
                                bloqueo=bloqueo)
@@ -66,8 +66,8 @@ def bloqueo_listado(terminos_de_busqueda):
         offset = (pagina - 1) * resultados_por_pagina
         motivos = mod_bloqueo.listar_motivo_bloqueo()
         resultado = mod_bloqueo.get_listado_bloqueo(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "bloqueo"
-        section = "bloqueo"
+        title = "Bloqueo"
+        section = "Bloqueo"
         return render_template("bloqueo/listado.html", 
                                max=max,
                                min=min,
