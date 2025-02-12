@@ -64,13 +64,14 @@ def bloqueo_listado(terminos_de_busqueda):
         # paginacion
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
-        
+        motivos = mod_bloqueo.listar_motivo_bloqueo()
         resultado = mod_bloqueo.get_listado_bloqueo(terminos_de_busqueda, resultados_por_pagina, offset)
         title = "bloqueo"
         section = "bloqueo"
         return render_template("bloqueo/listado.html", 
                                max=max,
                                min=min,
+                               motivos=motivos,
                                offset=offset,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,

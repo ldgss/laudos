@@ -133,27 +133,28 @@ def get_listado_bloqueo(terminos_de_busqueda, resultados_por_pagina, offset):
         condicion_final_ilike = ' AND '.join(condiciones_ilike)
 
         query_sql = f"""
-            SELECT 
-                m.den as mden,
-                m.numero_unico as m_numero_unico,
-                h.den as hden,
-                h.numero_unico as h_numero_unico,
-                e.den as eden,
-                e.numero_unico as e_numero_unico,
+            SELECT DISTINCT ON (COALESCE(m.numero_unico, h.numero_unico, e.numero_unico)) 
+                m.den AS mden,
+                m.numero_unico AS m_numero_unico,
+                h.den AS hden,
+                h.numero_unico AS h_numero_unico,
+                e.den AS eden,
+                e.numero_unico AS e_numero_unico,
                 b.estado,
                 b.numero_planilla,
+                mb.id as motivo_id,
                 mb.motivo,
                 b.observaciones,
                 u.nombre,
                 b.fecha_registro
             FROM bloqueado b
-            full outer JOIN mercaderia m ON b.mercaderia = m.numero_unico 
-            full outer join hojalata h ON b.hojalata = h.numero_unico
-            full outer join extracto e ON b.extracto = e.numero_unico
-            left JOIN motivo_bloqueo mb ON b.motivo = mb.id
-            left JOIN usuario u ON b.responsable = u.id
+            FULL OUTER JOIN mercaderia m ON b.mercaderia = m.numero_unico 
+            FULL OUTER JOIN hojalata h ON b.hojalata = h.numero_unico
+            FULL OUTER JOIN extracto e ON b.extracto = e.numero_unico
+            LEFT JOIN motivo_bloqueo mb ON b.motivo = mb.id
+            LEFT JOIN usuario u ON b.responsable = u.id
             WHERE {condicion_final_ilike}
-            ORDER BY b.fecha_registro DESC
+            ORDER BY COALESCE(m.numero_unico, h.numero_unico, e.numero_unico), b.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),
@@ -163,13 +164,13 @@ def get_listado_bloqueo(terminos_de_busqueda, resultados_por_pagina, offset):
         total_resultados = f"""
                                 SELECT COUNT(*)
                                 FROM (
-                                    SELECT 
-                                        m.den as mden,
-                                        m.numero_unico as m_numero_unico,
-                                        h.den as hden,
-                                        h.numero_unico as h_numero_unico,
-                                        e.den as eden,
-                                        e.numero_unico as e_numero_unico,
+                                    SELECT DISTINCT ON (COALESCE(m.numero_unico, h.numero_unico, e.numero_unico)) 
+                                        m.den AS mden,
+                                        m.numero_unico AS m_numero_unico,
+                                        h.den AS hden,
+                                        h.numero_unico AS h_numero_unico,
+                                        e.den AS eden,
+                                        e.numero_unico AS e_numero_unico,
                                         b.estado,
                                         b.numero_planilla,
                                         mb.motivo,
@@ -177,11 +178,11 @@ def get_listado_bloqueo(terminos_de_busqueda, resultados_por_pagina, offset):
                                         u.nombre,
                                         b.fecha_registro
                                     FROM bloqueado b
-                                    full outer JOIN mercaderia m ON b.mercaderia = m.numero_unico 
-                                    full outer join hojalata h ON b.hojalata = h.numero_unico
-                                    full outer join extracto e ON b.extracto = e.numero_unico
-                                    left JOIN motivo_bloqueo mb ON b.motivo = mb.id
-                                    left JOIN usuario u ON b.responsable = u.id
+                                    FULL OUTER JOIN mercaderia m ON b.mercaderia = m.numero_unico 
+                                    FULL OUTER JOIN hojalata h ON b.hojalata = h.numero_unico
+                                    FULL OUTER JOIN extracto e ON b.extracto = e.numero_unico
+                                    LEFT JOIN motivo_bloqueo mb ON b.motivo = mb.id
+                                    LEFT JOIN usuario u ON b.responsable = u.id
                                     WHERE {condicion_final_ilike}
                                 ) AS total_count;
                             """

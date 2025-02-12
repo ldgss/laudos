@@ -20,7 +20,7 @@
                     <th>Motivo</th>
                     <th>Observaciones</th>
                     <th>Responsable</th>
-                    <th>Fecha</th>
+                    <th>Fecha de Bloq/Lib</th>
                     <th>Selección</th>
                 </tr>
             </thead>
@@ -37,7 +37,7 @@
                         {{l.m_numero_unico or l.h_numero_unico or l.e_numero_unico}}
                     </td>
                     <td>
-                        {{'Bloqueado' if l.estado else 'Liberado'}}
+                        {{l.estado or '-'}}
                     </td>
                     <td>
                         {{l.numero_planilla or '-'}}
@@ -45,17 +45,30 @@
                     <td>
                         {{l.motivo or '-'}}
                     </td>
-                    <td>
+                    <td class="observacion_listado">
                         {{l.observaciones or '-'}}
                     </td>
                     <td>
-                        {{l.responsable or '-'}}
+                        {{l.nombre or '-'}}
                     </td>
                     <td>
-                        {{l.fecha_registro or '-'}}
+                        {{l.fecha_registro.strftime('%Y-%m-%d %H:%M') if l.fecha_registro else '-'}}
                     </td>
                     <td>
-                        <button class="btn btn-primary" onclick="mostrarModal('{{ l.m_numero_unico or l.h_numero_unico or l.e_numero_unico }}', '{{ l.mden or l.hden or l.eden }}', {{ 'true' if l.estado else 'false' }}, '{{ l.numero_planilla or '' }}', '{{ l.motivo or '' }}', '{{ l.observaciones or '' }}')">Cambiar</button>
+                        <button class="btn btn-primary" 
+                            onclick='mostrarModal(
+                                "{{ l.m_numero_unico or l.h_numero_unico or l.e_numero_unico }}", 
+                                "{{ l.mden or l.hden or l.eden }}", 
+                                "{% if l.estado == 'Liberado' or l.estado is none or l.estado == '' %}True{% elif l.estado == 'Bloqueado' %}False{% else %}False{% endif %}",
+                                "{{ l.numero_planilla or '' }}", 
+                                "{{ l.motivo_id or '' }}", 
+                                "{{ l.observaciones or '' }}"
+                            )'>
+                            Cambiar
+                        </button>
+
+
+
                     </td>
                 </tr>
                 {% endfor %}
@@ -84,19 +97,21 @@
                     </div>
                     <div class="mb-3">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="modalEstado" name="estado" role="switch">
+                            <input class="form-check-input" type="checkbox" id="modalEstado" name="estado" role="switch" onclick="return false">
                             <label class="form-check-label">Bloqueado</label>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Número de Planilla</label>
-                        <input type="number" id="modalPlanilla" name="numero_planilla" class="form-control">
+                        <input required min="0" type="number" id="modalPlanilla" name="numero_planilla" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Motivo</label>
-                        <select name="motivo" id="modalMotivo">
+                        <select required class="form-select" name="motivo" id="modalMotivo">
                             <option value=""></option>
-                            
+                            {% for m in motivos %}
+                                <option value="{{m.id}}">{{m.motivo}}</option>
+                            {% endfor%}
                         </select>
                         
                     </div>
