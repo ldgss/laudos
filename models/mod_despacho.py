@@ -1,10 +1,10 @@
 from sqlalchemy.sql import text
 from db import db
-from datetime import datetime
 from flask import request
 from flask import session
 import shlex
 import traceback
+import re
 
 def get_fleteros():
     # cambiar a sqlserver para llamar a arballon
@@ -53,12 +53,24 @@ def guardar_despacho():
 
             db.db.session.commit()
 
-        return True
+        return {
+            "status": True,
+            "message": "Guardado exitoso"
+        }
     except Exception as e:
         db.db.session.rollback()
-        error_message = traceback.format_exc()  # Obtiene la traza completa del error
-        print(f"Error: {error_message}")  # Imprime toda la información
-        return None
+        error_message = traceback.format_exc()
+        match = re.search(r'DETAIL: (.+)', error_message)
+        detail_message = match.group(1) if match else "No DETAIL found"
+        if 'Key' in detail_message:
+            detail_message = re.sub(r"Key \(.*?\)=\((.*?)\) already exists.", r"\1 ya existe.", detail_message)
+        return {
+            "status": None,
+            "message": detail_message
+        }
+    
+        
+        
     
 def get_listado_despacho(terminos_de_busqueda, resultados_por_pagina, offset):
     try:

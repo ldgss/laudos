@@ -94,8 +94,7 @@
     <div class="row m-4 justify-content-center">
         <label for="fecha" class="col-sm-2 col-form-label">Patente acoplado</label>
         <div class="col-sm-5">
-            <input required type="text" 
-            pattern="[A-Z]{3} [0-9]{3}" title="El formato debe ser ABC 123 (tres letras y tres números separados por un espacio)"
+            <input type="text" 
             class="form-control" name="fletero_patente_acoplado" id="fletero_patente_acoplado">
         </div>
     </div>
@@ -128,16 +127,11 @@
             </datalist>
         </div>
     </div>
-    <!-- <div class="row m-4 justify-content-center">
-        <label for="fecha" class="col-sm-2 col-form-label">Variedad codigo acoplado</label>
-        <div class="col-sm-5">
-        </div>
-    </div> -->
-    <input required type="hidden" class="form-control" name="variedad_codigo_acoplado" id="variedad_codigo_acoplado">
+    <input type="hidden" class="form-control" name="variedad_codigo_acoplado" id="variedad_codigo_acoplado">
     <div class="row m-4 justify-content-center">
         <label for="denominacion" class="col-sm-2 col-form-label">Variedad nombre acoplado</label>
         <div class="col-sm-5">
-            <input list="variedad_nombre_acoplado_lista" required type="text" 
+            <input list="variedad_nombre_acoplado_lista" type="text" 
             onblur="validar_variedad_nombre_acoplado()"
             class="form-control" name="variedad_nombre_acoplado" id="variedad_nombre_acoplado">
             <datalist id="variedad_nombre_acoplado_lista">

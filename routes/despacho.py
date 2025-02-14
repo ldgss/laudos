@@ -39,13 +39,11 @@ def despacho_agregar():
 def despacho_agregar_post():
     if helpers.session_on() and helpers.authorized_to("despacho"):
         despacho = mod_despacho.guardar_despacho()
-        title = "despacho"
-        section = "despacho"
-        if despacho:
+        if despacho["status"] is True:
             flash("Despacho agregado con éxito.")
             return redirect(url_for("despacho.despacho_agregar"))
         else:
-            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
+            flash(str(despacho["message"]))
             return redirect(url_for("despacho.despacho_agregar"))
     else:
         return redirect(url_for("login.login_get"))

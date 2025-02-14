@@ -48,14 +48,6 @@ def login_post():
             for cod_mae, den, cod_cls in productos_arballon_hojalata
         ]
         session["productos_arballon_hojalata"] = productos_dict_hojalata
-
-        # motivo_bloqueo = mod_bloqueo.listar_motivo_bloqueo()
-        # motivo_bloqueo_dict = [
-        #     {'id': id, 'motivo': motivo.strip(), 'motivo_mercaderia': motivo_mercaderia, 'motivo_hojalata': motivo_hojalata, 'motivo_extracto' : motivo_extracto}
-        #     for id, motivo, motivo_mercaderia, motivo_hojalata, motivo_extracto in motivo_bloqueo
-        # ]
-        # session["motivo_bloqueo"] = motivo_bloqueo_dict
-
         return redirect(url_for("index.index"))
     else:
         flash("usuario o contraseña incorrecta")
