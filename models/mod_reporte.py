@@ -332,17 +332,24 @@ def get_ubicacion():
     try:
         sql = text("""
             SELECT 
+                ub.mercaderia,
                 m.den AS mercaderia_den,
                 m.lote as mercaderia_lote,
+                m.cantidad as mercaderia_cdad,
+                m.fecha_elaboracion + INTERVAL '1 month' * v.meses AS env_vto,
+                m.fecha_etiquetado + INTERVAL '1 month' * v.meses AS eti_vto,
+                m.fecha_encajonado + INTERVAL '1 month' * v.meses AS encaj_vto,
+                ub.hojalata,
                 h.den AS hojalata_den,
                 h.lote as hojalata_lote,
+                h.cantidad as hojalata_cdad,
+                h.fecha_elaboracion + INTERVAL '1 month' * v.meses AS hoj_vto,
+                ub.extracto,
                 e.den AS extracto_den,
                 e.lote as extracto_lote,
-                r.nueva_den AS reacondicionado_den,
-                ub.mercaderia,
-                ub.hojalata,
-                ub.extracto,
+                e.fecha_elaboracion + INTERVAL '1 month' * v.meses AS ext_vto,
                 ub.reacondicionado,
+                r.nueva_den AS reacondicionado_den,
                 un.posicion,
                 un.sector,
                 ub.ubicacion_profundidad,
@@ -364,6 +371,12 @@ def get_ubicacion():
             		(d.extracto = ub.extracto) or
             		(d.reacondicionado = ub.reacondicionado)
             	)
+            left join vencimiento v on
+                (
+                   (m.vto = v.id) or
+                   (h.vto_meses = v.id) or
+                   (e.vto_meses = v.id)
+                )
             WHERE 
                (:fecha_inicial IS NULL OR ub.fecha_registro >= :fecha_inicial) AND
 			    (:fecha_final IS NULL OR ub.fecha_registro <= :fecha_final) AND
