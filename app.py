@@ -21,6 +21,7 @@ from routes import anulacion
 from routes import correcion
 from routes import materia
 from routes import despacho
+from routes import kpi
 from db import db
 from datetime import timedelta
 from flask import session
@@ -93,6 +94,7 @@ app.register_blueprint(anulacion.anulacion_bp)
 app.register_blueprint(correcion.correccion_bp)
 app.register_blueprint(materia.materia_bp)
 app.register_blueprint(despacho.despacho_bp)
+app.register_blueprint(kpi.kpi_bp)
 
 # swagger
 

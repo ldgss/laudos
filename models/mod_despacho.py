@@ -103,7 +103,7 @@ def get_listado_despacho(terminos_de_busqueda, resultados_por_pagina, offset):
         condicion_final_ilike = ' AND '.join(condiciones_ilike)
 
         query_sql = f"""
-            SELECT 
+            SELECT distinct on (d.id)
                 d.id as despacho_id,
                 d.mercaderia, 
                 d.hojalata, 
@@ -119,13 +119,13 @@ def get_listado_despacho(terminos_de_busqueda, resultados_por_pagina, offset):
                 u.nombre, 
                 d.fecha_registro
             FROM despacho d
-            JOIN usuario u ON d.responsable = u.id
+            left JOIN usuario u ON d.responsable = u.id
             left JOIN mercaderia m ON m.numero_unico = d.mercaderia
             left JOIN extracto e ON e.numero_unico = d.extracto
             left JOIN hojalata h ON h.numero_unico = d.hojalata
             left JOIN reacondicionado r ON r.numero_unico = d.reacondicionado
             WHERE {condicion_final_ilike}
-            ORDER BY d.fecha_registro DESC
+            ORDER BY d.id DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),
@@ -135,7 +135,7 @@ def get_listado_despacho(terminos_de_busqueda, resultados_por_pagina, offset):
         total_resultados = f"""
                                 SELECT COUNT(*)
                                 FROM (
-                                    SELECT 
+                                    SELECT
                                         d.id as despacho_id,
                                         d.mercaderia, 
                                         d.hojalata, 
@@ -151,7 +151,7 @@ def get_listado_despacho(terminos_de_busqueda, resultados_por_pagina, offset):
                                         u.nombre, 
                                         d.fecha_registro
                                     FROM despacho d
-                                    JOIN usuario u ON d.responsable = u.id
+                                    left JOIN usuario u ON d.responsable = u.id
                                     left JOIN mercaderia m ON m.numero_unico = d.mercaderia
                                     left JOIN extracto e ON e.numero_unico = d.extracto
                                     left JOIN hojalata h ON h.numero_unico = d.hojalata

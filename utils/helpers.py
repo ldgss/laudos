@@ -14,6 +14,11 @@ def session_on():
         return True
     return False
 
+def esta_activo():
+    if session["esta_activo"]:
+        return True
+    return False
+
 def authorized_to(section):
     if section in session:
         if session[section] is True:

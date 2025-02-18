@@ -6,7 +6,6 @@ from flask import Blueprint
 from models import mod_despacho
 from flask import flash
 from flask import request
-from flask import session
 
 
 despacho_bp = Blueprint("despacho", __name__)
@@ -16,8 +15,8 @@ resultados_por_pagina = 20
 @despacho_bp.get("/despacho")
 def despacho():
     if helpers.session_on() and helpers.authorized_to("despacho"):
-        title = "despacho"
-        section = "despacho"
+        title = "Despacho"
+        section = "Despacho"
         return render_template("despacho/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
@@ -26,8 +25,8 @@ def despacho():
 def despacho_agregar():
     if helpers.session_on() and helpers.authorized_to("despacho"):
         fleteros = mod_despacho.get_fleteros()
-        title = "despacho"
-        section = "despacho"
+        title = "Despacho"
+        section = "Despacho"
         return render_template("despacho/agregar.html", 
                                title=title, section=section, 
                                fleteros = fleteros
@@ -62,8 +61,8 @@ def despacho_listado(terminos_de_busqueda):
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
         resultado = mod_despacho.get_listado_despacho(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "despacho"
-        section = "despacho"
+        title = "Despacho"
+        section = "Despacho"
         return render_template("despacho/listado.html", 
                                max=max,
                                min=min,
