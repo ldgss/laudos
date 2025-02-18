@@ -352,6 +352,9 @@ def get_ubicacion():
                 r.nueva_den AS reacondicionado_den,
                 ra.cantidad AS reac_cantidad,
                 mra.lote AS reac_lote,
+                mra.fecha_elaboracion + INTERVAL '1 month' * v.meses AS reac_env_vto,
+                mra.fecha_etiquetado + INTERVAL '1 month' * v.meses AS reac_eti_vto,
+                mra.fecha_encajonado + INTERVAL '1 month' * v.meses AS reac_encaj_vto,
                 un.posicion,
                 un.sector,
                 ub.ubicacion_profundidad,
@@ -379,7 +382,8 @@ def get_ubicacion():
                 (
                    (m.vto = v.id) or
                    (h.vto_meses = v.id) or
-                   (e.vto_meses = v.id)
+                   (e.vto_meses = v.id) or
+                   (mra.vto = v.id)
                 )
             WHERE 
                (:fecha_inicial IS NULL OR ub.fecha_registro >= :fecha_inicial) AND
