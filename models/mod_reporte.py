@@ -350,6 +350,8 @@ def get_ubicacion():
                 e.fecha_elaboracion + INTERVAL '1 month' * v.meses AS ext_vto,
                 ub.reacondicionado,
                 r.nueva_den AS reacondicionado_den,
+                ra.cantidad AS reac_cantidad,
+                mra.lote AS reac_lote,
                 un.posicion,
                 un.sector,
                 ub.ubicacion_profundidad,
@@ -364,6 +366,8 @@ def get_ubicacion():
             LEFT JOIN hojalata h ON ub.hojalata = h.numero_unico
             LEFT JOIN extracto e ON ub.extracto = e.numero_unico
             LEFT JOIN reacondicionado r ON ub.reacondicionado = r.numero_unico
+            LEFT JOIN reacondicionado_detalle ra ON r.id = ra.reacondicionado
+            LEFT JOIN mercaderia mra ON mra.id = ra.mercaderia_original
             left join despacho d on 
             	(
             		(d.mercaderia = ub.mercaderia) or
