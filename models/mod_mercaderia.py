@@ -8,19 +8,23 @@ def listar_productos_arballon():
     try:
         with db.db.get_engine(bind='sqlserver').connect() as connection:
             result = connection.execute(text("""
-                SELECT cod_mae, den, cod_cls FROM genmae
-                WHERE tip_mae = 4 AND (
-                    cod_cls = 'Extrac' OR
-                    cod_cls = 'Pas500' OR
-                    cod_cls = 'Pelado' OR
-                    cod_cls = 'Pulpa' OR
-                    cod_cls = 'Pure' OR
-                    cod_cls = 'Tri500' OR
-                    cod_cls = 'Tri8' OR
-                    cod_cls = 'Tri910' OR
-                    cod_cls = 'Tri950' OR
-                    cod_cls = 'Tritur'
-                )
+                SELECT 
+                    cod_mae, den, cod_cls FROM genmae
+                WHERE 
+                    tip_mae = 4
+                    AND (
+                        cod_cls = 'Extrac' OR
+                        cod_cls = 'Pas500' OR
+                        cod_cls = 'Pelado' OR
+                        cod_cls = 'Pulpa' OR
+                        cod_cls = 'Pure' OR
+                        cod_cls = 'Tri500' OR
+                        cod_cls = 'Tri8' OR
+                        cod_cls = 'Tri910' OR
+                        cod_cls = 'Tri950' OR
+                        cod_cls = 'Tritur' OR
+                        lower(den) like '%tritu%'
+                    )
             """))
             return result.fetchall()
 

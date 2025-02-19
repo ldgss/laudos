@@ -27,7 +27,7 @@
             <input type="hidden" id="cod_mae" name="cod_mae">
             <datalist id="denominacion_opciones">
                 {% for p in productos_arballon %}
-                    {% if 'pasta' in (p.den | lower) or 'extracto' in (p.den | lower) %}
+                    {% if 'pasta' in (p.den | lower) or 'extracto' in (p.den | lower) or 'tritu' in (p.den | lower) %}
                         <option value="{{ p.den | trim }}" 
                                 data-cod-cls="{{ p.cod_cls | trim }}" 
                                 data-cod-mae="{{ p.cod_mae | trim }}">
