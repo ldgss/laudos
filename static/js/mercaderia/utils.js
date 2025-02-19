@@ -192,7 +192,18 @@ function julianoAutomatico(){
     const year = fechaActual.getFullYear();
     const fechaInicial = new Date(year, 0, 1);
     const hoy = Math.floor((fechaActual - fechaInicial) / (1000 * 60 * 60 * 24)) + 1;
-    lote_c.value = hoy;
+    lote_c.value = fixdaylength(hoy);
+}
+
+function fixdaylength(dia){
+    dia_string = dia.toString()
+    dia_length = dia_string.length
+    if(dia_length == 1){
+        dia_string = '00'+dia
+    }else if(dia_length == 2){
+        dia_string = '0'+dia
+    }
+    return dia_string
 }
 
 function imprimir(){

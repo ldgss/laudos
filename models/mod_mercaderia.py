@@ -22,8 +22,7 @@ def listar_productos_arballon():
                         cod_cls = 'Tri8' OR
                         cod_cls = 'Tri910' OR
                         cod_cls = 'Tri950' OR
-                        cod_cls = 'Tritur' OR
-                        lower(den) like '%tritu%'
+                        cod_cls = 'Tritur'
                     )
             """))
             return result.fetchall()
