@@ -206,13 +206,20 @@ def get_reacondicionado(numero_unico):
 
         sql = text(""" 
             SELECT m.*, e.*, r.*, rd.*, 
+                   m.den as mden,
+                   m.lote as mlote,
+                   e.den as eden,
+                   e.lote as elote, 
                    v.meses, u.nombre, m.numero_unico AS numero_unico_original,
-                   e.numero_unico AS numero_unico_original_extracto
+                   e.numero_unico AS numero_unico_original_extracto,
+                   e.fecha_elaboracion AS extracto_fecha_elaboracion,
+                   ve.meses AS extracto_vto
             FROM reacondicionado r
             RIGHT JOIN reacondicionado_detalle rd ON r.id = rd.reacondicionado
             LEFT JOIN mercaderia m ON m.id = rd.mercaderia_original
             LEFT JOIN extracto e ON e.id = rd.extracto_original
             LEFT JOIN vencimiento v ON v.id = m.vto
+            LEFT JOIN vencimiento ve ON ve.id = e.vto_meses
             LEFT JOIN usuario u ON r.responsable = u.id
             WHERE r.numero_unico = :numero_unico
          """)

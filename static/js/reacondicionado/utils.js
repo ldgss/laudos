@@ -76,7 +76,7 @@ function buscarParte(button) {
                                 <input hidden name="id_a_tomar" type="text" value="${data["reacondicionado"][i]["id"]}">
                                 <input hidden name="mercaderia_original" type="text" value="${data["reacondicionado"][i]["mercaderia_original"]}">
                                 <input type="number" class="form-control me-1" placeholder="Cantidad disponible" name="cantidad_disponible" min="0" readonly value="${data["reacondicionado"][i]["cantidad"]}">
-                                <input type="number" class="form-control" placeholder="Cantidad a tomar" name="cantidad_tomar" min="0" required>
+                                <input type="number" class="form-control" placeholder="Cantidad a tomar" name="cantidad_tomar" min="1" required>
                             </div>
                         </div>
                         `
@@ -96,7 +96,7 @@ function buscarParte(button) {
                                 <input hidden name="id_a_tomar" type="text" value="${data["id"]}">
                                 <input hidden name="mercaderia_original" type="text" value="${data["id"]}">
                                 <input type="number" class="form-control me-1" placeholder="Cantidad disponible" name="cantidad_disponible" min="0" readonly value="${data["cantidad"]}">
-                                <input type="number" class="form-control" placeholder="Cantidad a tomar" name="cantidad_tomar" min="0" required>
+                                <input type="number" class="form-control" placeholder="Cantidad a tomar" name="cantidad_tomar" min="1" required>
                             </div>
                         </div>
                         `

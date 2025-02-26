@@ -356,6 +356,7 @@ function actualizar_vencimiento_unico() {
     const elementosFechaElaboracion = document.querySelectorAll('.fecha_elaboracion');
     const elementosFechaEtiquetado = document.querySelectorAll('.fecha_etiquetado');
     const elementosFechaEncajonado = document.querySelectorAll('.fecha_encajonado');
+    const elementosFechaExtracto = document.querySelectorAll('.extracto_fecha_elaboracion');
     const elementosMeses = document.querySelectorAll('.meses');
     const elementosVencimiento = document.querySelectorAll('.vencimiento');
     
@@ -363,12 +364,13 @@ function actualizar_vencimiento_unico() {
     const cantidadElementos = Math.max(
         elementosFechaElaboracion.length, 
         elementosFechaEtiquetado.length, 
-        elementosFechaEncajonado.length
+        elementosFechaEncajonado.length,
+        elementosFechaExtracto.length
     );
 
     for (let i = 0; i < cantidadElementos; i++) {
         // Selecciona la fecha disponible (la primera que esté presente)
-        let fecha = elementosFechaElaboracion[i] || elementosFechaEtiquetado[i] || elementosFechaEncajonado[i];
+        let fecha = elementosFechaElaboracion[i] || elementosFechaEtiquetado[i] || elementosFechaEncajonado[i] || elementosFechaExtracto[i];
         
         if (fecha) {
             const fechaValor = fecha.innerText;

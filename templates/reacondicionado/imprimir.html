@@ -26,7 +26,7 @@
                 {% for r in reacondicionado["reacondicionado"]%}
                 {% if r["cantidad"]|int > 0 %}
                 <tr>
-                    <td>Numero único: {{r["numero_unico_original"]}}</td>
+                    <td>Numero único: {{r["numero_unico_original"]  or r["numero_unico_original_extracto"]}}</td>
                     <td>Cantidad: {{r["cantidad"]}}</td>
                 </tr>
                 
@@ -64,7 +64,7 @@
                 {% if r["cantidad"]|int > 0 %}
                 <tr>
                     <th>Denominacion:</th>
-                    <td>{{r["den"]}}</td>
+                    <td>{{r["mden"] or r["eden"]}}</td>
                 </tr>
                 <tr>
                     <th>Numero único:</th>
@@ -86,18 +86,23 @@
                         <th>Fecha de Encajonado:</th>
                         <td class="fecha_encajonado">{{ r["fecha_encajonado"].strftime('%Y-%m-%d %H:%M') }}</td>
                     </tr>
+                {% elif r["extracto_fecha_elaboracion"] %}
+                    <tr>
+                        <th>Fecha de Encajonado:</th>
+                        <td class="extracto_fecha_elaboracion">{{ r["extracto_fecha_elaboracion"].strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
                 {% endif %}
 
 
                 
                 <tr>
                     <th>Vencimiento:</th>
-                    <td hidden class="meses">{{r["meses"]}}</td>
+                    <td hidden class="meses">{{r["meses"] or r["extracto_vto"]}}</td>
                     <td class="vencimiento"></td>
                 </tr>
                 <tr>
                     <th>Lote:</th>
-                    <td>{{r["lote"]}}</td>
+                    <td>{{r["mlote"] or r["elote"] }}</td>
                 </tr>
                 <tr>
                     <th>Cantidad:</th>
