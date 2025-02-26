@@ -220,7 +220,7 @@ def guardar_extracto(form, vto, lote):
                     INSERT INTO
                     extracto
                     (numero_unico, producto, fecha_elaboracion, lote, brix, numero_recipiente,
-                    observaciones, vto_meses, responsable, fecha_registro, den)
+                    observaciones, vto_meses, responsable, fecha_registro, den, cantidad)
                     VALUES
                     (:numero_unico, :producto, :fecha_elaboracion, :lote, :brix, :numero_recipiente,
                     :observaciones, :vto_meses, :responsable, CURRENT_TIMESTAMP, :den, :cantidad)

@@ -105,9 +105,13 @@ def guardar_reacondicionado():
             reacondicionado_detalle_sql = text("""
                         INSERT INTO
                         reacondicionado_detalle
-                        (reacondicionado, mercaderia, cantidad, reacondicionado_detalle, fecha_registro, mercaderia_original)
+                        (reacondicionado, mercaderia, cantidad, 
+                        reacondicionado_detalle, fecha_registro, mercaderia_original,
+                        extracto, extracto_original)
                         VALUES
-                        (:reacondicionado, :mercaderia, :cantidad, :reacondicionado_detalle, CURRENT_TIMESTAMP, :mercaderia_original)
+                        (:reacondicionado, :mercaderia, :cantidad, 
+                        :reacondicionado_detalle, CURRENT_TIMESTAMP, :mercaderia_original,
+                        :extracto, :extracto_original)
                     """
                     )
             db.db.session.execute(reacondicionado_detalle_sql,
@@ -116,7 +120,9 @@ def guardar_reacondicionado():
                                                     "mercaderia": rd["id_a_tomar"] if "T1" in rd["numero"] else None,
                                                     "cantidad": rd["tomar"],
                                                     "reacondicionado_detalle":rd["id_a_tomar"] if "T2" in rd["numero"] else None,
-                                                    "mercaderia_original": rd["mercaderia_original"]
+                                                    "mercaderia_original": rd["mercaderia_original"] if "T1" in rd["numero"] else None,
+                                                    "extracto": rd["id_a_tomar"] if "E1" in rd["numero"] else None,
+                                                    "extracto_original": rd["mercaderia_original"] if "E1" in rd["numero"] else None,
                                                 })
         db.db.session.commit()
 
@@ -127,6 +133,19 @@ def guardar_reacondicionado():
             if "T1" in rd["numero"]:
                 update_mercaderia = text("""
                     UPDATE mercaderia
+                    SET cantidad = :nueva_cantidad
+                    WHERE id = :id;
+                """)
+                db.db.session.execute(
+                    update_mercaderia,
+                    {
+                        "nueva_cantidad": nueva_cantidad,  
+                        "id": rd["id_a_tomar"]         
+                    }
+                )
+            elif "E1" in rd["numero"]:
+                update_mercaderia = text("""
+                    UPDATE extracto
                     SET cantidad = :nueva_cantidad
                     WHERE id = :id;
                 """)
@@ -186,10 +205,13 @@ def get_reacondicionado(numero_unico):
         g1 = t1 or e1
 
         sql = text(""" 
-            SELECT m.*, r.*, rd.*, v.meses, u.nombre, m.numero_unico AS numero_unico_original
+            SELECT m.*, e.*, r.*, rd.*, 
+                   v.meses, u.nombre, m.numero_unico AS numero_unico_original,
+                   e.numero_unico AS numero_unico_original_extracto
             FROM reacondicionado r
             RIGHT JOIN reacondicionado_detalle rd ON r.id = rd.reacondicionado
             LEFT JOIN mercaderia m ON m.id = rd.mercaderia_original
+            LEFT JOIN extracto e ON e.id = rd.extracto_original
             LEFT JOIN vencimiento v ON v.id = m.vto
             LEFT JOIN usuario u ON r.responsable = u.id
             WHERE r.numero_unico = :numero_unico
