@@ -223,7 +223,7 @@ def guardar_extracto(form, vto, lote):
                     observaciones, vto_meses, responsable, fecha_registro, den)
                     VALUES
                     (:numero_unico, :producto, :fecha_elaboracion, :lote, :brix, :numero_recipiente,
-                    :observaciones, :vto_meses, :responsable, CURRENT_TIMESTAMP, :den)
+                    :observaciones, :vto_meses, :responsable, CURRENT_TIMESTAMP, :den, :cantidad)
                 """
                 )
         
@@ -238,7 +238,8 @@ def guardar_extracto(form, vto, lote):
                                                 "responsable": form['user_id'],
                                                 "numero_unico": form['numero_unico'],
                                                 "vto_meses": vto['id'],
-                                                "den": form['denominacion']
+                                                "den": form['denominacion'],
+                                                "cantidad" : 1
                                             })
         db.db.session.commit()
         return True

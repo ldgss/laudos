@@ -10,8 +10,8 @@ document.getElementById("btn_agregar").addEventListener("click", function() {
         <div class="col-sm-5 d-flex align-items-center">
             <input required type="text" class="form-control me-1 w-75"
                 name="numeros_unicos"
-                title="(Ej: 2024-T1-000001, 2024-T2-000001)" 
-                pattern="^\\d{4}-(T1|T2)-\\d{6}$">
+                title="(Ej: 2024-T1-000001, 2024-T2-000001, 2024-E1-000001)" 
+                pattern="^\\d{4}-(T1|T2|E1)-\\d{6}$">
 
             <button type="button" class="btn btn-outline-secondary btn-sm p-2 me-1" onclick="buscarParte(this)">
                 Buscar
@@ -57,7 +57,7 @@ function buscarParte(button) {
                 cantidades_placeholder.innerHTML = ""; // Limpia antes de insertar
 
                 const nuevoDiv = document.createElement("div");
-                if(data["reacondicionado"].length > 1){
+                if(data["reacondicionado"].length > 0){
 
                     for (let i = 0; i < data["reacondicionado"].length; i++) {
                         console.log(`detalle id: ${data["reacondicionado"][i]["id"]}`)

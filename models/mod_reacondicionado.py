@@ -172,7 +172,19 @@ def get_reacondicionado(numero_unico):
         
         t1 = db.db.session.execute(sql,{"numero_unico": numero_unico})
         t1 = t1.mappings().first() or {}
+        
+        sql = text("""
+                    SELECT *
+                    FROM extracto
+                    WHERE numero_unico = :numero_unico 
+                """
+                )
+        
+        e1 = db.db.session.execute(sql,{"numero_unico": numero_unico})
+        e1 = e1.mappings().first() or {}
     
+        g1 = t1 or e1
+
         sql = text(""" 
             SELECT m.*, r.*, rd.*, v.meses, u.nombre, m.numero_unico AS numero_unico_original
             FROM reacondicionado r
@@ -185,7 +197,7 @@ def get_reacondicionado(numero_unico):
         
         t2 = db.db.session.execute(sql,{"numero_unico": numero_unico})
         t2 = [dict(row) for row in t2.mappings().all() or {}]
-        return {**t1, "reacondicionado": t2}
+        return {**g1, "reacondicionado": t2}
     except Exception as e:
         print(f"Error: {e}")
         return None
