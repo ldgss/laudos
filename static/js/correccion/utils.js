@@ -1,6 +1,7 @@
+
 document.getElementById('form_buscar').addEventListener('submit', async function (e) {
     e.preventDefault();
-
+    
     const numeroUnico = document.getElementById('numero_unico').value;
     const tipo = numeroUnico.match(/-(T1|H1|E1)-/);
 
@@ -39,7 +40,8 @@ document.getElementById('form_buscar').addEventListener('submit', async function
         // Popular los campos del formulario (modal1 en este caso)
         if (modalId === 'modal1') {
             document.getElementById('denominacion_modal1').value = data['den'] || '';
-
+            document.getElementById('llenadora_botella').value = data['llenadora_botella'] || '';
+            
             // Manejo de fecha y hora
             const fechaHora = data['fecha_elaboracion'] || data['fecha_etiquetado'] || data['fecha_encajonado'] || '';
             let tipoFechaSeleccionada = '';
@@ -194,8 +196,26 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             document.getElementById('numero_unico_modal3').value = data['numero_unico'] || '';
         }
 
+    habilitarLlenadora();
+
     } catch (error) {
         console.error('Error:', error);
         alert('Hubo un problema al comunicarse con el servidor.');
     }
 });
+
+
+
+function habilitarLlenadora(){
+    let denominacionInput = document.getElementById("denominacion_modal1");
+    let llenadoraBotellaInput = document.getElementById("llenadora_botella");
+    
+    if (denominacionInput.value.toLowerCase().includes("botella")) {
+        llenadoraBotellaInput.removeAttribute("disabled");
+    } else {
+        llenadoraBotellaInput.setAttribute("disabled", "true");
+        llenadoraBotellaInput.value = ""; // Limpiar el campo si se deshabilita
+    }
+    denominacionInput.addEventListener('input', habilitarLlenadora);
+}
+

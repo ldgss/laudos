@@ -2,6 +2,7 @@ from sqlalchemy.sql import text
 from db import db
 from datetime import datetime
 import shlex
+from flask import request
 
 def listar_productos_arballon():
     # cambiar a sqlserver para llamar a arballon
@@ -11,20 +12,25 @@ def listar_productos_arballon():
                 SELECT 
                     cod_mae, den, cod_cls FROM genmae
                 WHERE 
-                    tip_mae = 4
-                    AND (
-                        cod_cls = 'Extrac' OR
-                        cod_cls = 'Pas500' OR
-                        cod_cls = 'Pelado' OR
-                        cod_cls = 'Pulpa' OR
-                        cod_cls = 'Pure' OR
-                        cod_cls = 'Tri500' OR
-                        cod_cls = 'Tri8' OR
-                        cod_cls = 'Tri910' OR
-                        cod_cls = 'Tri950' OR
-                        cod_cls = 'Tritur' OR
-                        cod_cls = 'TriP2K'
-                    )
+                    (
+	                    tip_mae = 4 and
+                        (
+                                cod_cls = 'Extrac' OR
+                                cod_cls = 'Pas500' OR
+                                cod_cls = 'Pelado' OR
+                                cod_cls = 'Pulpa' OR
+                                cod_cls = 'Pure' OR
+                                cod_cls = 'Tri500' OR
+                                cod_cls = 'Tri8' OR
+                                cod_cls = 'Tri910' OR
+                                cod_cls = 'Tri950' OR
+                                cod_cls = 'Tritur' OR
+                                cod_cls = 'TriP2K'
+                        )
+	                ) 
+                    OR 
+                        cod_mae = '1460618' OR
+                        cod_mae = '127105'
             """))
             return result.fetchall()
 
@@ -119,11 +125,11 @@ def guardar_envasado(form, vto, lote):
                     mercaderia
                     (producto, observacion, cantidad, lote, fecha_elaboracion, 
                     responsable, numero_unico, vto, fecha_registro,
-                    den)
+                    den, llenadora_botella)
                     VALUES
                     (:producto, :observacion, :cantidad, :lote, :fecha_elaboracion, 
                     :responsable, :numero_unico, :vto, CURRENT_TIMESTAMP,
-                    :den)
+                    :den, :llenadora_botella)
                 """
                 )
         
@@ -137,7 +143,8 @@ def guardar_envasado(form, vto, lote):
                                                 "responsable": form['user_id'],
                                                 "numero_unico": form['numero_unico'],
                                                 "vto": vto['id'],
-                                                "den": form['denominacion']
+                                                "den": form['denominacion'],
+                                                "llenadora_botella": request.form.get("llenadora_botella") or None
                                             })
         db.db.session.commit()
         return True
@@ -153,11 +160,11 @@ def guardar_etiquetado(form, vto, lote):
                     mercaderia
                     (producto, observacion, cantidad, lote, fecha_etiquetado, 
                     responsable, numero_unico, vto, fecha_registro,
-                    den)
+                    den, llenadora_botella)
                     VALUES
                     (:producto, :observacion, :cantidad, :lote, :fecha_etiquetado, 
                     :responsable, :numero_unico, :vto, CURRENT_TIMESTAMP,
-                    :den)
+                    :den, :llenadora_botella)
                 """
                 )
         
@@ -171,7 +178,8 @@ def guardar_etiquetado(form, vto, lote):
                                                 "responsable": form['user_id'],
                                                 "numero_unico": form['numero_unico'],
                                                 "vto": vto['id'],
-                                                "den": form['denominacion']
+                                                "den": form['denominacion'],
+                                                "llenadora_botella": request.form.get("llenadora_botella") or None
                                             })
         db.db.session.commit()
         return True

@@ -19,6 +19,27 @@ function validarMarca() {
     });
 }
 
+function validarLlenadora() {
+    // Seleccionar todos los elementos cuyo id comienza con "llenadora_botella"
+    const denominacionInputs = document.querySelectorAll('[id^="llenadora_botella"]');
+    
+    // Capturar el elemento fijo "llenadora_botella_opciones"
+    const denominacionOpciones = document.getElementById('llenadora_botella_opciones');
+    
+    // Validar que el elemento de opciones exista
+    if (!denominacionOpciones) return;
+
+    // Obtener las opciones como un array
+    const opciones = Array.from(denominacionOpciones.options).map(option => option.value);
+
+    // Validar cada input cuyo id comienza con "denominacion"
+    denominacionInputs.forEach(input => {
+        if (!opciones.includes(input.value)) {
+            input.value = '';
+        }
+    });
+}
+
 // function validarMarca() {
 //     const denominacionInput = document.querySelector('[id^="denominacion"]');
 //     const denominacion_opciones = document.getElementById('denominacion_opciones');
@@ -383,7 +404,22 @@ function actualizar_vencimiento_unico() {
     }
 }
 
+function habilitarLlenadora(){
+    const denominacionInput = document.getElementById("denominacion");
+    const llenadoraBotellaInput = document.getElementById("llenadora_botella");
 
+    function toggleLlenadoraBotella() {
+        if (denominacionInput.value.toLowerCase().includes("botella")) {
+            llenadoraBotellaInput.removeAttribute("disabled");
+        } else {
+            llenadoraBotellaInput.setAttribute("disabled", "true");
+            llenadoraBotellaInput.value = ""; // Limpiar el campo si se deshabilita
+        }
+    }
+
+    denominacionInput.addEventListener("input", toggleLlenadoraBotella);
+    toggleLlenadoraBotella(); // Ejecutar la función al cargar la página
+}
 
 try {
     window.addEventListener('load', actualizarFechaYHora);
@@ -393,6 +429,7 @@ try {
     window.addEventListener('load', imprimir_new_tab);
     window.addEventListener('load', actualizar_vencimiento_en_listado);
     window.addEventListener('load', actualizar_vencimiento_unico);
+    window.addEventListener('load', habilitarLlenadora);
 } catch (error) {
     // console.log(error)
 }

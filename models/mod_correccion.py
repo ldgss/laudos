@@ -23,7 +23,8 @@ def guardar_correccion():
                             fecha_elaboracion=:fecha_elaboracion, 
                             fecha_etiquetado=:fecha_etiquetado,  
                             fecha_encajonado=:fecha_encajonado, 
-                            den=:den
+                            den=:den,
+                            llenadora_botella=:llenadora_botella
                         WHERE 
                             numero_unico=:numero_unico; 
                        """)
@@ -38,7 +39,8 @@ def guardar_correccion():
                                                 "fecha_etiquetado":f"{request.form["fecha_modal1"]} {request.form["hora_modal1"]}" if 'tipo_fecha_etiquetado' in request.form["tipo_fecha_modal1"] else None,
                                                 "fecha_encajonado":f"{request.form["fecha_modal1"]} {request.form["hora_modal1"]}" if 'tipo_fecha_encajonado' in request.form["tipo_fecha_modal1"] else None,
                                                 "den":request.form["denominacion_modal1"],
-                                                "numero_unico":request.form["numero_unico_modal1"]
+                                                "numero_unico":request.form["numero_unico_modal1"],
+                                                "llenadora_botella":request.form.get("llenadora_botella") or None
                                             })
         elif numero_unico_modal2 and 'H1' in numero_unico_modal2:
             sql = text(""" 

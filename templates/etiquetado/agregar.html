@@ -27,7 +27,7 @@
             <input type="hidden" id="cod_mae" name="cod_mae">
             <datalist id="denominacion_opciones">
                 {% for p in productos_arballon %}
-                    {% if 'semi' not in (p.den | lower) %}
+                    {% if 'semi' not in (p.den | lower) and 'llena' not in (p.den | lower) %}
                         <option value="{{ p.den | trim }}" 
                                 data-cod-cls="{{ p.cod_cls | trim }}" 
                                 data-cod-mae="{{ p.cod_mae | trim }}">
@@ -38,6 +38,28 @@
         </div>
 
     </div>
+
+    <!-- linea de botella -->
+    <div class="row m-4 justify-content-center">
+        <label for="llenadora_botella" class="col-sm-2 col-form-label">Llenadora de botella</label>
+        <div class="col-sm-5">
+            <input list="llenadora_botella_opciones" required type="text" 
+            class="form-control" name="llenadora_botella" id="llenadora_botella"
+            onblur="validarLlenadora()" >
+            <datalist id="llenadora_botella_opciones">
+                {% for p in productos_arballon | reverse %}
+                    {% if 'llena' in (p.den | lower) %}
+                        <option value="{{ p.den | trim }}" 
+                                data-cod-cls="{{ p.cod_cls | trim }}" 
+                                data-cod-mae="{{ p.cod_mae | trim }}">
+                        </option>
+                    {% endif %}
+                {% endfor %}
+            </datalist>
+        </div>
+
+    </div> 
+    <!-- linea de botella -->
 
     <div class="row m-4 justify-content-center">
         <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>

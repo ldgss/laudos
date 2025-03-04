@@ -74,6 +74,28 @@
                         </div>
                 
                     </div>
+
+                    <!-- linea de botella -->
+                    <div class="row m-4 justify-content-center">
+                        <label for="llenadora_botella" class="col-sm-4 col-form-label">Llenadora de botella</label>
+                        <div class="col-sm-8">
+                            <input list="llenadora_botella_opciones" required type="text" 
+                            class="form-control" name="llenadora_botella" id="llenadora_botella"
+                            onblur="validarLlenadora()" >
+                            <datalist id="llenadora_botella_opciones">
+                                {% for p in productos_arballon | reverse %}
+                                    {% if 'llena' in (p.den | lower) %}
+                                        <option value="{{ p.den | trim }}" 
+                                                data-cod-cls="{{ p.cod_cls | trim }}" 
+                                                data-cod-mae="{{ p.cod_mae | trim }}">
+                                        </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </datalist>
+                        </div>
+
+                    </div> 
+                    <!-- linea de botella -->
                 
                     <div class="row m-4 justify-content-center">
                         <label for="tipo_fecha" class="col-sm-4 col-form-label">Tipo de fecha</label>
