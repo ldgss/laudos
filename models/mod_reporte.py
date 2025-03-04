@@ -17,6 +17,7 @@ def get_envasado():
                         m.vto, 
                         m.fecha_registro, 
                         m.den,
+                        m.llenadora_botella,
                         u.nombre,
                         d.fecha_registro as fecha_despacho
                     FROM mercaderia m
@@ -74,6 +75,7 @@ def get_etiquetado():
                         m.vto, 
                         m.fecha_registro, 
                         m.den,
+                        m.llenadora_botella,
                         u.nombre,
                         d.fecha_registro as fecha_despacho
                     FROM mercaderia m
@@ -339,6 +341,7 @@ def get_ubicacion():
                 m.fecha_elaboracion + INTERVAL '1 month' * v.meses AS env_vto,
                 m.fecha_etiquetado + INTERVAL '1 month' * v.meses AS eti_vto,
                 m.fecha_encajonado + INTERVAL '1 month' * v.meses AS encaj_vto,
+                m.llenadora_botella as llenadora,
                 ub.hojalata,
                 h.den AS hojalata_den,
                 h.lote as hojalata_lote,
@@ -355,6 +358,7 @@ def get_ubicacion():
                 mra.fecha_elaboracion + INTERVAL '1 month' * v.meses AS reac_env_vto,
                 mra.fecha_etiquetado + INTERVAL '1 month' * v.meses AS reac_eti_vto,
                 mra.fecha_encajonado + INTERVAL '1 month' * v.meses AS reac_encaj_vto,
+                mra.llenadora_botella as reac_llenadora,
                 un.posicion,
                 un.sector,
                 ub.ubicacion_profundidad,

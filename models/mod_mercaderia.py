@@ -352,6 +352,7 @@ def get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset):
             subcondicion.append(f"m.numero_unico::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.vto::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.den::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.llenadora_botella::TEXT ILIKE '%{termino}%'")
             
             # chequear cada termino en nombre usuario
             subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
@@ -420,6 +421,7 @@ def get_listado_etiquetado(terminos_de_busqueda, resultados_por_pagina, offset):
             subcondicion.append(f"m.numero_unico::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.vto::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.den::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.llenadora_botella::TEXT ILIKE '%{termino}%'")
             
             # chequear cada termino en nombre usuario
             subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
