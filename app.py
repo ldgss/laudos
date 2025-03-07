@@ -22,8 +22,11 @@ from routes import correcion
 from routes import materia
 from routes import despacho
 from routes import kpi
+from routes import usuario
+from routes.usuario import active_users
 from db import db
 from datetime import timedelta
+from datetime import datetime
 from flask import session
 from utils import tokens
 
@@ -95,6 +98,7 @@ app.register_blueprint(correcion.correccion_bp)
 app.register_blueprint(materia.materia_bp)
 app.register_blueprint(despacho.despacho_bp)
 app.register_blueprint(kpi.kpi_bp)
+app.register_blueprint(usuario.usuario_bp)
 
 # swagger
 
@@ -108,3 +112,31 @@ def spec():
         description: Devuelve la documentación de Swagger.
     """
     return swagger(app)
+
+
+@app.before_request
+def actualizar_ultima_actividad():
+    if session.get("nombre"):
+        ahora = datetime.now()
+        # 30 segundos de inactividad
+        timeout = 1 * 30
+        usuario_encontrado = False
+
+        # Actualizar la última actividad si el usuario ya está en la lista
+        for usuario in active_users:
+            if usuario["usuario"] == session["nombre"]:
+                usuario["ultima_actividad"] = ahora
+                usuario_encontrado = True
+                break
+
+        # Si el usuario no estaba en la lista, agregarlo
+        if not usuario_encontrado:
+            active_users.append(
+                {
+                    "usuario": session["nombre"],
+                    "ultima_actividad": ahora
+                }
+            )
+
+        # Limpiar usuarios inactivos sin modificar la lista mientras se itera
+        active_users[:] = [usuario for usuario in active_users if (ahora - usuario["ultima_actividad"]).seconds <= timeout]

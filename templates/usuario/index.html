@@ -1,0 +1,15 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+    <h2> Usuarios activos </h2>
+        <ul>
+            {% for u in active_users %}
+            <li>
+                {{ u["usuario"] }} - {{ u["ultima_actividad"].strftime('%Y-%m-%d %H:%M') }}
+            </li>
+            {% endfor %}
+        </ul>
+{% endblock %}

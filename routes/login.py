@@ -10,9 +10,6 @@ from models import mod_login
 from utils import helpers
 from models import mod_mercaderia
 from models import mod_hojalata
-from models import mod_bloqueo
-
-
 
 login_bp = Blueprint('login', __name__)
 

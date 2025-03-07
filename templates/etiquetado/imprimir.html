@@ -39,11 +39,13 @@
                     <th>Cantidad:</th>
                     <td>{{etiquetado["cantidad"]}}</td>
                 </tr>
-                <!-- <tr>
-                    <th>Observaciones:</th>
-                    <td>{{etiquetado["observacion"]}}</td>
-                </tr> -->
+                {% if etiquetado["llenadora_botella"] %}
+                    <tr>
+                        <th>Mqn:</th>
+                        <td>{{'LL1' if 'tey' in etiquetado["llenadora_botella"] | lower else 'LL2'}}</td>
+                    </tr>
                 <tr>
+                {% endif %}
                     <th>Responsable:</th>
                     <td>{{etiquetado["nombre"]}}</td>
                 </tr>

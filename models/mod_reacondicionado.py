@@ -231,6 +231,100 @@ def get_reacondicionado(numero_unico):
         print(f"Error: {e}")
         return None
     
+def imprimir(numero_unico):
+    try:
+        sql = text("""
+                    SELECT *
+                    FROM mercaderia
+                    WHERE numero_unico = :numero_unico 
+                """
+                )
+        
+        t1 = db.db.session.execute(sql,{"numero_unico": numero_unico})
+        t1 = t1.mappings().first() or {}
+        
+        sql = text("""
+                    SELECT *
+                    FROM extracto
+                    WHERE numero_unico = :numero_unico 
+                """
+                )
+        
+        e1 = db.db.session.execute(sql,{"numero_unico": numero_unico})
+        e1 = e1.mappings().first() or {}
+    
+        g1 = t1 or e1
+
+        sql = text(""" 
+            SELECT 
+                /* reacondicionado */
+                r.numero_unico,
+                r.nueva_den,
+                r.tipo_reacondicionado,
+                rd.cantidad,
+                r.observaciones,
+                u_r.nombre,
+                to_char(r.fecha_registro, 'YYYY-MM-DD HH24:MI') as fecha_registro,
+                /* mercaderia a un paso */
+                m.den as m_den,
+                m.numero_unico as m_numero_unico,
+                to_char(m.fecha_elaboracion, 'YYYY-MM-DD HH24:MI') as m_fecha_elaboracion,
+                to_char(m.fecha_etiquetado, 'YYYY-MM-DD HH24:MI') as m_fecha_etiquetado,
+                vm.meses as m_vto,
+                m.lote as m_lote,
+                m.observacion as m_observacion,
+                u_m.nombre as m_responsable,
+                /* extracto a un paso */
+                e.den as e_den,
+                e.numero_unico as e_numero_unico,
+                to_char(e.fecha_elaboracion, 'YYYY-MM-DD HH24:MI') as e_fecha_elaboracion,
+                ve.meses as e_vto,
+                e.lote as e_lote,
+                e.observaciones as e_observaciones,
+                u_e.nombre as e_responsable,
+                /* mercaderia a dos pasos */
+                m2.den as m2_den,
+                m2.numero_unico as m2_numero_unico,
+                to_char(m2.fecha_elaboracion, 'YYYY-MM-DD HH24:MI') as m2_fecha_elaboracion,
+                to_char(m2.fecha_etiquetado, 'YYYY-MM-DD HH24:MI') as m2_fecha_etiquetado,
+                vm2.meses as m2_vto,
+                m2.lote as m2_lote,
+                m2.observacion as m2_observacion,
+                u_m2.nombre as m2_responsable,
+                /* extracto a dos pasos */
+                e2.den as e2_den,
+                e2.numero_unico as e2_numero_unico,
+                to_char(e2.fecha_elaboracion, 'YYYY-MM-DD HH24:MI') as e2_fecha_elaboracion,
+                ve2.meses as e2_vto,
+                e2.lote as e2_lote,
+                e2.observaciones as e2_observaciones,
+                u_e2.nombre as e2_responsable
+            FROM reacondicionado r
+            left JOIN reacondicionado_detalle rd ON r.id = rd.reacondicionado
+            LEFT JOIN mercaderia m ON m.id = rd.mercaderia_original
+            LEFT JOIN extracto e ON e.id = rd.extracto_original
+            left join reacondicionado_detalle rd2 on rd2.id = rd.reacondicionado_detalle
+            left join mercaderia m2 on m2.id = rd2.mercaderia_original 
+            left join extracto e2 on e2.id = rd2.extracto_original 
+            left join usuario u_r on u_r.id = r.responsable 
+            left join usuario u_m on u_m.id = m.responsable
+            left join usuario u_m2 on u_m2.id = m2.responsable
+            left join usuario u_e on u_e.id = e.id
+            left join usuario u_e2 on u_e2.id = e2.id
+            left join vencimiento vm on vm.id = m.id
+            left join vencimiento vm2 on vm2.id = m2.id
+            left join vencimiento ve on ve.id = e.id
+            left join vencimiento ve2 on ve2.id = e2.id
+            WHERE r.numero_unico = :numero_unico
+         """)
+        
+        t2 = db.db.session.execute(sql,{"numero_unico": numero_unico})
+        t2 = [dict(row) for row in t2.mappings().all() or {}]
+        return {**g1, "reacondicionado": t2}
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
 def get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7

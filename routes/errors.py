@@ -10,3 +10,7 @@ def not_found(error):
 @errors_bp.app_errorhandler(401)
 def unauthorized(error):
     return render_template("error/no_autorizado.html"), 401
+
+@errors_bp.app_errorhandler(500)
+def internal_server_error(error):
+    return render_template("error/error_de_servidor.html"), 500

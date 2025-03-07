@@ -33,7 +33,7 @@ def anulacion_agregar():
         else:
             flash("""
                     Se ha producido un error en la anulacion.
-                    Revise que el pallet indicado no tenga ubicaciones asignadas.
+                    Revise que el pallet indicado no tenga ubicaciones asignadas o sea parte de un reacondicionado.
                   """)
             return redirect(url_for("anulacion.anulacion"))
     else:

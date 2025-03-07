@@ -60,7 +60,7 @@ def reacondicionado_buscart1t2(numero_unico):
 @reacondicionado_bp.get("/reacondicionado/imprimir/<numero_unico>")
 def reacondicionado_imprimir(numero_unico):
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
-        reacondicionado = mod_reacondicionado.get_reacondicionado(numero_unico)
+        reacondicionado = mod_reacondicionado.imprimir(numero_unico)
         title = "Reacondicionado"
         section = "Reacondicionado"
         return render_template("reacondicionado/imprimir.html", 

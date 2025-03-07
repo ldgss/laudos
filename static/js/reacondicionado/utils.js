@@ -67,7 +67,7 @@ function buscarParte(button) {
                         <div class="row m-4 justify-content-center">
                             <label for="cantidad" class="col-sm-2 col-form-label">Detalle</label>
                             <div class="col-sm-5 d-flex align-items-center">
-                                ${data["reacondicionado"][i]["lote"]}
+                                ${data["reacondicionado"][i]["mlote"] ? data["reacondicionado"][i]["mlote"] : data["reacondicionado"][i]["elote"]}
                             </div>
                         </div>
                         <div class="row m-4 justify-content-center">
