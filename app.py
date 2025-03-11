@@ -118,8 +118,8 @@ def spec():
 def actualizar_ultima_actividad():
     if session.get("nombre"):
         ahora = datetime.now()
-        # 30 segundos de inactividad
-        timeout = 1 * 30
+        # 8 minutos de inactividad
+        timeout = 8 * 60
         usuario_encontrado = False
 
         # Actualizar la última actividad si el usuario ya está en la lista

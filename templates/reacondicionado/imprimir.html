@@ -13,8 +13,31 @@
     </div>
     <div class="row m-4 justify-content-center">
         <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
-            
-            <table class="table-bordered col-12">
+            <!-- tabla para imprimir -->
+            <table id="descripcion_reacondicionado" class="table-bordered col-12 fixed-table">
+                <tr>
+                    <td>Denominacion: {{reacondicionado["reacondicionado"][0]["nueva_den"]}}</td>
+                    <td>Cantidad Total: {{ reacondicionado["reacondicionado"] | map(attribute="cantidad") | map("int") | sum }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="background-color: #f0f0f0; height: 10px;"></td>
+                </tr>                
+
+                {% for item in reacondicionado["reacondicionado"]%}
+                {% if item["cantidad"]|int > 0 %}
+                <tr>
+                    <td>Numero único: {{item["m_numero_unico"] or item["e_numero_unico"] or item["m2_numero_unico"] or item["e2_numero_unico"]}}</td>
+                    <td>Cantidad: {{item["cantidad"]}}</td>
+                </tr>
+                
+                <tr>
+                    <td colspan="3" style="background-color: #f0f0f0; height: 5px;"></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+            <!-- tabla para mostrar -->
+            <table class="table-bordered col-12 fixed-table">
                 <!-- Datos principales del producto -->
                 <tr>
                     <td>Número único</td>
@@ -52,7 +75,7 @@
             
             <!-- Iterar sobre las composiciones -->
             {% for item in reacondicionado["reacondicionado"] %}
-                <table class="table-bordered col-12">
+                <table class="table-bordered col-12 fixed-table">
                     <tr>
                         <td>Denominacion</td>
                         <td>{{item["m_den"] or item["e_den"] or item["m2_den"] or item["e2_den"]}}</td>

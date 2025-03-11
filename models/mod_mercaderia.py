@@ -3,6 +3,8 @@ from db import db
 from datetime import datetime
 import shlex
 from flask import request
+import traceback
+
 
 def listar_productos_arballon():
     # cambiar a sqlserver para llamar a arballon
@@ -150,7 +152,9 @@ def guardar_envasado(form, vto, lote):
         return True
     except Exception as e:
         db.db.session.rollback()
-        print(f"Error: {e}")
+        error_traceback = traceback.format_exc()
+        print(f"e: {e}")
+        print(f"tb: {error_traceback}")
         return None
     
 def guardar_etiquetado(form, vto, lote):

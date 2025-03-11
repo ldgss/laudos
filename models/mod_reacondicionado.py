@@ -309,8 +309,8 @@ def imprimir(numero_unico):
             left join usuario u_r on u_r.id = r.responsable 
             left join usuario u_m on u_m.id = m.responsable
             left join usuario u_m2 on u_m2.id = m2.responsable
-            left join usuario u_e on u_e.id = e.id
-            left join usuario u_e2 on u_e2.id = e2.id
+            left join usuario u_e on u_e.id = e.responsable
+            left join usuario u_e2 on u_e2.id = e2.responsable
             left join vencimiento vm on vm.id = m.id
             left join vencimiento vm2 on vm2.id = m2.id
             left join vencimiento ve on ve.id = e.id
