@@ -68,10 +68,7 @@ def guardar_despacho():
             "status": None,
             "message": detail_message
         }
-    
-        
-        
-    
+       
 def get_listado_despacho(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
@@ -187,3 +184,68 @@ def anular_despacho():
         db.db.session.rollback()
         print(f"Error: {e}")
         return None
+    
+def detalle_despacho():
+    try:
+        n = request.json.get("numeroUnico")
+        sql = text("""
+                    select 
+                        /* despacho */
+                        to_char(d.fecha_registro, 'YYYY-MM-DD HH24:MI') as despachado, 
+                        /* mercaderia */
+                        m.den as m_den,
+                        m.lote as m_lote,
+                        /* hojalata */
+                        h.den as h_den,
+                        h.lote as h_lote,
+                        /* extracto */
+                        e.den as e_den,
+                        e.lote as e_lote,
+                        /* reacondicionado mercaderia */
+                        m2.den as m2_den,
+                        m2.lote as m2_lote,
+                        /* reacondicionado extracto */
+                        e2.den as e2_den,
+                        e2.lote as e2_lote,
+                        /* reacondicionado mercaderia rec */
+                        m3.den as m3_den,
+                        m3.lote as m3_lote,
+                        /* reacondicionado extracto rec */
+                        e3.den as e3_den,
+                        e3.lote as e3_lote
+                    from despacho d
+                    full outer join mercaderia m on m.numero_unico = d.mercaderia
+                    full outer join hojalata h on h.numero_unico = d.hojalata 
+                    full outer join extracto e on e.numero_unico = d.extracto 
+                    full outer join reacondicionado r on r.numero_unico = d.reacondicionado 
+                    left join reacondicionado_detalle rd on rd.reacondicionado = r.id 
+                    left join mercaderia m2 on m2.id = rd.mercaderia_original 
+                    left join extracto e2 on e2.id = rd.extracto_original
+                    left join reacondicionado_detalle rd2 on rd2.id = rd.reacondicionado_detalle
+                    left join mercaderia m3 on m3.id = rd2.mercaderia_original 
+                    left join extracto e3 on e3.id = rd2.extracto_original 
+                    where 
+                        coalesce(d.mercaderia, d.hojalata, d.extracto, d.reacondicionado, 
+                                m.numero_unico, h.numero_unico, e.numero_unico, r.numero_unico) is not null and (
+                            m.numero_unico = :mercaderia or
+                            h.numero_unico = :hojalata or
+                            e.numero_unico = :extracto or
+                            r.numero_unico = :reacondicionado
+                        )
+                """
+                )
+        
+        detalle = db.db.session.execute(sql, 
+                                        {
+                                            "mercaderia": n if 'T1' in n else None,
+                                            "hojalata": n if 'H1' in n else None,
+                                            "extracto": n if 'E1' in n else None,
+                                            "reacondicionado": n if 'T2' in n else None
+                                        }
+                                        )
+        detalle = [dict(row) for row in detalle.mappings().all()]
+        return detalle
+    except Exception as e:
+        db.db.session.rollback()
+        error_message = traceback.format_exc()
+        return error_message

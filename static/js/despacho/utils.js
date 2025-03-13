@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    function agregarEscaneo(numeroUnicoValor) {
+    function agregarEscaneo(numeroUnicoValor, despachado, detalles) {
         contador++;
         let inputId = `numero_unico_${contador}`;
         let rowId = `row_${contador}`;
@@ -96,6 +96,8 @@ document.addEventListener("DOMContentLoaded", function () {
         input.id = inputId;
         input.value = numeroUnicoValor;
         input.readOnly = true;
+        input.style.border = `1px solid ${despachado ? "red" : "green"}`;
+        input.style.boxShadow = `${despachado ? "red" : "green"} 0px 0px 5px`;
 
         let divBtnCol = document.createElement("div");
         divBtnCol.className = "col-sm-2";
@@ -110,7 +112,29 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         };
 
+        // Contenedor para la información de despacho
+        let despachoInfoContainer = document.createElement("div");
+        despachoInfoContainer.className = "mt-2";
+        let despachoEstado = document.createElement("p");
+        if(despachado){
+            despachoEstado.innerHTML = `<p>Estado: Despachado el dia ${detalles[0]["despachado"]}</p>`
+        }else{
+            despachoEstado.innerHTML = `<p>Estado: Disponible</p>`
+        }
+        despachoInfoContainer.appendChild(despachoEstado);
+
+        detalles.forEach((detalle) => {
+            let despachoInfo = document.createElement("p");
+            let den = detalle["m3_den"] || detalle["m_den"] || detalle["e3_den"] || detalle["e_den"] || detalle["h_den"] || detalle["m2_den"] || detalle["e2_den"] || "-";
+            let lote = detalle["m3_lote"] || detalle["m_lote"] || detalle["e3_lote"] || detalle["e_lote"] || detalle["h_lote"] || detalle["m2_lote"] || detalle["e2_lote"] || "-";
+            despachoInfo.innerHTML = `<p>${den}</p> <p>${lote}</p>`;
+            despachoInfoContainer.appendChild(despachoInfo);
+        });
+
+
+
         divCol.appendChild(input);
+        divCol.appendChild(despachoInfoContainer);
         divBtnCol.appendChild(btnEliminar);
         divRow.appendChild(divCol);
         divRow.appendChild(divBtnCol);
@@ -129,7 +153,32 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
         document.getElementById("escaneo").value = ""
-        agregarEscaneo(numeroUnicoValor);
+        // agregamos solo despues de conocer el estado del pallet, despachado o no
+        // agregarEscaneo(numeroUnicoValor);
+
+        // chequear el estado del pallet
+        // si existe, si esta despachado, nombre del producto y lote
+        fetch("/despacho/detalle", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ numeroUnico: numeroUnicoValor })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error en la petición: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // agregamos el pallet pero avisando si esta despachado o no
+            // si no hay detalle, el pallet no se ha despachado y se contornea verde
+            // si hay detalle, el pallet se ha despachado y se contornea rojo
+            const despachado = data.length > 0 && data.some(item => item.hasOwnProperty('despachado') && item['despachado']);
+            agregarEscaneo(numeroUnicoValor, despachado, data);
+        })
+        .catch(error => console.error("Error al obtener el detalle del despacho:", error));
     });
 
      // Evitar envío del formulario con Enter y verificar que haya al menos un escaneo
@@ -142,10 +191,20 @@ document.addEventListener("DOMContentLoaded", function () {
  
      formulario.addEventListener("submit", function (event) {
          let inputs = document.querySelectorAll("#lista_numero_unico input");
+         let despachados = document.querySelectorAll("#lista_numero_unico p");
+
          if (inputs.length === 0) {
              alert("Debe agregar al menos un escaneo antes de enviar el formulario.");
              event.preventDefault();
          }
+
+         for (let p of despachados) {
+            if (p.textContent.toLowerCase().includes("despachado")) {
+                alert("Algunos elementos ya fueron despachados, revise e intente de nuevo");
+                event.preventDefault();
+                return;
+            }
+        }
      });
 });
 

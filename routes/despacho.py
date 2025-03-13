@@ -6,6 +6,7 @@ from flask import Blueprint
 from models import mod_despacho
 from flask import flash
 from flask import request
+from flask import jsonify
 
 
 despacho_bp = Blueprint("despacho", __name__)
@@ -83,5 +84,16 @@ def despacho_anular_post():
         else:
             flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
             return redirect(referer)
+    else:
+        return redirect(url_for("login.login_get"))
+
+@despacho_bp.post("/despacho/detalle")
+def despacho_detalle():
+    if helpers.session_on() and helpers.authorized_to("despacho"):
+        result = mod_despacho.detalle_despacho()
+        if result:
+            return jsonify(result)
+        else:
+            return jsonify({})
     else:
         return redirect(url_for("login.login_get"))
