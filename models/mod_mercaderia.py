@@ -45,7 +45,7 @@ def get_ultimo_id():
         sql = text("""
                     SELECT numero_unico
                     FROM mercaderia
-                    ORDER BY id DESC
+                    ORDER BY numero_unico DESC
                     LIMIT 1
                    ;
                 """
