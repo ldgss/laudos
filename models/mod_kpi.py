@@ -39,6 +39,7 @@ def get_listado_kpi(producto):
                     m.fecha_elaboracion + INTERVAL '1 month' * v.meses AS env_vto,
                     m.fecha_etiquetado as etiquetado,
                     m.fecha_etiquetado + INTERVAL '1 month' * v.meses AS etiq_vto,
+                    m.llenadora_botella,
                     m.fecha_registro as registro, 
                     u.nombre as responsable,
                     m.observacion 
