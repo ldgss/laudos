@@ -90,3 +90,9 @@ function actualizarValoresOcultos() {
         }
     }
 }
+
+function envioUnico() {
+    const btnEnviar = document.getElementById('btn-enviar');
+    btnEnviar.disabled = true;
+    return true;  // Continúa con el envío del formulario
+}
