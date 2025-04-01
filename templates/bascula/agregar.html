@@ -1,0 +1,80 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/bascula/utils.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+
+<form id="form_agregar" action="agregar" method="post">
+
+    <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+        <div class="col-sm-5">
+            <input required type="datetime-local" class="form-control" name="fecha" id="fecha">
+        </div>
+    </div>
+    
+    <div class="row m-4 justify-content-center">
+        <label for="modo" class="col-sm-2 col-form-label">Modo</label>
+        <div class="col-sm-5">
+            <select required class="form-select" name="modo" id="modo">
+                <option value=""></option>
+                <option value="entrada">Entrada</option>
+                <option value="salida">Salida</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="chofer" class="col-sm-2 col-form-label">Chofer</label>
+        <div class="col-sm-5">
+            <input required type="text" maxlength="40" class="form-control" name="chofer" id="chofer">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="dominio" class="col-sm-2 col-form-label">Dominio</label>
+        <div class="col-sm-5">
+            <input required type="text" 
+            pattern="[A-Z]{3} [0-9]{3}" title="El formato debe ser ABC 123 (tres letras y tres números separados por un espacio)"
+            class="form-control" name="dominio" id="dominio">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="ipm" class="col-sm-2 col-form-label">Ipm</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="999999" maxlength="6" class="form-control" name="ipm" id="ipm">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-2">
+            <div onclick="pesar()" class="btn btn-warning">
+                Pesar
+                <div id="spinner" style="display: none;" class="spinner-border spinner-border-sm text-white" role="status"></div>
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="999999" maxlength="6" class="form-control" name="peso" id="peso">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+        <div class="col-sm-5">
+            <textarea class="form-control" id="observaciones" name="observaciones" 
+            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

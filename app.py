@@ -24,6 +24,8 @@ from routes import despacho
 from routes import kpi
 from routes import usuario
 from routes.usuario import active_users
+from routes import bascula
+from routes import retiro
 from db import db
 from datetime import timedelta
 from datetime import datetime
@@ -99,6 +101,8 @@ app.register_blueprint(materia.materia_bp)
 app.register_blueprint(despacho.despacho_bp)
 app.register_blueprint(kpi.kpi_bp)
 app.register_blueprint(usuario.usuario_bp)
+app.register_blueprint(bascula.bascula_bp)
+app.register_blueprint(retiro.retiro_bp)
 
 # swagger
 
@@ -113,6 +117,11 @@ def spec():
     """
     return swagger(app)
 
+# ping para chequear conexion
+
+@app.route('/ping')
+def ping():
+    return "pong", 200
 
 @app.before_request
 def actualizar_ultima_actividad():

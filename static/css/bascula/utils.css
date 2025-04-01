@@ -1,0 +1,19 @@
+#descripcion_bascula{
+    border-collapse: collapse;
+}
+
+.peso {
+font-size: xx-large;
+font-weight: bold;
+}
+
+#descripcion_bascula th:first-child,
+#descripcion_bascula td:first-child {
+    white-space: nowrap; /* Evita que el texto se divida */
+    width: 1px; /* Fuerza el ajuste al contenido más largo */
+    border: none;
+}
+
+.descripcion_bascula_container{
+    border: 2px dashed black;
+}

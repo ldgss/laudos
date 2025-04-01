@@ -55,8 +55,6 @@ def materia_agregar():
 def materia_agregar_post():
     if helpers.session_on() and helpers.authorized_to("materia"):
         resultado = mod_materia.guardar_materia()
-        title = "Materia"
-        section = "Materia"
         if resultado:
             return redirect(url_for("materia.materia_imprimir", id=resultado))
         else:

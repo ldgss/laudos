@@ -131,14 +131,17 @@
 
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Queue
+                Porteria
               </a>
               <ul class="dropdown-menu">
                 <li class="">
-                  <a class="dropdown-item" href="/nodered">NodeRed</a>
+                  <a class="dropdown-item" href="/materia">Ingreso de materia</a>
                 </li>
                 <li class="">
-                  <a class="dropdown-item" href="/materia">Materia Prima</a>
+                  <a class="dropdown-item" href="/bascula">Bascula</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/retiro">Retiros de mercaderia</a>
                 </li>
               </ul>
             </li>
@@ -192,6 +195,16 @@
     
     <div id="loading" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
         <img src="{{ url_for('static', filename='img/loading.gif') }}" alt="Cargando...">
+    </div>
+
+    <!-- Toast de conexión/desconexión -->
+    <div id="connection-toast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toast-message">
+                Sin conexión al servidor.
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
     </div>
     
     <div class="container">
