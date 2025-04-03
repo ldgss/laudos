@@ -61,7 +61,7 @@ def leer_bascula(ip='192.168.23.77', port=1001, bytes=14):
     try:
         # la bascula usa un socket udp
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-            sock.settimeout(3)
+            sock.settimeout(5)
             # mandamos algo para despertar la bascula
             sock.sendto(b'\n', (ip, port))
             lectura, _ = sock.recvfrom(bytes)

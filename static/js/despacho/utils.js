@@ -1,3 +1,6 @@
+let total_escaneado = document.getElementById("total_escaneado");
+let total_escaneado_value = 0;
+
 document.querySelectorAll('.btn-anular').forEach(button => {
     button.addEventListener('click', function () {
         const despacho_id = this.getAttribute('data-id');
@@ -78,6 +81,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function agregarEscaneo(numeroUnicoValor, despachado, detalles) {
+        // total mostrado al lado del boton agregar
+        total_escaneado_value++;
+        total_escaneado.innerText = total_escaneado_value
+
         contador++;
         let inputId = `numero_unico_${contador}`;
         let rowId = `row_${contador}`;
@@ -110,6 +117,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (elemento) {
                 elemento.remove();
             }
+            total_escaneado_value--;
+            total_escaneado.innerText = total_escaneado_value
         };
 
         // Contenedor para la información de despacho
@@ -172,13 +181,21 @@ document.addEventListener("DOMContentLoaded", function () {
             return response.json();
         })
         .then(data => {
-            // agregamos el pallet pero avisando si esta despachado o no
-            // si no hay detalle, el pallet no se ha despachado y se contornea verde
-            // si hay detalle, el pallet se ha despachado y se contornea rojo
-            const despachado = data.length > 0 && data.some(item => item.hasOwnProperty('despachado') && item['despachado']);
-            agregarEscaneo(numeroUnicoValor, despachado, data);
+            try{
+                if (!data || !Array.isArray(data)) {
+                    throw new Error("Error al obtener el pallet o no existe. C1");
+                }
+
+                // agregamos el pallet pero avisando si esta despachado o no
+                // si no hay detalle, el pallet no se ha despachado y se contornea verde
+                // si hay detalle, el pallet se ha despachado y se contornea rojo
+                const despachado = data.length > 0 && data.some(item => item.hasOwnProperty('despachado') && item['despachado']);
+                agregarEscaneo(numeroUnicoValor, despachado, data);
+            } catch (error) {
+                alert("Error al obtener el pallet o no existe. C2:", error);
+            }
         })
-        .catch(error => console.error("Error al obtener el detalle del despacho:", error));
+        .catch(error => console.error("Error al obtener el pallet o no existe. C3:", error));
     });
 
      // Evitar envío del formulario con Enter y verificar que haya al menos un escaneo

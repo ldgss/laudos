@@ -81,15 +81,16 @@ function updateDateTimeField() {
 }
 
 function extraerPeso(texto) {
-    if(texto.length === 9){
-        return 0
-    }else{
-        // Eliminar caracteres de control (\u0002 o \x02) y espacios innecesarios
-        texto = texto.replace(/[\u0002\x02]/g, '').trim();
-        // Buscar el número más a la derecha
-        const match = texto.match(/(\d+)\D*$/);
-        return match ? parseInt(match[1], 10) : 0;
-    }
+    console.log("antes: " + texto);
+    texto = texto.replace(/u0002/gi, '').trim();
+    texto = texto.replace(/x02/gi, '').trim();
+    texto = texto.replace(/kg/gi, '').trim();
+    texto = texto.replace(/KG/gi, '').trim();
+    texto = texto.replace(' ', '').trim();
+    let numeros = texto.replace(/\D/g, '');
+    let peso = numeros.length > 0 ? parseInt(numeros, 10) : 0;
+    console.log("despues: " + peso);
+    return peso;
 }
 
 function boton_volver() {
