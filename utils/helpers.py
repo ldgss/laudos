@@ -33,6 +33,8 @@ def authorized_to_submodule(submodule):
 
 def authorized_to_action(action):
     if action in session:
-        if session[action] is True:
-            return True
+        if session[action]:
+            return abort(401)
+        return False
     return abort(401)
+        
