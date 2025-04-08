@@ -15,9 +15,9 @@
             class="form-control" name="transporte" id="transporte"
             onblur="validarTransporte()" oninput="actualizarCuit()">
             <datalist id="transporte_opciones">
-                {% for t in transporte %}
-                    <option value="{{ t.den | trim }}" 
-                            data-cuit="{{ t.cuit | trim }}" 
+                {% for c in clientes_proveedores %}
+                    <option value="{{ c.den | trim }}" 
+                            data-cuit="{{ c.cuit | trim }}" 
                     </option>
                 {% endfor %}
             </datalist>

@@ -30,12 +30,12 @@ def retiro_buscar():
 @retiro_bp.get("/retiro/agregar")
 def retiro_agregar():
     if helpers.session_on() and helpers.authorized_to("materia"):
-        transporte = mod_retiro.get_clientes()
+        clientes_proveedores = mod_retiro.get_clientes_proveedores()
         title = "Retiro"
         section = "Retiro"
         return render_template("retiro/agregar.html", 
                                title=title, section=section, 
-                               transporte = transporte
+                               clientes_proveedores = clientes_proveedores
                                )
     else:
         return redirect(url_for("login.login_get"))

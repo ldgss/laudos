@@ -24,7 +24,7 @@ def bloqueo():
     
 @bloqueo_bp.post("/bloqueo/cambiar")
 def bloqueo_cambiar_post():
-    if helpers.session_on() and helpers.authorized_to("bloqueo"):
+    if helpers.session_on() and helpers.authorized_to("bloqueo") and not helpers.authorized_to_action("limitado"):
         referer = request.headers.get('Referer', '/')
         cambio = mod_bloqueo.cambiar_bloqueo()
         title = "Bloqueo"

@@ -16,7 +16,7 @@ resultados_por_pagina = 20
 
 @correccion_bp.get("/correccion")
 def correccion():
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("correccion"):
         title = "Correccion"
         section = "Correccion"
         return render_template("correccion/index.html", 
@@ -29,7 +29,7 @@ def correccion():
 
 @correccion_bp.post("/correccion/seleccionar/")
 def correccion_seleccionar():
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("correccion"):
         # ajax
         data = request.get_json()
         numero_unico = data.get('numero_unico')
@@ -40,7 +40,7 @@ def correccion_seleccionar():
 
 @correccion_bp.post("/correccion/actualizar")
 def correccion_actualizar():
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("correccion"):
         resultado = mod_correccion.guardar_correccion()
         if resultado:
             flash("El producto se actualizo con exito")
@@ -53,14 +53,14 @@ def correccion_actualizar():
     
 @correccion_bp.post("/correccion/buscar")
 def correccion_buscar():
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("correccion"):
         return redirect(url_for("correccion.correccion_listado", terminos_de_busqueda=request.form["buscar"]))
     else:
         return redirect(url_for("login.login_get"))
     
 @correccion_bp.get("/correccion/listado/<terminos_de_busqueda>")
 def correccion_listado(terminos_de_busqueda):
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("correccion"):
         # paginacion
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina

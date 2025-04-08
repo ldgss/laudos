@@ -24,3 +24,15 @@ def authorized_to(section):
         if session[section] is True:
             return True
     return abort(401)
+
+def authorized_to_submodule(submodule):
+    if submodule in session:
+        if session[submodule] is True:
+            return True
+    return abort(401)
+
+def authorized_to_action(action):
+    if action in session:
+        if session[action] is True:
+            return True
+    return abort(401)

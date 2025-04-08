@@ -7,17 +7,22 @@ import shlex
 import traceback
 
 
-def get_clientes():
+def get_clientes_proveedores():
     # cambiar a sqlserver para llamar a arballon
     try:
         with db.db.get_engine(bind='sqlserver').connect() as connection:
             result = connection.execute(text("""
                 select 
-                    cc.denominacion as den, 
-                    cc.numero_documento as cuit 
+                    cc.denominacion as den,
+                    cc.numero_documento as cuit
                 from cog_cliente cc 
-                where 
-                    denominacion != '~VARIOS~'
+                where denominacion != '~VARIOS~'
+                union
+                select
+                    cp.denominacion as den,
+                    cp.numero_documento as cuit
+                from cog_proveedor cp 
+                where denominacion != '~VARIOS~'
             """))
             return result.fetchall()
     except Exception as e:
