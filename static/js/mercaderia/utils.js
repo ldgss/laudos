@@ -127,6 +127,12 @@ function rellenarCantidad() {
             case 'MI PT Tetra 520 CUISUINE & CO':
                 cantidadInput.value = 1800;
                 break;
+            case 'MI TT Botella 1020 ATALAIA T.OFF':
+                cantidadInput.value = 720;
+                break;
+            case 'Semi-Elaborado Botella 1020 T.OFF':
+                cantidadInput.value = 720;
+                break;
             default:
                 console.log("La cantidad no está definida");
                 break;

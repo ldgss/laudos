@@ -177,6 +177,7 @@ WITH ubicacion_con_row AS (
         u.ubicacion_profundidad,
         u.ubicacion_altura,
         u.reacondicionado,
+        r.nueva_den as reacondicionado_nueva_den,
         u_n.id as ubicacion_fila_2,
         u_n.posicion,
         u_n.sector,
@@ -194,6 +195,7 @@ WITH ubicacion_con_row AS (
     left join mercaderia m on m.numero_unico = u.mercaderia
     left join hojalata h on h.numero_unico = u.hojalata
     left join extracto e on e.numero_unico = u.extracto
+    left join reacondicionado r on r.numero_unico = u.reacondicionado
     WHERE 
         {condicion_final_ilike}
 )
@@ -211,6 +213,7 @@ SELECT
         u.ubicacion_profundidad,
         u.ubicacion_altura,
         u.reacondicionado,
+        r.nueva_den as reacondicionado_nueva_den,
         u_n.id as ubicacion_fila_2,
         u_n.posicion,
         u_n.sector,
@@ -222,6 +225,7 @@ LEFT JOIN usuario ON u.responsable = usuario.id
 left join mercaderia m on m.numero_unico = u.mercaderia
 left join hojalata h on h.numero_unico = u.hojalata
 left join extracto e on e.numero_unico = u.extracto
+left join reacondicionado r on r.numero_unico = u.reacondicionado
 WHERE u.rn = 1
 ORDER BY u.fecha_registro DESC
 LIMIT :limit OFFSET :offset;
