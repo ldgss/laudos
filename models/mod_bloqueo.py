@@ -157,7 +157,7 @@ def get_listado_bloqueo(terminos_de_busqueda, resultados_por_pagina, offset):
             LEFT JOIN motivo_bloqueo mb ON b.motivo = mb.id
             LEFT JOIN usuario u ON b.responsable = u.id
             WHERE {condicion_final_ilike}
-            ORDER BY COALESCE(m.numero_unico, h.numero_unico, e.numero_unico), b.fecha_registro DESC
+            ORDER BY COALESCE(m.numero_unico, h.numero_unico, e.numero_unico) DESC, b.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),
