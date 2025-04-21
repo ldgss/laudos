@@ -417,14 +417,25 @@ def get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, off
         total_resultados = f"""
                                 SELECT COUNT(*)
                                 FROM (
-                                    SELECT m.*, r.*, rd.*, v.meses, u.nombre, m.numero_unico AS numero_unico_original
+                                    SELECT 
+                                        r.*, 
+                                        u.nombre AS responsable_nombre, 
+                                        array_agg(json_build_object(
+                                            'mercaderia_id', m.id,
+                                            'numero_unico_original', m.numero_unico,
+                                            'producto', v.producto,
+                                            'meses', v.meses,
+                                            'detalle_id', rd.id
+                                        )) AS detalles
                                     FROM reacondicionado r
+                                    LEFT JOIN usuario u ON r.responsable = u.id
                                     RIGHT JOIN reacondicionado_detalle rd ON r.id = rd.reacondicionado
                                     LEFT JOIN mercaderia m ON m.id = rd.mercaderia_original
                                     LEFT JOIN extracto e ON e.id = rd.extracto_original
                                     LEFT JOIN vencimiento v ON v.id = m.vto
-                                    LEFT JOIN usuario u ON r.responsable = u.id
                                     WHERE {condicion_final_ilike}
+                                    GROUP BY r.id, u.nombre
+                                    ORDER BY r.fecha_registro DESC
                                 ) AS total_count;
                             """
 
