@@ -81,7 +81,7 @@ function updateDateTimeField() {
 }
 
 function extraerPeso(texto) {
-    console.log("antes: " + texto);
+    console.log("raw: " + texto);
     texto = texto.replace(/u0002/gi, '').trim();
     texto = texto.replace(/x02/gi, '').trim();
     texto = texto.replace(/kg/gi, '').trim();
@@ -89,7 +89,7 @@ function extraerPeso(texto) {
     texto = texto.replace(' ', '').trim();
     let numeros = texto.replace(/\D/g, '');
     let peso = numeros.length > 0 ? parseInt(numeros, 10) : 0;
-    console.log("despues: " + peso);
+    console.log("trimed: " + peso);
     return peso;
 }
 

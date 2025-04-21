@@ -16,6 +16,23 @@
 //     });
 // });
 
+// autofocus en el primer input
+
+window.addEventListener("DOMContentLoaded", () => {
+    const inputs = document.querySelectorAll("form input:not([type='hidden']), form textarea, form select");
+
+    for (let input of inputs) {
+      const isDisabled = input.disabled;
+      const isReadOnly = input.readOnly;
+      const hasValue = input.value && input.value.trim() !== "";
+
+      if (!isDisabled && !isReadOnly && !hasValue) {
+        input.focus();
+        break;
+      }
+    }
+});
+
 // chequear la conexion cada 5 segundos
 
 let isDisconnected = false;
