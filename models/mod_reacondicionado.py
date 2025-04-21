@@ -333,7 +333,7 @@ def get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, off
         
         for termino in terminos_de_busqueda:
             subcondicion = []
-            # chequear cada termino en cada columna de mercaderia
+            # chequear cada termino en mercaderia
             subcondicion.append(f"m.producto::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.observacion::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.cantidad::TEXT ILIKE '%{termino}%'")
@@ -344,7 +344,18 @@ def get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, off
             subcondicion.append(f"m.vto::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.den::TEXT ILIKE '%{termino}%'")
 
-            # chequear cada termino en nombre reacondicionado
+            # chequear cada termino en extracto
+            subcondicion.append(f"e.numero_unico::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.producto::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.fecha_elaboracion::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.lote::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.brix::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.numero_recipiente::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.observaciones::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.den::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"e.cantidad::TEXT ILIKE '%{termino}%'")
+
+            # chequear cada termino en reacondicionado
             subcondicion.append(f"r.numero_unico::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"r.responsable::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"r.fecha_registro::TEXT ILIKE '%{termino}%'")
@@ -352,7 +363,7 @@ def get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, off
             subcondicion.append(f"r.observaciones::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"r.tipo_reacondicionado::TEXT ILIKE '%{termino}%'")
 
-            # chequear cada termino en nombre reacondicionado_detalle
+            # chequear cada termino en reacondicionado_detalle
             subcondicion.append(f"rd.fecha_registro::TEXT ILIKE '%{termino}%'")
 
             # chequear cada termino en nombre usuario
@@ -391,6 +402,7 @@ def get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, off
             LEFT JOIN usuario u ON r.responsable = u.id
             RIGHT JOIN reacondicionado_detalle rd ON r.id = rd.reacondicionado
             LEFT JOIN mercaderia m ON m.id = rd.mercaderia_original
+            LEFT JOIN extracto e ON e.id = rd.extracto_original
             LEFT JOIN vencimiento v ON v.id = m.vto
             WHERE {condicion_final_ilike}
             GROUP BY r.id, u.nombre
@@ -409,6 +421,7 @@ def get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, off
                                     FROM reacondicionado r
                                     RIGHT JOIN reacondicionado_detalle rd ON r.id = rd.reacondicionado
                                     LEFT JOIN mercaderia m ON m.id = rd.mercaderia_original
+                                    LEFT JOIN extracto e ON e.id = rd.extracto_original
                                     LEFT JOIN vencimiento v ON v.id = m.vto
                                     LEFT JOIN usuario u ON r.responsable = u.id
                                     WHERE {condicion_final_ilike}
