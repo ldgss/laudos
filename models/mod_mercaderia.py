@@ -27,7 +27,9 @@ def listar_productos_arballon():
                                 cod_cls = 'Tri910' OR
                                 cod_cls = 'Tri950' OR
                                 cod_cls = 'Tritur' OR
-                                cod_cls = 'TriP2K'
+                                cod_cls = 'TriP2K' OR
+                                cod_cls = 'TriPou' OR
+                                cod_cls = 'Tr1020'
                         )
 	                ) 
                     OR 
