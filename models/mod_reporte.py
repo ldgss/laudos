@@ -14,7 +14,7 @@ def get_envasado():
                         m.lote, 
                         m.fecha_elaboracion, 
                         m.numero_unico, 
-                        m.vto, 
+                        m.fecha_elaboracion + INTERVAL '1 month' * v.meses AS vto,
                         m.fecha_registro, 
                         m.den,
                         m.llenadora_botella,
@@ -24,6 +24,7 @@ def get_envasado():
                     INNER JOIN usuario u
                         ON m.responsable = u.id
                     LEFT JOIN despacho d ON m.numero_unico = d.mercaderia
+                    LEFT JOIN vencimiento v ON v.id  = m.vto
                     WHERE 
                         (:fecha_inicial IS NULL OR m.fecha_elaboracion >= :fecha_inicial)
                         AND (:fecha_final IS NULL OR m.fecha_elaboracion <= :fecha_final)
@@ -72,7 +73,7 @@ def get_etiquetado():
                         m.lote, 
                         m.fecha_etiquetado, 
                         m.numero_unico, 
-                        m.vto, 
+                        m.fecha_etiquetado + INTERVAL '1 month' * v.meses AS vto, 
                         m.fecha_registro, 
                         m.den,
                         m.llenadora_botella,
@@ -82,6 +83,7 @@ def get_etiquetado():
                     INNER JOIN usuario u
                         ON m.responsable = u.id
                     LEFT JOIN despacho d ON m.numero_unico = d.mercaderia
+                    LEFT JOIN vencimiento v ON v.id = m.vto
                     WHERE 
                         (:fecha_inicial IS NULL OR m.fecha_etiquetado >= :fecha_inicial)
                         AND (:fecha_final IS NULL OR m.fecha_etiquetado <= :fecha_final)
@@ -238,7 +240,7 @@ def get_extracto():
                             e.brix, 
                             e.numero_recipiente, 
                             e.observaciones, 
-                            e.vto_meses, 
+                            e.fecha_elaboracion + INTERVAL '1 month' * v.meses AS vto, 
                             u.nombre,
                             e.fecha_registro, 
                             e.den,
@@ -246,6 +248,7 @@ def get_extracto():
                         FROM extracto e
                         inner join usuario u on e.responsable = u.id
                         left join despacho d on d.extracto = e.numero_unico 
+                        left join vencimiento v on v.id = e.vto_meses
                         where 
                             (:fecha_inicial IS NULL OR e.fecha_registro >= :fecha_inicial) and
                             (:fecha_final IS NULL OR e.fecha_registro <= :fecha_final) and
