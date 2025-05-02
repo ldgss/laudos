@@ -81,6 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function agregarEscaneo(numeroUnicoValor, despachado, detalles) {
+        let agotado = chequear_agotado(detalles)
         // total mostrado al lado del boton agregar
         total_escaneado_value++;
         total_escaneado.innerText = total_escaneado_value
@@ -103,8 +104,8 @@ document.addEventListener("DOMContentLoaded", function () {
         input.id = inputId;
         input.value = numeroUnicoValor;
         input.readOnly = true;
-        input.style.border = `1px solid ${despachado ? "red" : "green"}`;
-        input.style.boxShadow = `${despachado ? "red" : "green"} 0px 0px 5px`;
+        input.style.border = `1px solid ${despachado || agotado ? "red" : "green"}`;
+        input.style.boxShadow = `${despachado || agotado ? "red" : "green"} 0px 0px 5px`;
 
         let divBtnCol = document.createElement("div");
         divBtnCol.className = "col-sm-2";
@@ -127,6 +128,8 @@ document.addEventListener("DOMContentLoaded", function () {
         let despachoEstado = document.createElement("p");
         if(despachado){
             despachoEstado.innerHTML = `<p>Estado: Despachado el dia ${detalles[0]["despachado"]}</p>`
+        }else if(agotado){
+            despachoEstado.innerHTML = `<p>Estado: Agotado</p>`
         }else{
             despachoEstado.innerHTML = `<p>Estado: Disponible</p>`
         }
@@ -149,6 +152,18 @@ document.addEventListener("DOMContentLoaded", function () {
         divRow.appendChild(divBtnCol);
 
         document.getElementById("lista_numero_unico").appendChild(divRow);
+    }
+
+    function chequear_agotado(detalles){
+        return !detalles.some((detalle) =>
+            detalle["m_cantidad"] ||
+            detalle["m3_cantidad"] ||
+            detalle["m2_cantidad"] ||
+            detalle["h_cantidad"] ||
+            detalle["e_cantidad"] ||
+            detalle["e3_cantidad"] ||
+            detalle["e2_cantidad"]
+        );
     }
 
     document.getElementById("agregar").addEventListener("click", function () {

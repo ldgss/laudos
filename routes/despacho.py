@@ -37,7 +37,7 @@ def despacho_agregar():
     
 @despacho_bp.post("/despacho/agregar")
 def despacho_agregar_post():
-    if helpers.session_on() and helpers.authorized_to("despacho"):
+    if helpers.session_on() and helpers.authorized_to("despacho") and not helpers.authorized_to_action("limitado"):
         despacho = mod_despacho.guardar_despacho()
         if despacho["status"] is True:
             flash("Despacho agregado con éxito.")
@@ -76,7 +76,7 @@ def despacho_listado(terminos_de_busqueda):
     
 @despacho_bp.post("/despacho/anular")
 def despacho_anular_post():
-    if helpers.session_on() and helpers.authorized_to("despacho"):
+    if helpers.session_on() and helpers.authorized_to("despacho") and not helpers.authorized_to_action("limitado"):
         referer = request.headers.get('Referer', '/')
         result = mod_despacho.anular_despacho()
         if result:

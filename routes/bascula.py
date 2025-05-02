@@ -72,7 +72,7 @@ def leer_bascula(ip='192.168.23.77', port=1001, bytes=14):
     
 @bascula_bp.post("/bascula/agregar")
 def bascula_agregar_post():
-    if helpers.session_on() and helpers.authorized_to("materia"):
+    if helpers.session_on() and helpers.authorized_to("materia") and not helpers.authorized_to_action("limitado"):
         resultado = mod_bascula.guardar_bascula()
         if resultado:
             return redirect(url_for("bascula.bascula_imprimir", id=resultado))

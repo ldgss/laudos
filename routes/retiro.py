@@ -42,7 +42,7 @@ def retiro_agregar():
 
 @retiro_bp.post("/retiro/agregar")
 def retiro_agregar_post():
-    if helpers.session_on() and helpers.authorized_to("materia"):
+    if helpers.session_on() and helpers.authorized_to("materia") and not helpers.authorized_to_action("limitado"):
         resultado = mod_retiro.guardar_retiro()
         if resultado:
             return redirect(url_for("retiro.retiro_imprimir", id=resultado))

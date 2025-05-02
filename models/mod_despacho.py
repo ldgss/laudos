@@ -195,24 +195,31 @@ def detalle_despacho():
                         /* mercaderia */
                         m.den as m_den,
                         m.lote as m_lote,
+                        m.cantidad as m_cantidad,
                         /* hojalata */
                         h.den as h_den,
                         h.lote as h_lote,
+                        h.cantidad as h_cantidad,
                         /* extracto */
                         e.den as e_den,
                         e.lote as e_lote,
+                        e.cantidad as e_cantidad,
                         /* reacondicionado mercaderia */
                         m2.den as m2_den,
                         m2.lote as m2_lote,
+                        m2.cantidad as m2_cantidad,
                         /* reacondicionado extracto */
                         e2.den as e2_den,
                         e2.lote as e2_lote,
+                        e2.cantidad as e2_cantidad,
                         /* reacondicionado mercaderia rec */
                         m3.den as m3_den,
                         m3.lote as m3_lote,
+                        m3.cantidad as m3_cantidad,
                         /* reacondicionado extracto rec */
                         e3.den as e3_den,
-                        e3.lote as e3_lote
+                        e3.lote as e3_lote,
+                        e3.cantidad as e3_cantidad
                     from despacho d
                     full outer join mercaderia m on m.numero_unico = d.mercaderia
                     full outer join hojalata h on h.numero_unico = d.hojalata 
