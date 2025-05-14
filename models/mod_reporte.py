@@ -449,14 +449,20 @@ def get_despacho():
                 d.mercaderia,
                 m.den as mercaderia_den,
                 m.lote as mercaderia_lote,
+                m.cantidad as mercaderia_cantidad,
                 d.hojalata,
                 h.den as hojalata_den,
                 h.lote as hojalata_lote,
+                h.cantidad as hojalata_cantidad,
                 d.extracto,
                 e.den as extracto_den,
                 e.lote as extracto_lote,
+                e.cantidad as extracto_cantidad,
                 d.reacondicionado,
                 r.nueva_den as reacondicionado_den,
+                mrd.numero_unico as reac_mercaderia_nu,
+                rd.cantidad as reacondicionado_cant,
+                erd.numero_unico as reac_extracto_nu,
                 d.fletero_codigo,
                 d.fletero_nombre,
                 d.observaciones,
@@ -468,6 +474,9 @@ def get_despacho():
             LEFT JOIN hojalata h ON d.hojalata = h.numero_unico
             LEFT JOIN extracto e ON d.extracto = e.numero_unico
             LEFT JOIN reacondicionado r ON d.reacondicionado = r.numero_unico
+            LEFT JOIN reacondicionado_detalle rd ON r.id = rd.reacondicionado
+            LEFT JOIN mercaderia mrd ON rd.mercaderia_original = mrd.id
+            LEFT JOIN extracto erd ON rd.extracto_original = erd.id
             WHERE 
 			    (:fecha_inicial IS NULL OR d.fecha_registro >= :fecha_inicial) AND
 			    (:fecha_final IS NULL OR d.fecha_registro <= :fecha_final) AND
@@ -492,7 +501,7 @@ def get_despacho():
 			        h.den ILIKE '%' || :denominacion || '%' OR 
 			        e.den ILIKE '%' || :denominacion || '%' OR 
 			        r.nueva_den ILIKE '%' || :denominacion || '%')
-			ORDER BY d.fecha_registro DESC;
+			ORDER BY d.fecha_registro DESC, rd.fecha_registro DESC;
                     """)
 
         # Ejecutar la consulta
