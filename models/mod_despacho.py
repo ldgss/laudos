@@ -32,11 +32,11 @@ def guardar_despacho():
                 INSERT INTO despacho
                     (mercaderia, hojalata, extracto, reacondicionado, 
                     fletero_codigo, fletero_nombre, 
-                    observaciones, responsable, fecha_registro)
+                    observaciones, responsable, fecha_registro, patente, pin)
                 VALUES
                     (:mercaderia, :hojalata, :extracto, :reacondicionado, 
                     :fletero_codigo, :fletero_nombre, 
-                    :observaciones, :responsable, CURRENT_TIMESTAMP)
+                    :observaciones, :responsable, CURRENT_TIMESTAMP, :patente, :pin)
             """)
 
             for producto in productos:
@@ -49,6 +49,8 @@ def guardar_despacho():
                     "fletero_nombre" : request.form["fletero_nombre"],
                     "observaciones" : request.form["observaciones"],
                     "responsable" : session["id"],
+                    "patente" : request.form["patente"],
+                    "pin" : request.form["pin"]
                 })
 
             db.db.session.commit()
