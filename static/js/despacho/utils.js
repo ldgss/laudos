@@ -154,7 +154,10 @@ document.addEventListener("DOMContentLoaded", function () {
         divRow.appendChild(divCol);
         divRow.appendChild(divBtnCol);
 
-        document.getElementById("lista_numero_unico").appendChild(divRow);
+        // document.getElementById("lista_numero_unico").appendChild(divRow);
+        // insertar el nuevo escaneo al principio de la lista para mejor visibilidad
+        let lista = document.getElementById("lista_numero_unico")
+        lista.insertBefore(divRow, lista.firstChild)
     }
 
     function chequear_agotado(detalles){
