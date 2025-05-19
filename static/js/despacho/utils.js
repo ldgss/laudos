@@ -1,5 +1,6 @@
 let total_escaneado = document.getElementById("total_escaneado");
 let total_escaneado_value = 0;
+const codigos_escaneados = new Set();
 
 document.querySelectorAll('.btn-anular').forEach(button => {
     button.addEventListener('click', function () {
@@ -68,8 +69,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let contador = 0; // Contador para generar IDs únicos
 
     function existeEscaneo(codigo) {
-        return Array.from(document.querySelectorAll("#lista_numero_unico input"))
-            .some(input => input.value === codigo);
+        // return Array.from(document.querySelectorAll("#lista_numero_unico input"))
+        //     .some(input => input.value === codigo);
+        return codigos_escaneados.has(codigo)
     }
 
     Quagga.onDetected(function (result) {
@@ -117,6 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let elemento = document.getElementById(rowId);
             if (elemento) {
                 elemento.remove();
+                codigos_escaneados.delete(numeroUnicoValor)
             }
             total_escaneado_value--;
             total_escaneado.innerText = total_escaneado_value
@@ -176,6 +179,10 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("El escaneo ya ha sido agregado.");
             return;
         }
+
+        // si no esta agregado, lo hacemos aca
+        codigos_escaneados.add(numeroUnicoValor)
+
         document.getElementById("escaneo").value = ""
         // agregamos solo despues de conocer el estado del pallet, despachado o no
         // agregarEscaneo(numeroUnicoValor);
