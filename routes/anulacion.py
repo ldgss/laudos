@@ -7,6 +7,7 @@ from models import mod_anulacion
 from flask import flash
 from flask import request
 from flask import session
+from flask import jsonify
 
 
 anulacion_bp = Blueprint("anulacion", __name__)
@@ -39,6 +40,17 @@ def anulacion_agregar():
     else:
         return redirect(url_for("login.login_get"))
     
+@anulacion_bp.post("/anulacion/detalle_t2")
+def detalle_t2():
+    if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("anulacion"):
+        resultado = mod_anulacion.detalle_t2()
+        if resultado:
+            return resultado
+        else:
+            return jsonify({'error': 'Pallet no encontrado'}), 404
+    else:
+        return redirect(url_for("login.login_get"))
+
 @anulacion_bp.post("/anulacion/buscar")
 def anulacion_buscar():
     if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("anulacion"):
