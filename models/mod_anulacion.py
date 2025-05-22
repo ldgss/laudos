@@ -98,7 +98,7 @@ def guardar_anulacion():
         print(f"tb: {error_traceback}")
         app.logger.debug(f"e: {e}")
         app.logger.debug(f"tb: {traceback}")
-        return None
+        return False
 
 def detalle_t2():
     try:

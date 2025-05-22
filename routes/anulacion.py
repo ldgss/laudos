@@ -28,14 +28,12 @@ def anulacion_agregar():
     if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("anulacion"):
         
         resultado = mod_anulacion.guardar_anulacion()
+        # un mensaje largo en flash se ignora
         if resultado:
             flash("Anulacion guardada con exito")
             return redirect(url_for("anulacion.anulacion"))
         else:
-            flash("""
-                    Se ha producido un error en la anulacion.
-                    Revise que el pallet indicado no tenga ubicaciones asignadas o sea parte de un reacondicionado.
-                  """)
+            flash("Se ha producido un error en la anulacion")
             return redirect(url_for("anulacion.anulacion"))
     else:
         return redirect(url_for("login.login_get"))
