@@ -240,12 +240,12 @@ def guardar_extracto(form, vto, lote):
                     :observaciones, :vto_meses, :responsable, CURRENT_TIMESTAMP, :den, :cantidad)
                 """
                 )
-        
+        # a partir de mayo de 2025 los brix los lleva calidad
         envasado = db.db.session.execute(sql,
                                             {
                                                 "producto": form['cod_mae'],
                                                 "observaciones": form['observaciones'],
-                                                "brix": form['brix'],
+                                                "brix": None,
                                                 "numero_recipiente": form['numero_recipiente'],
                                                 "lote": lote,
                                                 "fecha_elaboracion": f"{form['fecha']} {form['hora']}",
