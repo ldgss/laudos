@@ -161,6 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function chequear_agotado(detalles){
+        console.log(detalles)
         return !detalles.some((detalle) =>
             detalle["m_cantidad"] ||
             detalle["m3_cantidad"] ||
@@ -168,7 +169,9 @@ document.addEventListener("DOMContentLoaded", function () {
             detalle["h_cantidad"] ||
             detalle["e_cantidad"] ||
             detalle["e3_cantidad"] ||
-            detalle["e2_cantidad"]
+            detalle["e2_cantidad"] ||
+            detalle["rd_cantidad"] ||
+            detalle["rd2_cantidad"]
         );
     }
 

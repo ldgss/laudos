@@ -221,7 +221,9 @@ def detalle_despacho():
                         /* reacondicionado extracto rec */
                         e3.den as e3_den,
                         e3.lote as e3_lote,
-                        e3.cantidad as e3_cantidad
+                        e3.cantidad as e3_cantidad,
+                        rd.cantidad as rd_cantidad,
+                        rd2.cantidad as rd2_cantidad
                     from despacho d
                     full outer join mercaderia m on m.numero_unico = d.mercaderia
                     full outer join hojalata h on h.numero_unico = d.hojalata 
