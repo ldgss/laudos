@@ -23,6 +23,20 @@
 {% block content %}
 
 <form action="agregar" method="post" id="formulario">
+    
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-7">
+            <div class="alert alert-info">Para cargar la fecha manualmente, tocar el campo fecha.</div>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+        <div class="col-sm-5">
+            <input required type="datetime-local" class="form-control" name="fecha" id="fecha">
+        </div>
+    </div>
+    
     <input required type="hidden" class="form-control" name="fletero_codigo" id="fletero_codigo">
     
     <!-- Sección Fletero Nombre -->
@@ -44,10 +58,11 @@
     </div>
 
     <!-- Sección patente -->
+    <!-- opcional para cargas atrasadas -->
     <div class="row m-4 justify-content-center">
         <label for="patente" class="col-sm-2 col-form-label">Patente</label>
         <div class="col-sm-5">
-            <input type="text" required maxlength="20" class="form-control" name="patente" id="patente">
+            <input type="text" maxlength="20" class="form-control" name="patente" id="patente">
         </div>
     </div>
 

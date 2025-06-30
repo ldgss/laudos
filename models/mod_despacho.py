@@ -32,11 +32,11 @@ def guardar_despacho():
                 INSERT INTO despacho
                     (mercaderia, hojalata, extracto, reacondicionado, 
                     fletero_codigo, fletero_nombre, 
-                    observaciones, responsable, fecha_registro, patente, pin)
+                    observaciones, responsable, fecha_registro, patente, pin, fecha)
                 VALUES
                     (:mercaderia, :hojalata, :extracto, :reacondicionado, 
                     :fletero_codigo, :fletero_nombre, 
-                    :observaciones, :responsable, CURRENT_TIMESTAMP, :patente, :pin)
+                    :observaciones, :responsable, CURRENT_TIMESTAMP, :patente, :pin, :fecha)
             """)
 
             for producto in productos:
@@ -50,7 +50,8 @@ def guardar_despacho():
                     "observaciones" : request.form["observaciones"],
                     "responsable" : session["id"],
                     "patente" : request.form["patente"],
-                    "pin" : request.form["pin"]
+                    "pin" : request.form["pin"],
+                    "fecha" : request.form["fecha"]
                 })
 
             db.db.session.commit()
@@ -116,7 +117,8 @@ def get_listado_despacho(terminos_de_busqueda, resultados_por_pagina, offset):
                 d.fletero_nombre, 
                 d.observaciones, 
                 u.nombre, 
-                d.fecha_registro
+                d.fecha_registro,
+                d.fecha
             FROM despacho d
             left JOIN usuario u ON d.responsable = u.id
             left JOIN mercaderia m ON m.numero_unico = d.mercaderia

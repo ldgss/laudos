@@ -43,6 +43,24 @@ function validar_fletero_nombre() {
 
 const beepSound = new Audio("/static/sounds/scan_success.mp3");
 
+function updateDateTimeField() {
+    const field = document.getElementById('fecha');
+    const now = new Date();
+
+    // Ajusta la fecha y hora al huso horario UTC-3
+    now.setHours(now.getUTCHours() - 6);
+
+    // Formatea la fecha y hora ajustada en formato YYYY-MM-DDTHH:mm
+    const formattedDateTime = now.toISOString().slice(0, 16);
+
+    // Actualiza el campo
+    if (field) {
+        field.value = formattedDateTime;
+    } else {
+        console.warn("El campo con ID 'fecha' no fue encontrado.");
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     // Inicializar QuaggaJS en el div con id "interactive"
     Quagga.init({
@@ -253,4 +271,35 @@ document.addEventListener("DOMContentLoaded", function () {
      });
 });
 
+function mensajeHoraManual(){
+    alert("Al tocar la fecha, la misma se habilita para carga manual. ")
+}
+
+let intervalId;
+
+try {
+    window.addEventListener('load', () => {
+        updateDateTimeField();
+        intervalId = setInterval(updateDateTimeField, 1000);
+    });
+
+    const field = document.getElementById('fecha');
+
+    // Detener el intervalo al interactuar con el campo (clic o toque)
+    field.addEventListener('click', () => {
+        if(intervalId){
+            clearInterval(intervalId);
+            mensajeHoraManual()
+            intervalId = null
+        }
+    });
+
+    field.addEventListener('touchstart', () => {
+        clearInterval(intervalId);
+        mensajeHoraManual()
+    });
+
+} catch (error) {
+    console.log(error);
+}
 
