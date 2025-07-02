@@ -35,6 +35,13 @@ def listar_productos_arballon():
                     OR 
                         cod_mae = '1460618' OR
                         cod_mae = '127105'
+                    OR
+                        cod_cls = 'Hojala' AND NOT
+                        lower(den) like '%jumba%' OR 
+                        cod_mae = '902013' OR 
+                        cod_mae = '9111001' OR 
+                        cod_mae = '902005' OR 
+                        cod_mae = '1061001001'
             """))
             return result.fetchall()
 

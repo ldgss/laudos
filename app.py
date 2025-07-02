@@ -30,10 +30,14 @@ from datetime import timedelta
 from datetime import datetime
 from flask import session
 from utils import tokens
+from flask_session import Session
 
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex()
+
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
 
 # logging
 
@@ -125,8 +129,8 @@ def ping():
 def actualizar_ultima_actividad():
     if session.get("nombre"):
         ahora = datetime.now()
-        # 8 minutos de inactividad
-        timeout = 8 * 60
+        # 1 minutos de inactividad
+        timeout = 1 * 60
         usuario_encontrado = False
 
         # Actualizar la última actividad si el usuario ya está en la lista
