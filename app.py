@@ -25,6 +25,7 @@ from routes import usuario
 from routes.usuario import active_users
 from routes import bascula
 from routes import retiro
+from routes import hojalata
 from db import db
 from datetime import timedelta
 from datetime import datetime
@@ -105,6 +106,7 @@ app.register_blueprint(kpi.kpi_bp)
 app.register_blueprint(usuario.usuario_bp)
 app.register_blueprint(bascula.bascula_bp)
 app.register_blueprint(retiro.retiro_bp)
+app.register_blueprint(hojalata.hojalata_bp)
 
 # swagger
 
