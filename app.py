@@ -15,7 +15,6 @@ from routes import extracto
 from routes import index
 from routes import errors
 from routes import bloqueo
-from routes import hojalata
 from routes import reporte
 from routes import anulacion
 from routes import correcion
@@ -93,7 +92,6 @@ app.register_blueprint(reacondicionado.reacondicionado_bp)
 app.register_blueprint(ubicaciones.ubicaciones_bp)
 app.register_blueprint(insumos.insumos_bp)
 app.register_blueprint(bloqueo.bloqueo_bp)
-app.register_blueprint(hojalata.hojalata_bp)
 app.register_blueprint(reporte.reporte_bp)
 app.register_blueprint(anulacion.anulacion_bp)
 app.register_blueprint(correcion.correccion_bp)
