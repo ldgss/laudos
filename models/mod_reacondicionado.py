@@ -65,6 +65,7 @@ def guardar_reacondicionado():
         ids_a_tomar = request.form.getlist('id_a_tomar')
         numeros_unicos = request.form.getlist('numeros_unicos')
         mercaderias_originales = request.form.getlist('mercaderia_original')
+        mercaderia_original_numero_unicos = request.form.getlist('mercaderia_original_numero_unico')
         cantidades_disponibles = request.form.getlist('cantidad_disponible')
         cantidades_tomar = request.form.getlist('cantidad_tomar')
         reacondicionado_detalle = []
@@ -73,9 +74,9 @@ def guardar_reacondicionado():
         numeros_unicos_exp = [next(cycle(numeros_unicos)) for _ in range(len(ids_a_tomar))]
 
         # agrupar los detalles
-        for id_a_tomar, numero, mercaderia_original, disponible, tomar in zip(ids_a_tomar, numeros_unicos_exp, mercaderias_originales,cantidades_disponibles, cantidades_tomar):
-            print(f"appending: {id_a_tomar}, {numero}, {disponible}, {tomar}, {mercaderia_original}")
-            reacondicionado_detalle.append({"id_a_tomar":id_a_tomar,"numero": numero, "mercaderia_original": mercaderia_original, "disponible": disponible, "tomar": tomar})
+        for id_a_tomar, numero, mercaderia_original, mercaderia_original_numero_unico, disponible, tomar in zip(ids_a_tomar, numeros_unicos_exp, mercaderias_originales, mercaderia_original_numero_unicos,cantidades_disponibles, cantidades_tomar):
+            print(f"appending: {id_a_tomar}, {numero}, {disponible}, {tomar}, {mercaderia_original}, {mercaderia_original_numero_unico}")
+            reacondicionado_detalle.append({"id_a_tomar":id_a_tomar,"numero": numero, "mercaderia_original": mercaderia_original, "mercaderia_original_numero_unico":mercaderia_original_numero_unico, "disponible": disponible, "tomar": tomar})
 
         print(f"reacondicionado detalle: {reacondicionado_detalle}")
 
@@ -120,9 +121,9 @@ def guardar_reacondicionado():
                                                     "mercaderia": rd["id_a_tomar"] if "T1" in rd["numero"] else None,
                                                     "cantidad": rd["tomar"],
                                                     "reacondicionado_detalle":rd["id_a_tomar"] if "T2" in rd["numero"] else None,
-                                                    "mercaderia_original": rd["mercaderia_original"] if "T1" in rd["numero"] else None,
+                                                    "mercaderia_original": rd["mercaderia_original"] if "T1" in rd["mercaderia_original_numero_unico"] else None,
                                                     "extracto": rd["id_a_tomar"] if "E1" in rd["numero"] else None,
-                                                    "extracto_original": rd["mercaderia_original"] if "E1" in rd["numero"] else None,
+                                                    "extracto_original": rd["mercaderia_original"] if "E1" in rd["mercaderia_original_numero_unico"] else None,
                                                 })
         db.db.session.commit()
 
@@ -205,24 +206,56 @@ def get_reacondicionado(numero_unico):
         g1 = t1 or e1
 
         sql = text(""" 
-            SELECT m.*, e.*, r.*, rd.*, 
-                   m.den as mden,
-                   m.lote as mlote,
-                   e.den as eden,
-                   e.lote as elote, 
-                   v.meses, u.nombre, m.numero_unico AS numero_unico_original,
-                   e.numero_unico AS numero_unico_original_extracto,
-                   e.fecha_elaboracion AS extracto_fecha_elaboracion,
-                   ve.meses AS extracto_vto
-            FROM reacondicionado r
+            SELECT  
+			m.id as mid,
+			m.lote as mlote,
+            m.numero_unico as m_numero_unico,
+           	e.id as eid,
+           	e.lote as elote,
+            e.numero_unico as e_numero_unico,
+           	m2.id as m2id,
+			m2.lote as m2lote,
+            m2.numero_unico as m2_numero_unico,
+           	e2.id as e2id,
+           	e2.lote as e2lote,
+            e2.numero_unico as e2_numero_unico,
+           	rd.id as rd_id,
+            rd.cantidad as rd_cantidad,
+            rd.mercaderia_original as rd_mercaderia_original,
+            rd.extracto_original as rd_extracto_original,
+           	rd2.id as rd2_id,
+            rd2.cantidad as rd2_cantidad,
+            rd2.mercaderia_original as rd2_mercaderia_original,
+            rd2.extracto_original as rd2_extracto_original
+           	FROM reacondicionado r
             RIGHT JOIN reacondicionado_detalle rd ON r.id = rd.reacondicionado
             LEFT JOIN mercaderia m ON m.id = rd.mercaderia_original
             LEFT JOIN extracto e ON e.id = rd.extracto_original
-            LEFT JOIN vencimiento v ON v.id = m.vto
-            LEFT JOIN vencimiento ve ON ve.id = e.vto_meses
-            LEFT JOIN usuario u ON r.responsable = u.id
+            left join reacondicionado_detalle rd2 on rd2.id = rd.reacondicionado_detalle
+            left join mercaderia m2 on m2.id = rd2.mercaderia_original 
+            left join extracto e2 on e2.id = rd2.extracto_original
             WHERE r.numero_unico = :numero_unico
-         """)
+        """)
+
+        # sql = text(""" 
+        #     SELECT m.*, e.*, r.*, rd.*, 
+        #            m.den as mden,
+        #            m.lote as mlote,
+        #            e.den as eden,
+        #            e.lote as elote, 
+        #            v.meses, u.nombre, m.numero_unico AS numero_unico_original,
+        #            e.numero_unico AS numero_unico_original_extracto,
+        #            e.fecha_elaboracion AS extracto_fecha_elaboracion,
+        #            ve.meses AS extracto_vto
+        #     FROM reacondicionado r
+        #     RIGHT JOIN reacondicionado_detalle rd ON r.id = rd.reacondicionado
+        #     LEFT JOIN mercaderia m ON m.id = rd.mercaderia_original
+        #     LEFT JOIN extracto e ON e.id = rd.extracto_original
+        #     LEFT JOIN vencimiento v ON v.id = m.vto
+        #     LEFT JOIN vencimiento ve ON ve.id = e.vto_meses
+        #     LEFT JOIN usuario u ON r.responsable = u.id
+        #     WHERE r.numero_unico = :numero_unico
+        #  """)
         
         t2 = db.db.session.execute(sql,{"numero_unico": numero_unico})
         t2 = [dict(row) for row in t2.mappings().all() or {}]

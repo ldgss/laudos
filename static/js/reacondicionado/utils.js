@@ -60,22 +60,38 @@ function buscarParte(button) {
                 if(data["reacondicionado"].length > 0){
 
                     for (let i = 0; i < data["reacondicionado"].length; i++) {
-                        console.log(`detalle id: ${data["reacondicionado"][i]["id"]}`)
-                        console.log(`detalle cantidad: ${data["reacondicionado"][i]["cantidad"]}`)
                         nuevoDiv.innerHTML += `
                         <!-- Nueva fila para Cantidad disponible y Cantidad a tomar -->
                         <div class="row m-4 justify-content-center">
                             <label for="cantidad" class="col-sm-2 col-form-label">Detalle</label>
                             <div class="col-sm-5 d-flex align-items-center">
-                                ${data["reacondicionado"][i]["mlote"] ? data["reacondicionado"][i]["mlote"] : data["reacondicionado"][i]["elote"]}
+                                ${data["reacondicionado"][i]["mlote"] 
+                                || data["reacondicionado"][i]["m2lote"] 
+                                || data["reacondicionado"][i]["elote"] 
+                                || data["reacondicionado"][i]["e2lote"]}
                             </div>
                         </div>
                         <div class="row m-4 justify-content-center">
                             <label for="cantidad" class="col-sm-2 col-form-label">Cantidades</label>
                             <div class="col-sm-5 d-flex align-items-center cantidades">
-                                <input hidden name="id_a_tomar" type="text" value="${data["reacondicionado"][i]["id"]}">
-                                <input hidden name="mercaderia_original" type="text" value="${data["reacondicionado"][i]["mercaderia_original"]}">
-                                <input type="number" class="form-control me-1" placeholder="Cantidad disponible" name="cantidad_disponible" min="0" readonly value="${data["reacondicionado"][i]["cantidad"]}">
+                                <input hidden name="id_a_tomar" type="text" 
+                                value="${data['reacondicionado'][i]['rd_id'] 
+                                || data['reacondicionado'][i]['rd2:id']}">
+
+                                <input hidden name="mercaderia_original_numero_unico" type="text" 
+                                value="${data['reacondicionado'][i]['m_numero_unico'] 
+                                || data['reacondicionado'][i]['m2_numero_unico']
+                                || data['reacondicionado'][i]['e_numero_unico']
+                                || data['reacondicionado'][i]['e2_numero_unico']}">
+
+                                <input hidden name="mercaderia_original" type="text" 
+                                value="${data['reacondicionado'][i]['rd_mercaderia_original'] 
+                                || data['reacondicionado'][i]['rd2_mercaderia_original'] 
+                                || data['reacondicionado'][i]['rd_extracto_original'] 
+                                || data['reacondicionado'][i]['rd2_extracto_original']}">
+                                <input type="number" class="form-control me-1" placeholder="Cantidad disponible" 
+                                    name="cantidad_disponible" min="0" readonly 
+                                    value="${data['reacondicionado'][i]['rd_cantidad'] != null ? data['reacondicionado'][i]['rd_cantidad'] : data['reacondicionado'][i]['rd2_cantidad']}">
                                 <input type="number" class="form-control" placeholder="Cantidad a tomar" name="cantidad_tomar" min="1" required>
                             </div>
                         </div>
