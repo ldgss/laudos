@@ -65,6 +65,7 @@ def guardar_reacondicionado():
         ids_a_tomar = request.form.getlist('id_a_tomar')
         numeros_unicos = request.form.getlist('numeros_unicos')
         mercaderias_originales = request.form.getlist('mercaderia_original')
+        extractos_originales = request.form.getlist('extracto_original')
         cantidades_disponibles = request.form.getlist('cantidad_disponible')
         cantidades_tomar = request.form.getlist('cantidad_tomar')
         reacondicionado_detalle = []
@@ -73,9 +74,9 @@ def guardar_reacondicionado():
         numeros_unicos_exp = [next(cycle(numeros_unicos)) for _ in range(len(ids_a_tomar))]
 
         # agrupar los detalles
-        for id_a_tomar, numero, mercaderia_original, disponible, tomar in zip(ids_a_tomar, numeros_unicos_exp, mercaderias_originales,cantidades_disponibles, cantidades_tomar):
-            print(f"appending: {id_a_tomar}, {numero}, {disponible}, {tomar}, {mercaderia_original}")
-            reacondicionado_detalle.append({"id_a_tomar":id_a_tomar,"numero": numero, "mercaderia_original": mercaderia_original, "disponible": disponible, "tomar": tomar})
+        for id_a_tomar, numero, mercaderia_original, extracto_original,disponible, tomar in zip(ids_a_tomar, numeros_unicos_exp, mercaderias_originales,extractos_originales,cantidades_disponibles, cantidades_tomar):
+            print(f"appending: {id_a_tomar}, {numero}, {disponible}, {tomar}, {mercaderia_original}, {extracto_original}")
+            reacondicionado_detalle.append({"id_a_tomar":id_a_tomar,"numero": numero, "mercaderia_original": mercaderia_original, "extracto_original":extracto_original, "disponible": disponible, "tomar": tomar})
 
         print(f"reacondicionado detalle: {reacondicionado_detalle}")
 
@@ -120,9 +121,9 @@ def guardar_reacondicionado():
                                                     "mercaderia": rd["id_a_tomar"] if "T1" in rd["numero"] else None,
                                                     "cantidad": rd["tomar"],
                                                     "reacondicionado_detalle":rd["id_a_tomar"] if "T2" in rd["numero"] else None,
-                                                    "mercaderia_original": rd["mercaderia_original"] if "T1" in rd["numero"] else None,
+                                                    "mercaderia_original": rd["mercaderia_original"] if rd["mercaderia_original"] else None,
                                                     "extracto": rd["id_a_tomar"] if "E1" in rd["numero"] else None,
-                                                    "extracto_original": rd["mercaderia_original"] if "E1" in rd["numero"] else None,
+                                                    "extracto_original": rd["extracto_original"] if rd["extracto_original"] else None
                                                 })
         db.db.session.commit()
 
