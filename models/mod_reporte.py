@@ -332,6 +332,56 @@ def get_insumo():
         print(f"Error: {e}")
         return None
     
+def get_hojalata():
+    try:
+        sql = text("""
+                    SELECT 
+                        h.den as denominacion,
+                        h.numero_unico,
+                        h.cantidad,
+                        h.lote as lote,
+                        h.fecha_elaboracion as elaboracion,
+                        h.fecha_elaboracion + INTERVAL '1 month' * v.meses AS vencimiento
+                    FROM hojalata h
+                    inner join usuario u on h.responsable = u.id
+                    left join vencimiento v on v.id = h.vto_meses
+                        where 
+                        (:fecha_inicial IS NULL OR h.fecha_registro >= :fecha_inicial) and
+                        (:fecha_final IS NULL OR h.fecha_registro <= :fecha_final) and
+                        (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%') and
+                        (:denominacion IS NULL OR h.den ILIKE '%' || :denominacion || '%') and
+                        (:lote_inicial IS NULL OR h.lote >= :lote_inicial) and
+                        (:lote_final IS NULL OR h.lote >= :lote_final) and
+                        (:numero_pallet_interno_inicial IS NULL OR h.numero_pallet_interno >= :numero_pallet_interno_inicial) and
+                        (:numero_pallet_interno_final IS NULL OR h.numero_pallet_interno >= :numero_pallet_interno_final)
+                    order by h.fecha_registro DESC;
+                """
+                )
+        envasado = db.db.session.execute(sql,
+                                         {
+                                            "fecha_inicial": request.form["fecha_inicial"] if request.form["fecha_inicial"].strip() else None,
+                                            "fecha_final": request.form["fecha_final"] if request.form["fecha_final"].strip() else None,
+                                            "responsable": request.form["responsable"] if request.form["responsable"].strip() else None,
+                                            "denominacion": request.form["denominacion"] if request.form["denominacion"].strip() else None,
+                                            "lote_inicial": request.form["lote_inicial"] if request.form["lote_inicial"].strip() else None,
+                                            "lote_final": request.form["lote_final"] if request.form["lote_final"].strip() else None,
+                                            "numero_pallet_interno_inicial": request.form["numero_pallet_interno_inicial"] if request.form["numero_pallet_interno_inicial"].strip() else None,
+                                            "numero_pallet_interno_final": request.form["numero_pallet_interno_final"] if request.form["numero_pallet_interno_final"].strip() else None,
+                                          }
+                                         ).fetchall()
+        # Crear un DataFrame a partir de envasado, las columnas se infieren automáticamente
+        df = pd.DataFrame(envasado)
+        # Crear un archivo CSV en memoria
+        output = BytesIO()
+        df.to_csv(output, index=False)
+
+        output.seek(0)  # Mover el puntero al inicio del archivo
+
+        return output
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
 def get_ubicacion():
     
     try:
