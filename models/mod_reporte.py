@@ -383,6 +383,87 @@ def get_hojalata():
     except Exception as e:
         print(f"Error: {e}")
         return None
+    
+def get_bloqueo():
+    try:
+        sql = text("""
+                    SELECT 
+                        b.mercaderia, 
+                        m.den as m_den,
+                        m.lote as m_lote,
+                        b.hojalata, 
+                        h.den as h_den,
+                        h.lote as h_lote,
+                        b.extracto, 
+                        e.den as e_den,
+                        e.lote as e_lote,
+                        b.estado, 
+                        b.numero_planilla, 
+                        mb.motivo, 
+                        b.observaciones, 
+                        u.nombre, 
+                        b.fecha_registro, 
+                        b.fecha_cambio
+                    FROM bloqueado b
+                    inner join usuario u on b.responsable = u.id 
+                    inner join motivo_bloqueo mb on b.motivo = mb.id
+                    left join mercaderia m on b.mercaderia = m.numero_unico 
+                    left join hojalata h on b.hojalata = h.numero_unico 
+                    left join extracto e on b.extracto = e.numero_unico 
+                    where 
+                        (:fecha_inicial IS NULL OR b.fecha_registro >= :fecha_inicial) and
+                        (:fecha_final IS NULL OR b.fecha_registro <= :fecha_final) and
+                        (:estado IS NULL OR b.estado ILIKE '%' || :estado || '%') and
+                        (:numero_planilla IS NULL OR b.numero_planilla ILIKE '%' || :numero_planilla || '%') and
+                        (:motivo IS NULL OR mb.motivo ILIKE '%' || :motivo || '%') and
+                        (:observaciones IS NULL OR b.observaciones ILIKE '%' || :observaciones || '%') and
+                        (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%') and
+                        (
+                         (
+	                            (:numero_unico IS NULL OR b.mercaderia ILIKE '%' || :numero_unico || '%') and
+	                            (:denominacion IS NULL OR m.den ILIKE '%' || :denominacion || '%') and
+	                            (:lote IS NULL OR m.lote ILIKE '%' || :lote || '%') 
+	                        ) or
+	                        (
+	                            (:numero_unico IS NULL OR b.hojalata ILIKE '%' || :numero_unico || '%') and
+	                            (:denominacion IS NULL OR h.den ILIKE '%' || :denominacion || '%') and
+	                            (:lote IS NULL OR h.lote ILIKE '%' || :lote || '%') 
+	                        ) or
+	                        ( 
+	                            (:numero_unico IS NULL OR b.extracto ILIKE '%' || :numero_unico || '%') and
+	                            (:denominacion IS NULL OR e.den ILIKE '%' || :denominacion || '%') and
+	                            (:lote IS NULL OR e.lote ILIKE '%' || :lote || '%')
+	                        )
+						)
+                    order by b.fecha_registro DESC;
+                """
+                )
+        envasado = db.db.session.execute(sql,
+                                         {
+                                            "fecha_inicial": request.form["fecha_inicial"] if request.form["fecha_inicial"].strip() else None,
+                                            "fecha_final": request.form["fecha_final"] if request.form["fecha_final"].strip() else None,
+                                            "estado": request.form["estado"] if request.form["estado"].strip() else None,
+                                            "numero_planilla": request.form["numero_planilla"] if request.form["numero_planilla"].strip() else None,
+                                            "motivo": request.form["motivo"] if request.form["motivo"].strip() else None,
+                                            "observaciones": request.form["observaciones"] if request.form["observaciones"].strip() else None,
+                                            "responsable": request.form["responsable"] if request.form["responsable"].strip() else None,
+                                            "numero_unico": request.form["numero_unico"] if request.form["numero_unico"].strip() else None,
+                                            "denominacion": request.form["denominacion"] if request.form["denominacion"].strip() else None,
+                                            "lote": request.form["lote"] if request.form["lote"].strip() else None,
+                                          }
+                                         ).fetchall()
+        # Crear un DataFrame a partir de envasado, las columnas se infieren automáticamente
+        df = pd.DataFrame(envasado)
+        # Crear un archivo CSV en memoria
+        output = BytesIO()
+        df.to_csv(output, index=False)
+
+        output.seek(0)  # Mover el puntero al inicio del archivo
+
+        return output
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
 
 def get_ubicacion():
     

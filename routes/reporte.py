@@ -61,6 +61,8 @@ def reporte_exportar(modulo):
                 return generar_reporte(mod_reporte.get_insumo())
             case "hojalata":
                 return generar_reporte(mod_reporte.get_hojalata())
+            case "bloqueo":
+                return generar_reporte(mod_reporte.get_bloqueo())
             case "ubicacion":
                 return generar_reporte(mod_reporte.get_ubicacion())
             case "despacho":

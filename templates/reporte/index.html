@@ -30,6 +30,11 @@
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#hojalataModal">Hojalata</button>
         </div>
     {% endif %}
+    {% if session["bloqueo"] %}
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#bloqueoModal">Bloqueo</button>
+        </div>
+    {% endif %}
     {% if session["insumo"] %}
         <div class="m-3">
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#insumoModal">Insumos</button>
@@ -345,6 +350,57 @@
     </div>
   </div>
   
+  <!-- Modal bloqueo -->
+  <div class="modal fade" id="bloqueoModal" tabindex="-1" aria-labelledby="bloqueoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bloqueoModalLabel">Bloqueo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+            <form method="POST" action="/reporte/exportar/bloqueo">
+                <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+                <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+            
+                <label class="col-form-label" for="fecha_final">Fecha final</label>
+                <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+            
+                <label class="col-form-label" for="estado">Estado</label>
+                <input class="form-control" type="text" maxlength="20" name="estado" id="estado">
+                
+                <label class="col-form-label" for="numero_planilla">Numero de planilla</label>
+                <input class="form-control" type="text" maxlength="20" name="numero_planilla" id="numero_planilla">
+                
+                <label class="col-form-label" for="motivo">Motivo</label>
+                <input class="form-control" type="text" maxlength="20" name="motivo" id="motivo">
+                
+                <label class="col-form-label" for="observaciones">Observaciones</label>
+                <input class="form-control" type="text" maxlength="20" name="observaciones" id="observaciones">
+                
+                <label class="col-form-label" for="responsable">Responsable</label>
+                <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+                
+                <label class="col-form-label" for="numero_unico">Numero unico</label>
+                <input class="form-control" type="text" maxlength="20" name="numero_unico" id="numero_unico">
+                
+                <label class="col-form-label" for="denominacion">Denominacion</label>
+                <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
+                
+                <label class="col-form-label" for="lote">Lote</label>
+                <input class="form-control" type="text" maxlength="20" name="lote" id="lote">
+
+                <div class="row m-3">
+                    <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+                </div>
+            </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Ubicaciones -->
   <div class="modal fade" id="ubicacionModal" tabindex="-1" aria-labelledby="ubicacionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
