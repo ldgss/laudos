@@ -338,10 +338,12 @@ def get_hojalata():
                     SELECT 
                         h.den as denominacion,
                         h.numero_unico,
+                        h.numero_pallet_interno,
                         h.cantidad,
                         h.lote as lote,
                         h.fecha_elaboracion as elaboracion,
-                        h.fecha_elaboracion + INTERVAL '1 month' * v.meses AS vencimiento
+                        h.fecha_elaboracion + INTERVAL '1 month' * v.meses AS vencimiento,
+                        h.observacion
                     FROM hojalata h
                     inner join usuario u on h.responsable = u.id
                     left join vencimiento v on v.id = h.vto_meses
