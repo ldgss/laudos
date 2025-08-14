@@ -186,7 +186,7 @@ WITH ubicacion_con_row AS (
         ROW_NUMBER() OVER (
             PARTITION BY 
                 u.mercaderia, u.reacondicionado,
-                u.extracto
+                u.extracto, u.hojalata
             ORDER BY u.fecha_registro DESC
         ) AS rn
     FROM ubicacion u
@@ -262,7 +262,7 @@ WITH ubicacion_con_row AS (
         ROW_NUMBER() OVER (
             PARTITION BY 
                 u.mercaderia, u.reacondicionado,
-                u.extracto
+                u.extracto, u.hojalata
             ORDER BY u.fecha_registro DESC
         ) AS rn
     FROM ubicacion u
