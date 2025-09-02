@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     Quagga.onDetected(function (result) {
-        let codigoBarras = result.codeResult.code;
+        let codigoBarras = result.codeResult.code.trim().toUpperCase();
         if (pattern.test(codigoBarras) && !existeEscaneo(codigoBarras)) {
             document.getElementById("escaneo").value = codigoBarras;
             beepSound.play()
