@@ -271,7 +271,8 @@ def imprimir(numero_unico):
                 m.numero_unico as m_numero_unico,
                 to_char(m.fecha_elaboracion, 'YYYY-MM-DD HH24:MI') as m_fecha_elaboracion,
                 to_char(m.fecha_etiquetado, 'YYYY-MM-DD HH24:MI') as m_fecha_etiquetado,
-                vm.meses as m_vto,
+                (m.fecha_elaboracion + INTERVAL '1 month' * vm.meses)::date AS m_vto_elaboracion,
+                (m.fecha_etiquetado + INTERVAL '1 month' * vm.meses)::date AS m_vto_etiquetado,
                 m.lote as m_lote,
                 m.observacion as m_observacion,
                 u_m.nombre as m_responsable,
@@ -279,7 +280,7 @@ def imprimir(numero_unico):
                 e.den as e_den,
                 e.numero_unico as e_numero_unico,
                 to_char(e.fecha_elaboracion, 'YYYY-MM-DD HH24:MI') as e_fecha_elaboracion,
-                ve.meses as e_vto,
+                (e.fecha_elaboracion + INTERVAL '1 month' * ve.meses)::date AS e_vto,
                 e.lote as e_lote,
                 e.observaciones as e_observaciones,
                 u_e.nombre as e_responsable,
@@ -288,7 +289,8 @@ def imprimir(numero_unico):
                 m2.numero_unico as m2_numero_unico,
                 to_char(m2.fecha_elaboracion, 'YYYY-MM-DD HH24:MI') as m2_fecha_elaboracion,
                 to_char(m2.fecha_etiquetado, 'YYYY-MM-DD HH24:MI') as m2_fecha_etiquetado,
-                vm2.meses as m2_vto,
+                (m2.fecha_elaboracion + INTERVAL '1 month' * vm2.meses)::date AS m2_vto_elaboracion,
+                (m2.fecha_etiquetado + INTERVAL '1 month' * vm2.meses)::date AS m2_vto_etiquetado,
                 m2.lote as m2_lote,
                 m2.observacion as m2_observacion,
                 u_m2.nombre as m2_responsable,
@@ -296,7 +298,7 @@ def imprimir(numero_unico):
                 e2.den as e2_den,
                 e2.numero_unico as e2_numero_unico,
                 to_char(e2.fecha_elaboracion, 'YYYY-MM-DD HH24:MI') as e2_fecha_elaboracion,
-                ve2.meses as e2_vto,
+                (e2.fecha_elaboracion + INTERVAL '1 month' * ve2.meses)::date AS e2_vto,
                 e2.lote as e2_lote,
                 e2.observaciones as e2_observaciones,
                 u_e2.nombre as e2_responsable
@@ -312,10 +314,10 @@ def imprimir(numero_unico):
             left join usuario u_m2 on u_m2.id = m2.responsable
             left join usuario u_e on u_e.id = e.responsable
             left join usuario u_e2 on u_e2.id = e2.responsable
-            left join vencimiento vm on vm.id = m.id
-            left join vencimiento vm2 on vm2.id = m2.id
-            left join vencimiento ve on ve.id = e.id
-            left join vencimiento ve2 on ve2.id = e2.id
+            left join vencimiento vm on vm.id = m.vto
+            left join vencimiento vm2 on vm2.id = m2.vto
+            left join vencimiento ve on ve.id = e.vto_meses
+            left join vencimiento ve2 on ve2.id = e2.vto_meses
             WHERE r.numero_unico = :numero_unico
          """)
         

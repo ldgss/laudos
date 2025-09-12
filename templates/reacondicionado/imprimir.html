@@ -16,8 +16,8 @@
             <!-- tabla para imprimir -->
             <table id="descripcion_reacondicionado" class="table-bordered col-12 fixed-table">
                 <tr>
-                    <td>Denominacion: {{reacondicionado["reacondicionado"][0]["nueva_den"]}}</td>
-                    <td>Cantidad Total: {{ reacondicionado["reacondicionado"] | map(attribute="cantidad") | map("int") | sum }}</td>
+                    <td style="text-align: center;">Denominacion: {{reacondicionado["reacondicionado"][0]["nueva_den"]}}</td>
+                    <td style="text-align: center;">Cantidad Total: {{ reacondicionado["reacondicionado"] | map(attribute="cantidad") | map("int") | sum }}</td>
                 </tr>
                 <tr>
                     <td colspan="3" style="background-color: #f0f0f0; height: 10px;"></td>
@@ -26,8 +26,27 @@
                 {% for item in reacondicionado["reacondicionado"]%}
                 {% if item["cantidad"]|int > 0 %}
                 <tr>
-                    <td>Numero único: {{item["m_numero_unico"] or item["e_numero_unico"] or item["m2_numero_unico"] or item["e2_numero_unico"]}}</td>
-                    <td>Cantidad: {{item["cantidad"]}}</td>
+                    <td style="display: flex;justify-content: space-around;">
+                        <span>
+                            {{item["m_numero_unico"] or item["e_numero_unico"] or item["m2_numero_unico"] or item["e2_numero_unico"]}}
+                        </span>
+
+                        <span>
+                            <strong>
+                                {{item["m_lote"] or item["e_lote"] or item["m2_lote"] or item["e2_lote"]}}
+                            </strong>
+                        </span>
+
+                        <span>
+                            {{item["m_vto_elaboracion"] or item["m_vto_etiquetado"] or 
+                            item["e_vto"] or 
+                            item["m2_vto_elaboracion"] or item["m2_vto_etiquetado"] or 
+                            item["e2_vto"]
+                            }}
+                        </span>
+
+                    </td>
+                    <td style="text-align: center;">Cantidad: {{item["cantidad"]}}</td>
                 </tr>
                 
                 <tr>
