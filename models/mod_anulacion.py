@@ -5,6 +5,7 @@ from flask import session
 import shlex
 from flask import current_app as app
 import traceback
+from utils import helpers
     
 def guardar_anulacion():
     try:
@@ -25,13 +26,13 @@ def guardar_anulacion():
 
         numero_unico = request.form.get("numero_unico")
 
-        if numero_unico and 'T1' in numero_unico:
+        if numero_unico and 'T1' in numero_unico and helpers.authorized_to("mercaderia"):
             deletion_sql = text("""DELETE FROM mercaderia WHERE numero_unico=:numero_unico""")
-        elif numero_unico and 'H1' in numero_unico:
+        elif numero_unico and 'H1' in numero_unico and helpers.authorized_to("hojalata"):
             deletion_sql = text("""DELETE FROM hojalata WHERE numero_unico=:numero_unico""")
-        elif numero_unico and 'E1' in numero_unico:
+        elif numero_unico and 'E1' in numero_unico and helpers.authorized_to("mercaderia"):
             deletion_sql = text("""DELETE FROM extracto WHERE numero_unico=:numero_unico""")
-        elif numero_unico and 'T2' in numero_unico:
+        elif numero_unico and 'T2' in numero_unico and helpers.authorized_to("mercaderia"):
             # 1. devolver unicades
             form_items = list(request.form.items())[4:]  # Saltamos las primeras 4 claves fijas
             items = {}
@@ -78,7 +79,7 @@ def guardar_anulacion():
                         "cantidad": cantidad,
                         "origen": origen
                     }
-                db.db.session.execute(update_sql, update_params)
+                # db.db.session.execute(update_sql, update_params)
             # ahora borramos el T2
             deletion_sql = text("""DELETE FROM reacondicionado WHERE numero_unico=:numero_unico""")
             
@@ -86,11 +87,19 @@ def guardar_anulacion():
                                 "numero_unico": request.form["numero_unico"]
                             }
 
-        db.db.session.execute(deletion_sql, deletion_params)
-        db.db.session.execute(insertion_sql, insertion_params)
-        db.db.session.commit()
-        
-        return True
+        # db.db.session.execute(deletion_sql, deletion_params)
+        # db.db.session.execute(insertion_sql, insertion_params)
+        # db.db.session.commit()
+
+        with db.db.session.begin():
+            if 'T2' in numero_unico:
+                db.db.session.execute(update_sql, update_params)
+            result = db.db.session.execute(deletion_sql, deletion_params)
+            if result.rowcount == 0:
+                raise ValueError("No se borró nada, no inserto")
+            else:
+                db.db.session.execute(insertion_sql, insertion_params)
+                return True
     except Exception as e:
         db.db.session.rollback()
         error_traceback = traceback.format_exc()

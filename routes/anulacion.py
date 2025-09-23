@@ -25,8 +25,7 @@ def anulacion():
     
 @anulacion_bp.post("/anulacion/agregar")
 def anulacion_agregar():
-    if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("anulacion"):
-        
+    if helpers.session_on() and (helpers.authorized_to("mercaderia") or helpers.authorized_to("hojalata")) and helpers.authorized_to_submodule("anulacion"):
         resultado = mod_anulacion.guardar_anulacion()
         # un mensaje largo en flash se ignora
         if resultado:
