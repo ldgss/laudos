@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import request
 from itertools import cycle
 import shlex
+from collections import defaultdict
 
 def get_ultimo_id():
     try:
@@ -55,132 +56,115 @@ def get_vencimiento(form):
     
 def guardar_reacondicionado():
     try:
-        # insert 1 vars
         responsable = request.form["user_id"]
         denominacion = request.form["denominacion"]
         numero_unico = request.form["numero_unico"]
         tipo_reacondicionado = request.form["tipo_reacondicionado"]
         observaciones = request.form["observaciones"]
-        # insert 2 vars T1|T2
-        ids_a_tomar = request.form.getlist('id_a_tomar')
-        numeros_unicos = request.form.getlist('numeros_unicos')
-        mercaderias_originales = request.form.getlist('mercaderia_original')
-        extractos_originales = request.form.getlist('extracto_original')
-        cantidades_disponibles = request.form.getlist('cantidad_disponible')
-        cantidades_tomar = request.form.getlist('cantidad_tomar')
-        reacondicionado_detalle = []
 
-        # extendemos numeros_unicos ya que es un array mas corto, sino no coinciden el numero para zip
-        numeros_unicos_exp = [next(cycle(numeros_unicos)) for _ in range(len(ids_a_tomar))]
+        print(f"form: {request.form}")
+        detalle = build_detalle(request.form)
+        print(f"detalle: {detalle}")
 
-        # agrupar los detalles
-        for id_a_tomar, numero, mercaderia_original, extracto_original,disponible, tomar in zip(ids_a_tomar, numeros_unicos_exp, mercaderias_originales,extractos_originales,cantidades_disponibles, cantidades_tomar):
-            print(f"appending: {id_a_tomar}, {numero}, {disponible}, {tomar}, {mercaderia_original}, {extracto_original}")
-            reacondicionado_detalle.append({"id_a_tomar":id_a_tomar,"numero": numero, "mercaderia_original": mercaderia_original, "extracto_original":extracto_original, "disponible": disponible, "tomar": tomar})
-
-        print(f"reacondicionado detalle: {reacondicionado_detalle}")
-
-        # insert 1
-        reacondicionado = text("""
-                    INSERT INTO
-                    reacondicionado
-                    (numero_unico, responsable, fecha_registro, nueva_den, observaciones, tipo_reacondicionado)
+        # UNA SOLA TRANSACCIÓN
+        with db.db.session.begin():
+            # insert maestro
+            rec_id = db.db.session.execute(
+                text("""
+                    INSERT INTO reacondicionado
+                        (numero_unico, responsable, fecha_registro, nueva_den,
+                         observaciones, tipo_reacondicionado)
                     VALUES
-                    (:numero_unico, :responsable, CURRENT_TIMESTAMP, :nueva_den, :observaciones, :tipo_reacondicionado)
-                    RETURNING id;
-                """
-                )
-        reacondicionado = db.db.session.execute(reacondicionado,
-                                            {
-                                                "numero_unico": numero_unico,
-                                                "responsable": responsable,
-                                                "nueva_den": denominacion,
-                                                "observaciones": observaciones,
-                                                "tipo_reacondicionado": tipo_reacondicionado
-                                            })
-        db.db.session.commit()
-        reacondicionado = reacondicionado.scalar() # obtengo el id insertado
-        
-        # insert 2
-        for rd in reacondicionado_detalle:
-            reacondicionado_detalle_sql = text("""
-                        INSERT INTO
-                        reacondicionado_detalle
-                        (reacondicionado, mercaderia, cantidad, 
-                        reacondicionado_detalle, fecha_registro, mercaderia_original,
-                        extracto, extracto_original)
+                        (:numero_unico, :responsable, CURRENT_TIMESTAMP,
+                         :nueva_den, :observaciones, :tipo_reacondicionado)
+                    RETURNING id
+                """),
+                {
+                    "numero_unico": numero_unico,
+                    "responsable": responsable,
+                    "nueva_den": denominacion,
+                    "observaciones": observaciones,
+                    "tipo_reacondicionado": tipo_reacondicionado,
+                },
+            ).scalar()
+
+            # insert detalle
+            for rd in detalle:
+                db.db.session.execute(
+                    text("""
+                        INSERT INTO reacondicionado_detalle
+                            (reacondicionado, mercaderia, cantidad,
+                             reacondicionado_detalle, fecha_registro,
+                             mercaderia_original, extracto, extracto_original)
                         VALUES
-                        (:reacondicionado, :mercaderia, :cantidad, 
-                        :reacondicionado_detalle, CURRENT_TIMESTAMP, :mercaderia_original,
-                        :extracto, :extracto_original)
-                    """
+                            (:reacondicionado, :mercaderia, :cantidad,
+                             :reacondicionado_detalle, CURRENT_TIMESTAMP,
+                             :mercaderia_original, :extracto, :extracto_original)
+                    """),
+                    {
+                        "reacondicionado": rec_id,
+                        "mercaderia": rd["id_a_tomar"] if "T1" in rd["numero"] else None,
+                        "cantidad": rd["tomar"],
+                        "reacondicionado_detalle": rd["id_a_tomar"] if "T2" in rd["numero"] else None,
+                        "mercaderia_original": rd["mercaderia_original"] or None,
+                        "extracto": rd["id_a_tomar"] if "E1" in rd["numero"] else None,
+                        "extracto_original": rd["extracto_original"] or None,
+                    },
+                )
+
+            # updates de cantidad
+            for rd in detalle:
+                nueva_cantidad = int(rd["disponible"]) - int(rd["tomar"])
+                if "T1" in rd["numero"]:
+                    db.db.session.execute(
+                        text("UPDATE mercaderia SET cantidad = :nueva WHERE id = :id"),
+                        {"nueva": nueva_cantidad, "id": rd["id_a_tomar"]},
                     )
-            db.db.session.execute(reacondicionado_detalle_sql,
-                                                {
-                                                    "reacondicionado": reacondicionado,
-                                                    "mercaderia": rd["id_a_tomar"] if "T1" in rd["numero"] else None,
-                                                    "cantidad": rd["tomar"],
-                                                    "reacondicionado_detalle":rd["id_a_tomar"] if "T2" in rd["numero"] else None,
-                                                    "mercaderia_original": rd["mercaderia_original"] if rd["mercaderia_original"] else None,
-                                                    "extracto": rd["id_a_tomar"] if "E1" in rd["numero"] else None,
-                                                    "extracto_original": rd["extracto_original"] if rd["extracto_original"] else None
-                                                })
-        db.db.session.commit()
+                elif "E1" in rd["numero"]:
+                    db.db.session.execute(
+                        text("UPDATE extracto SET cantidad = :nueva WHERE id = :id"),
+                        {"nueva": nueva_cantidad, "id": rd["id_a_tomar"]},
+                    )
+                else:
+                    db.db.session.execute(
+                        text("UPDATE reacondicionado_detalle SET cantidad = :nueva WHERE id = :id"),
+                        {"nueva": nueva_cantidad, "id": rd["id_a_tomar"]},
+                    )
 
-        # actualizar las cantidades, tanto si es mercaderia T1 como reacondicionados T2
-        
-        for rd in reacondicionado_detalle:
-            nueva_cantidad = int(rd["disponible"]) - int(rd["tomar"])
-            if "T1" in rd["numero"]:
-                update_mercaderia = text("""
-                    UPDATE mercaderia
-                    SET cantidad = :nueva_cantidad
-                    WHERE id = :id;
-                """)
-                db.db.session.execute(
-                    update_mercaderia,
-                    {
-                        "nueva_cantidad": nueva_cantidad,  
-                        "id": rd["id_a_tomar"]         
-                    }
-                )
-            elif "E1" in rd["numero"]:
-                update_mercaderia = text("""
-                    UPDATE extracto
-                    SET cantidad = :nueva_cantidad
-                    WHERE id = :id;
-                """)
-                db.db.session.execute(
-                    update_mercaderia,
-                    {
-                        "nueva_cantidad": nueva_cantidad,  
-                        "id": rd["id_a_tomar"]         
-                    }
-                )
-            else:
-                update_reacondicionado_detalle = text("""
-                    UPDATE reacondicionado_detalle
-                    SET cantidad = :nueva_cantidad
-                    WHERE id = :id
-                """)
-                db.db.session.execute(
-                    update_reacondicionado_detalle, 
-                    {
-                        "nueva_cantidad": nueva_cantidad,
-                        "id": rd["id_a_tomar"]
-                    }
-                )
-
-        # Hacemos un solo commit al final
-        db.db.session.commit()
-
-        
+        # si llegó hasta acá, se hace commit automático
         return numero_unico
+
     except Exception as e:
         db.db.session.rollback()
         print(f"Error: {e}")
         return None
-    
+
+def build_detalle(form):
+    # 1) Agrupar por numero_unico
+    grupos = defaultdict(lambda: defaultdict(list))
+
+    for key, value in form.items(multi=True):
+        # solo claves con el patrón <numero_unico>_<campo>
+        if "_" in key:
+            numero, campo = key.split("_", 1)
+            grupos[numero][campo].append(value)
+
+    # 2) Convertir a la estructura detalle
+    detalle = []
+    for numero, campos in grupos.items():
+        # Aseguramos que todas las listas tengan la misma longitud
+        filas = len(campos["id_a_tomar"])
+        for i in range(filas):
+            detalle.append({
+                "id_a_tomar":       campos["id_a_tomar"][i],
+                "numero":           numero,
+                "mercaderia_original": campos["mercaderia_original"][i],
+                "extracto_original":   campos["extracto_original"][i],
+                "disponible":       campos["cantidad_disponible"][i],
+                "tomar":            campos["cantidad_tomar"][i],
+            })
+    return detalle
+
 def get_reacondicionado(numero_unico):
     try:
         sql = text("""

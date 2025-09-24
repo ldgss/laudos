@@ -9,97 +9,88 @@ from utils import helpers
     
 def guardar_anulacion():
     try:
-        insertion_sql = text("""
-                    INSERT INTO
-                    anulacion
-                    (numero_unico, observaciones, responsable, fecha_registro)
-                    VALUES
-                    (:numero_unico, :observaciones, :responsable, CURRENT_TIMESTAMP)
-                """
-                )
-        insertion_params =  {
-                                "numero_unico": request.form["numero_unico"],
-                                "observaciones": request.form["observaciones"],
-                                "responsable": session["id"]
-                            }
-        
-
-        numero_unico = request.form.get("numero_unico")
-
-        if numero_unico and 'T1' in numero_unico and helpers.authorized_to("mercaderia"):
-            deletion_sql = text("""DELETE FROM mercaderia WHERE numero_unico=:numero_unico""")
-        elif numero_unico and 'H1' in numero_unico and helpers.authorized_to("hojalata"):
-            deletion_sql = text("""DELETE FROM hojalata WHERE numero_unico=:numero_unico""")
-        elif numero_unico and 'E1' in numero_unico and helpers.authorized_to("mercaderia"):
-            deletion_sql = text("""DELETE FROM extracto WHERE numero_unico=:numero_unico""")
-        elif numero_unico and 'T2' in numero_unico and helpers.authorized_to("mercaderia"):
-            # 1. devolver unicades
-            form_items = list(request.form.items())[4:]  # Saltamos las primeras 4 claves fijas
-            items = {}
-            for key, value in form_items:
-                # key tiene formato: items[0][cantidad] o items[1][destino], etc.
-                parts = key.replace('items[', '').replace(']', '').split('[')  # ['0', 'cantidad']
-                if len(parts) == 2:
-                    index, field = parts
-                    if index not in items:
-                        items[index] = {}
-                    items[index][field] = value
-
-            for item in items.values():
-                # cantidad es igual para todos
-                cantidad = int(item.get('cantidad', 0))
-                # destino es para T1 y E1, trae los numeros unicos
-                destino = item.get('destino')
-                # origen es para T2, trae los ids 
-                origen = item.get('origen')
-                original_mercaderia = True if "T1" in destino else False
-                original_extracto = True if "E1" in destino else False
-                
-                if original_mercaderia:
-                    update_sql = text("""UPDATE mercaderia
-                            SET cantidad= cantidad + :cantidad
-                            WHERE numero_unico=:destino""")
-                    update_params = {
-                        "cantidad": cantidad,
-                        "destino": destino
-                    }
-                elif original_extracto:
-                    update_sql = text("""UPDATE extracto
-                            SET cantidad= cantidad + :cantidad
-                            WHERE numero_unico=:destino""")
-                    update_params = {
-                        "cantidad": cantidad,
-                        "destino": destino
-                    }
-                else:
-                    update_sql = text("""UPDATE reacondicionado_detalle
-                            SET cantidad= cantidad + :cantidad
-                            WHERE id=:origen""")
-                    update_params = {
-                        "cantidad": cantidad,
-                        "origen": origen
-                    }
-                # db.db.session.execute(update_sql, update_params)
-            # ahora borramos el T2
-            deletion_sql = text("""DELETE FROM reacondicionado WHERE numero_unico=:numero_unico""")
-            
-        deletion_params =   {
-                                "numero_unico": request.form["numero_unico"]
-                            }
-
-        # db.db.session.execute(deletion_sql, deletion_params)
-        # db.db.session.execute(insertion_sql, insertion_params)
-        # db.db.session.commit()
-
         with db.db.session.begin():
-            if 'T2' in numero_unico:
-                db.db.session.execute(update_sql, update_params)
-            result = db.db.session.execute(deletion_sql, deletion_params)
-            if result.rowcount == 0:
-                raise ValueError("No se borró nada, no inserto")
-            else:
-                db.db.session.execute(insertion_sql, insertion_params)
-                return True
+            insertion_sql = text("""
+                        INSERT INTO
+                        anulacion
+                        (numero_unico, observaciones, responsable, fecha_registro)
+                        VALUES
+                        (:numero_unico, :observaciones, :responsable, CURRENT_TIMESTAMP)
+                    """
+                    )
+            insertion_params =  {
+                                    "numero_unico": request.form["numero_unico"],
+                                    "observaciones": request.form["observaciones"],
+                                    "responsable": session["id"]
+                                }
+            
+
+            numero_unico = request.form.get("numero_unico")
+
+            if numero_unico and 'T1' in numero_unico and helpers.authorized_to("mercaderia"):
+                deletion_sql = text("""DELETE FROM mercaderia WHERE numero_unico=:numero_unico""")
+            elif numero_unico and 'H1' in numero_unico and helpers.authorized_to("hojalata"):
+                deletion_sql = text("""DELETE FROM hojalata WHERE numero_unico=:numero_unico""")
+            elif numero_unico and 'E1' in numero_unico and helpers.authorized_to("mercaderia"):
+                deletion_sql = text("""DELETE FROM extracto WHERE numero_unico=:numero_unico""")
+            elif numero_unico and 'T2' in numero_unico and helpers.authorized_to("mercaderia"):
+                # 1. devolver unicades
+                form_items = list(request.form.items())[4:]  # Saltamos las primeras 4 claves fijas
+                items = {}
+                for key, value in form_items:
+                    # key tiene formato: items[0][cantidad] o items[1][destino], etc.
+                    parts = key.replace('items[', '').replace(']', '').split('[')  # ['0', 'cantidad']
+                    if len(parts) == 2:
+                        index, field = parts
+                        if index not in items:
+                            items[index] = {}
+                        items[index][field] = value
+
+                for item in items.values():
+                    # cantidad es igual para todos
+                    cantidad = int(item.get('cantidad', 0))
+                    # destino es para T1 y E1, trae los numeros unicos
+                    destino = item.get('destino')
+                    # origen es para T2, trae los ids 
+                    origen = item.get('origen')
+                    original_mercaderia = True if "T1" in destino else False
+                    original_extracto = True if "E1" in destino else False
+                    
+                    if original_mercaderia:
+                        update_sql = text("""UPDATE mercaderia
+                                SET cantidad= cantidad + :cantidad
+                                WHERE numero_unico=:destino""")
+                        update_params = {
+                            "cantidad": cantidad,
+                            "destino": destino
+                        }
+                    elif original_extracto:
+                        update_sql = text("""UPDATE extracto
+                                SET cantidad= cantidad + :cantidad
+                                WHERE numero_unico=:destino""")
+                        update_params = {
+                            "cantidad": cantidad,
+                            "destino": destino
+                        }
+                    else:
+                        update_sql = text("""UPDATE reacondicionado_detalle
+                                SET cantidad= cantidad + :cantidad
+                                WHERE id=:origen""")
+                        update_params = {
+                            "cantidad": cantidad,
+                            "origen": origen
+                        }
+                    db.db.session.execute(update_sql, update_params)
+                # ahora borramos el T2
+                deletion_sql = text("""DELETE FROM reacondicionado WHERE numero_unico=:numero_unico""")
+                
+            deletion_params =   {
+                                    "numero_unico": request.form["numero_unico"]
+                                }
+
+            db.db.session.execute(deletion_sql, deletion_params)
+            db.db.session.execute(insertion_sql, insertion_params)
+        return True
     except Exception as e:
         db.db.session.rollback()
         error_traceback = traceback.format_exc()
