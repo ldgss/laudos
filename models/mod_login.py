@@ -22,7 +22,9 @@ def log_user(usuario, password):
                     p.anulacion,
                     p.correccion,
                     p.materia,
-                    p.limitado
+                    p.limitado,
+                    p.hys,
+                    p.mantenimiento
                     FROM usuario u
                     INNER JOIN permiso p ON u.id = p.responsable
                     WHERE u.nombre ILIKE :usuario AND u.password = :password;

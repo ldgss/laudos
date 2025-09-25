@@ -26,6 +26,9 @@ from routes.usuario import active_users
 from routes import bascula
 from routes import retiro
 from routes import hojalata
+from routes import hys
+from routes import energia
+from routes import intervenciones
 from db import db
 from datetime import timedelta
 from datetime import datetime
@@ -107,6 +110,9 @@ app.register_blueprint(usuario.usuario_bp)
 app.register_blueprint(bascula.bascula_bp)
 app.register_blueprint(retiro.retiro_bp)
 app.register_blueprint(hojalata.hojalata_bp)
+app.register_blueprint(hys.hys_bp)
+app.register_blueprint(energia.energia_bp)
+app.register_blueprint(intervenciones.intervenciones_bp)
 
 # swagger
 
