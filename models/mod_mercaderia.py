@@ -22,6 +22,8 @@ def listar_productos_arballon():
                                 cod_cls = 'Pelado' OR
                                 cod_cls = 'Pulpa' OR
                                 cod_cls = 'Pure' OR
+                                cod_cls = 'SalLis' OR
+                                cod_cls = 'Salsa' OR
                                 cod_cls = 'Tri500' OR
                                 cod_cls = 'Tri8' OR
                                 cod_cls = 'Tri910' OR
