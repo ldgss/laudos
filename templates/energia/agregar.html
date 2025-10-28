@@ -8,105 +8,53 @@
 
 <form action="agregar" method="post">
 
-    <div class="row m-4 justify-content-center">
-        <label for="operario" class="col-sm-2 col-form-label">Operario</label>
-        <div class="col-sm-5">
-            <input readonly maxlength="30" type="text" class="form-control" 
-            name="user_name" id="user_name" value="{{session["nombre"]}}">
-            <input type="hidden" id="user_id" name="user_id" value="{{session["id"]}}">
-        </div>
-    </div>
-
-    <div class="row m-4 justify-content-center">
-        <label for="denominacion" class="col-sm-2 col-form-label">Denominacion</label>
-        <div class="col-sm-5">
-            <input list="denominacion_opciones" required type="text" 
-            class="form-control" name="denominacion" id="denominacion"
-            onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
-            <input type="hidden" id="cod_cls" name="cod_cls">
-            <input type="hidden" id="cod_mae" name="cod_mae">
-            <datalist id="denominacion_opciones">
-                {% for p in productos_arballon %}
-                    {% if 'semi' in (p.den | lower) or 'decom' in (p.den | lower) or 'rep' in (p.den | lower) or 'abo' in (p.den | lower) %}
-                        <option value="{{ p.den | trim }}" 
-                                data-cod-cls="{{ p.cod_cls | trim }}" 
-                                data-cod-mae="{{ p.cod_mae | trim }}">
-                        </option>
-                    {% endif %}
-                {% endfor %}
-            </datalist>
-        </div>
-
-    </div>
-
-    <!-- linea de botella -->
-    <div class="row m-4 justify-content-center">
-        <label for="llenadora_botella" class="col-sm-2 col-form-label">Llenadora de botella</label>
-        <div class="col-sm-5">
-            <input list="llenadora_botella_opciones" required type="text" 
-            class="form-control" name="llenadora_botella" id="llenadora_botella"
-            onblur="validarLlenadora()" >
-            <datalist id="llenadora_botella_opciones">
-                {% for p in productos_arballon | reverse %}
-                    {% if 'llena' in (p.den | lower) %}
-                        <option value="{{ p.den | trim }}" 
-                                data-cod-cls="{{ p.cod_cls | trim }}" 
-                                data-cod-mae="{{ p.cod_mae | trim }}">
-                        </option>
-                    {% endif %}
-                {% endfor %}
-            </datalist>
-        </div>
-
-    </div> 
-    <!-- linea de botella -->
-
-    <div class="row m-4 justify-content-center">
-        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
-        <div class="col-sm-5">
-            <input required type="date" class="form-control" name="fecha" id="fecha">
-        </div>
-    </div>
     
     <div class="row m-4 justify-content-center">
-        <label for="hora" class="col-sm-2 col-form-label">Hora</label>
+        <label for="acometida_norte" class="col-sm-2 col-form-label">Acometida norte (Kw)</label>
         <div class="col-sm-5">
-            <input required type="time" class="form-control" name="hora" id="hora">
-        </div>
-    </div>
-    
-    <div class="row m-4 justify-content-center">
-        <label for="lote_a" class="col-sm-2 col-form-label">
-            Lote
-        </label>
-        <div class="col-sm-5 d-flex justify-content-between">
-            <input required type="text" maxlength="1" class="form-control" style="width: 33%;" pattern="^[0-9]$"
-            title="(Ej: 2024 -> 4, 2025 -> 5)"
-            name="lote_a" id="lote_a"
-            >
-            <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
-            title="(Ej: 000 - 999)"
-            name="lote_b" id="lote_b"
-            >
-            <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
-            title="(Ej: 30 de enero -> 030)"
-            name="lote_c" id="lote_c"
-            >
+            <input required type="number" min="0" max="10000" step="0.01" class="form-control" name="acometida_norte" id="acometida_norte">
         </div>
     </div>
     <div class="row m-4 justify-content-center">
-        <label for="parte" class="col-sm-2 col-form-label">Numero de parte</label>
+        <label for="acometida_este" class="col-sm-2 col-form-label">Acometida este (Kw)</label>
         <div class="col-sm-5">
-            <input required type="text" class="form-control" 
-            value="{{ proximo_id }}"
-            name="numero_unico" id="numero_unico"
-            title="(Ej: 2024-T-000001)" pattern="^\d{4}-(T1|T2)-\d{6}$">
+            <input required type="number" min="0" max="10000" step="0.01" class="form-control" name="acometida_este" id="acometida_este">
         </div>
     </div>
     <div class="row m-4 justify-content-center">
-        <label for="cantidad" class="col-sm-2 col-form-label">Cantidad</label>
+        <label for="gas_natural" class="col-sm-2 col-form-label">Gas natural (m3)</label>
         <div class="col-sm-5">
-            <input required type="number" min="1" max="1980" class="form-control" name="cantidad" id="cantidad">
+            <input required type="number" min="0" max="100000" step="0.01" class="form-control" name="gas_natural" id="gas_natural">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="agua_pozo" class="col-sm-2 col-form-label">Agua pozo (m3 x 100)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="20000" step="0.01" class="form-control" name="agua_pozo" id="agua_pozo">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="agua_caldera_1" class="col-sm-2 col-form-label">Agua caldera 1 (m3)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="5000" step="0.01" class="form-control" name="agua_caldera_1" id="agua_caldera_1">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="agua_caldera_2" class="col-sm-2 col-form-label">Agua caldera 2 (m3)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="5000" step="0.01" class="form-control" name="agua_caldera_2" id="agua_caldera_2">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="agua_caldera_3" class="col-sm-2 col-form-label">Agua caldera 3 (m3)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="5000" step="0.01" class="form-control" name="agua_caldera_3" id="agua_caldera_3">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="efluente_generado" class="col-sm-2 col-form-label">Efluente generado (m3)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="50000" step="0.01" class="form-control" name="efluente_generado" id="efluente_generado">
         </div>
     </div>
 

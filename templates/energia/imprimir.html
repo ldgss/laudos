@@ -1,0 +1,64 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+    
+    <div class="row m-4 justify-content-center">
+        <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
+            <table id="descripcion" class="table-bordered col-12">
+                <tr>
+                    <th>Electricidad Norte</th>
+                    <td>{{ energia["electricidad_acometida_norte_kw"] }} Kw</td>
+                </tr>
+                <tr>
+                    <th>Electricidad Este</th>
+                    <td>{{ energia["electricidad_acometida_este_kw"] }} Kw</td>
+                </tr>
+                <tr>
+                    <th>Gas natural</th>
+                    <td>{{ energia["gas_natural_m3"] }} m3</td>
+                </tr>
+                <tr>
+                    <th>Agua pozo</th>
+                    <td>{{ energia["agua_pozo_m3x100"] }} m3 x 100</td>
+                </tr>
+                <tr>
+                    <th>Agua caldera 1</th>
+                    <td>{{ energia["agua_caldera1_m3"] }} m3</td>
+                </tr>
+                <tr>
+                    <th>Agua caldera 2</th>
+                    <td>{{ energia["agua_caldera2_m3"] }} m3</td>
+                </tr>
+                <tr>
+                    <th>Agua caldera 3</th>
+                    <td>{{ energia["agua_caldera3_m3"] }} m3</td>
+                </tr>
+                <tr>
+                    <th>Efluente generado</th>
+                    <td>{{ energia["efluente_generado_m3"] }} m3</td>
+                </tr>
+                <tr>
+                    <th>Responsable</th>
+                    <td>{{ energia["responsable"] }}</td>
+                </tr>
+                <tr>
+                    <th>Observaciones</th>
+                    <td>{{ energia["observaciones"] }}</td>
+                </tr>
+                <tr>
+                    <th>Fecha registro</th>
+                    <td>{{ energia["fecha_registro"].strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="m-2 text-center">
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+{% endblock %}

@@ -3,21 +3,22 @@ from flask import redirect
 from flask import url_for
 from utils import helpers
 from flask import Blueprint
-from models import mod_mercaderia
+from models import mod_energia
 from flask import flash
 from flask import request
 from flask import session
+from flask import jsonify
 
 
 energia_bp = Blueprint("energia", __name__)
 # cantidad para paginacion
 resultados_por_pagina = 20
+title = "Energía"
 
 @energia_bp.get("/energia")
 def energia():
     if helpers.session_on() and helpers.authorized_to("mantenimiento"):
-        title = "energia"
-        section = "energia"
+        section = "Energía"
         return render_template("energia/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
@@ -25,41 +26,42 @@ def energia():
 @energia_bp.get("/energia/agregar")
 def energia_agregar():
     if helpers.session_on() and helpers.authorized_to("mantenimiento"):
-        proximo_id = mod_mercaderia.get_ultimo_id()
-        title = "energia"
-        section = "energia"
+        section = "Agregar medición de energía"
         return render_template("energia/agregar.html", 
-                               title=title, section=section, 
-                               proximo_id=proximo_id,
-                               productos_arballon=session["productos_arballon"])
+                               title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
     
 @energia_bp.post("/energia/agregar")
 def energia_agregar_post():
     if helpers.session_on() and helpers.authorized_to("mantenimiento"):
-        # obtenemos el id solo del vencimiento necesario
-        vto = mod_mercaderia.get_vencimiento(request.form)
-        # ensamblo el lote
-        lote = f"{request.form["lote_a"]}-{request.form["lote_b"]}-{request.form["lote_c"]}"
-        barcode = mod_mercaderia.guardar_energia(request.form, vto, lote)
-        title = "energia"
-        section = "energia"
-        if barcode:
-            # enviar a imprimir/detalle el producto recien creado
-            return redirect(url_for("energia.energia_imprimir", numero_unico=request.form["numero_unico"]))
+        result = mod_energia.guardar_energia()
+        if result:
+            return redirect(url_for("energia.energia_imprimir", id_medicion_energia=result))
         else:
             flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
             return redirect(url_for("energia.energia_agregar"))
     else:
         return redirect(url_for("login.login_get"))
     
-@energia_bp.get("/energia/imprimir/<numero_unico>")
-def energia_imprimir(numero_unico):
+@energia_bp.post("/energia/anular")
+def energia_anular_post():
+    if helpers.session_on() and helpers.authorized_to("mantenimiento") and not helpers.authorized_to_action("limitado"):
+        referer = request.headers.get('Referer', '/')
+        result = mod_energia.anular_energia()
+        if result:
+            return redirect(referer)
+        else:
+            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
+            return redirect(referer)
+    else:
+        return redirect(url_for("login.login_get"))
+    
+@energia_bp.get("/energia/imprimir/<id_medicion_energia>")
+def energia_imprimir(id_medicion_energia):
     if helpers.session_on() and helpers.authorized_to("mantenimiento"):
-        energia = mod_mercaderia.get_energia(numero_unico)
-        title = "energia"
-        section = "energia"
+        energia = mod_energia.get_energia(id_medicion_energia)
+        section = "Visulizando registro de energía"
         return render_template("energia/imprimir.html", 
                                title=title, section=section, 
                                energia=energia)
@@ -80,9 +82,8 @@ def energia_listado(terminos_de_busqueda):
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
         
-        resultado = mod_mercaderia.get_listado_energia(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "energia"
-        section = "energia"
+        resultado = mod_energia.get_listado_energia(terminos_de_busqueda, resultados_por_pagina, offset)
+        section = "Listado de mediciones de energía"
         return render_template("energia/listado.html", 
                                max=max,
                                min=min,
@@ -92,3 +93,24 @@ def energia_listado(terminos_de_busqueda):
                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
     else:
         return redirect(url_for("login.login_get"))
+
+@energia_bp.get("/energia/estadisticas")
+def energia_estadisticas():
+    if helpers.session_on() and helpers.authorized_to("mantenimiento"):
+        section = "Estadísticas de energía"
+        return render_template(
+                "energia/estadisticas.html", 
+                title=title, 
+                section=section,
+            )
+    else:
+        return redirect(url_for("login.login_get"))
+
+@energia_bp.post("/energia/estadisticas/filtrar")
+def energia_filtrar():
+    print(f"filtro: {request.form}")
+    estadisticas = mod_energia.get_estadisticas()
+    if estadisticas:
+        return estadisticas
+    else:
+        return redirect(url_for("energia.energia"))

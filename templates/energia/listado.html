@@ -2,6 +2,7 @@
 
 {% block header %}
     <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/energia/utils.js")}}"></script>
    
 {% endblock %}
 
@@ -12,15 +13,16 @@
             <thead>
                 <tr>
                     <th>N°</th>
-                    <th>Denominacion</th>
-                    <th>Número Único</th>
-                    <th>Fecha Elaboración</th>
-                    <th>Vencimiento</th>
-                    <th>Lote</th>
-                    <th>Cantidad</th>
-                    <th>Observación</th>
-                    <th>Responsable</th>
-                    <th>Acción</th>
+                    <th>Aco Norte Kw</th>
+                    <th>Aco Este Kw</th>
+                    <th>Gas m3</th>
+                    <th>Agua pozo m3x100</th>
+                    <th>Caldera 1 m3</th>
+                    <th>Caldera 2 m3</th>
+                    <th>Caldera 3 m3</th>
+                    <th>Efluente m3</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,33 +32,41 @@
                         {{loop.index + offset}}
                     </td>
                     <td>
-                        {{l.den}}
+                        {{l.electricidad_acometida_norte_kw}}
                     </td>
                     <td>
-                        {{l.numero_unico}}
-                    </td>
-                    <td class="fecha_elaboracion">
-                        {{l.fecha_elaboracion.strftime('%Y-%m-%d %H:%M')}}
-                    </td>
-                    <td hidden class="meses">
-                        {{l.meses}}
-                    </td>
-                    <td class="vencimiento">
+                        {{l.electricidad_acometida_este_kw}}
                     </td>
                     <td>
-                        {{l.lote}}
+                        {{l.gas_natural_m3}}
                     </td>
                     <td>
-                        {{l.cantidad}}
-                    </td>
-                    <td class="observacion_listado">
-                        {{l.observacion}}
+                        {{l.agua_pozo_m3x100}}
                     </td>
                     <td>
-                        {{l.nombre}}
+                        {{l.agua_caldera1_m3}}
                     </td>
                     <td>
-                        <a href="{{url_for('envasado.envasado_imprimir', numero_unico=l.numero_unico)}}" class="btn btn-outline-primary">Ver</a >
+                        {{l.agua_caldera2_m3}}
+                    </td>
+                    <td>
+                        {{l.agua_caldera3_m3}}
+                    </td>
+                    <td>
+                        {{l.efluente_generado_m3}}
+                    </td>
+                    <td>
+                        {{l.fecha_registro.strftime('%Y-%m-%d %H:%M')}}
+                    </td>
+                    <td>
+                        <a href="{{url_for('energia.energia_imprimir', id_medicion_energia=l.id)}}" class="btn btn-outline-primary">Ver</a >
+                        <button 
+                            class="btn btn-danger btn-anular" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modalConfirmarAnulacion" 
+                            data-id="{{ l.id }}">
+                            Anular
+                        </button>
                     </td>
                     <td>
                     </td>
@@ -76,14 +86,14 @@
             
             <li class="page-item">
                 {% if pagina_actual > 1 %}
-                <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda, page=pagina_actual - 1) }}">Anterior</a>
+                <a class="page-link" href="{{ url_for('energia.energia_listado', terminos_de_busqueda=terminos_de_busqueda, page=pagina_actual - 1) }}">Anterior</a>
                 {% endif %}
             </li>
             
             {# Mostrar enlace a la primera página si no está cerca del rango #}
             {% if pagina_actual > rango_mostrado + 2 %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda, page=mostrar_inicio) }}">{{ mostrar_inicio }}</a>
+                    <a class="page-link" href="{{ url_for('energia.energia_listado', terminos_de_busqueda=terminos_de_busqueda, page=mostrar_inicio) }}">{{ mostrar_inicio }}</a>
                 </li>
                 <li class="page-item disabled"><span class="page-link">...</span></li>
             {% endif %}
@@ -91,7 +101,7 @@
             {# Páginas cercanas al rango #}
             {% for i in range(max(mostrar_inicio, pagina_actual - rango_mostrado), min(mostrar_final, pagina_actual + rango_mostrado) + 1) %}
                 <li class="page-item {% if i == pagina_actual %}active{% endif %}">
-                    <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda, page=i) }}">{{ i }}</a>
+                    <a class="page-link" href="{{ url_for('energia.energia_listado', terminos_de_busqueda=terminos_de_busqueda, page=i) }}">{{ i }}</a>
                 </li>
             {% endfor %}
             
@@ -99,13 +109,13 @@
             {% if pagina_actual < total_paginas - rango_mostrado - 1 %}
                 <li class="page-item disabled"><span class="page-link">...</span></li>
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda, page=mostrar_final) }}">{{ mostrar_final }}</a>
+                    <a class="page-link" href="{{ url_for('energia.energia_listado', terminos_de_busqueda=terminos_de_busqueda, page=mostrar_final) }}">{{ mostrar_final }}</a>
                 </li>
             {% endif %}
             
             <li class="page-item">
                 {% if pagina_actual < total_paginas %}
-                <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda, page=pagina_actual + 1) }}">Siguiente</a>
+                <a class="page-link" href="{{ url_for('energia.energia_listado', terminos_de_busqueda=terminos_de_busqueda, page=pagina_actual + 1) }}">Siguiente</a>
                 {% endif %}
             </li>
         </ul>
@@ -113,6 +123,28 @@
 
     <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
 
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalConfirmarAnulacion" tabindex="-1" aria-labelledby="modalConfirmarAnulacionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="/energia/anular">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConfirmarAnulacionLabel">Confirmar Anulación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro de que desea anular este registro?</p>
+                    <input type="hidden" name="energia_id" id="energia_id">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Anular</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
     
 
