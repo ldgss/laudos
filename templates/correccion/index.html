@@ -22,14 +22,13 @@
         </div>
     </form>
 
-    <!-- correcion de h1 deshabilitada por el momento -->
     <form id="form_buscar">
         <div class="m-3">
             <label class="form-label" for="numero_unico">Numero único a corregir</label>
             <input class="form-control" required
             placeholder="Ingrese numero único" 
-            title="(Ej: 2024-T1-000001, 2024-E1-000001)" 
-            pattern="^\d{4}-(T1|E1)-\d{6}$"
+            title="(Ej: 2024-T1-000001, 2024-E1-000001, 2024-H1-000001)" 
+            pattern="^\d{4}-(T1|E1|H1)-\d{6}$"
             type="text" id="numero_unico" name="numero_unico">
         </div>
         <div class="m-3">
@@ -59,12 +58,12 @@
                     <div class="row m-4 justify-content-center">
                         <label for="denominacion" class="col-sm-4 col-form-label">Denominacion</label>
                         <div class="col-sm-8">
-                            <input list="denominacion_opciones" required type="text" 
+                            <input list="denominacion_opciones_modal1" required type="text" 
                             class="form-control" name="denominacion_modal1" id="denominacion_modal1"
-                            onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
+                            onblur="validarMarcaCorreccion()" oninput="actualizarValoresOcultosCorreccion()">
                             <input type="hidden" id="cod_cls_modal1" name="cod_cls_modal1">
                             <input type="hidden" id="cod_mae_modal1" name="cod_mae_modal1">
-                            <datalist id="denominacion_opciones">
+                            <datalist id="denominacion_opciones_modal1">
                                 {% for p in productos_arballon %}
                                         <option value="{{ p.den | trim }}" 
                                                 data-cod-cls="{{ p.cod_cls | trim }}" 
@@ -196,14 +195,17 @@
                     <div class="row m-4 justify-content-center">
                         <label for="denominacion" class="col-sm-4 col-form-label">Denominación</label>
                         <div class="col-sm-8">
-                            <input list="denominacion_opciones_hojalata" required type="text" 
+                            <input list="denominacion_opciones_modal2" required type="text" 
                                    class="form-control" name="denominacion_modal2" id="denominacion_modal2"
-                                   onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
+                                   onblur="validarMarcaCorreccion()" oninput="actualizarValoresOcultosCorreccion()">
                             <input type="hidden" id="cod_cls_modal2" name="cod_cls_modal2">
                             <input type="hidden" id="cod_mae_modal2" name="cod_mae_modal2">
-                            <datalist id="denominacion_opciones">
-                                {% for p in productos_arballon_hojalata%}
-                                    <option value="{{ p.den }}" data-cod-cls="{{ p.cod_cls }}" data-cod-mae="{{ p.cod_mae }}"></option>
+                            <datalist id="denominacion_opciones_modal2">
+                                {% for p in productos_arballon %}
+                                        <option value="{{ p.den | trim }}" 
+                                                data-cod-cls="{{ p.cod_cls | trim }}" 
+                                                data-cod-mae="{{ p.cod_mae | trim }}">
+                                        </option>
                                 {% endfor %}
                             </datalist>
                         </div>
@@ -229,10 +231,10 @@
                         </label>
                         
                         <div class="col-sm-8">
-                            <input required type="text" class="form-control" pattern="\d-\d{3}-\d{3}"
-                                title="(Ej: Año:24-Viaje:015-pallets:02-Color:R-Diametro:038)"
-                                name="lote_modal2" id="lote_modal2"
-                                >
+                            <input required type="text" class="form-control"
+                            pattern="^[0-9]-(0[0-9]{2}|[1-9][0-9]{2})-(0[0-2][0-9]{2}|3[0-5][0-9]|36[0-6])$" 
+                            title="Formato: ultimo dia del año - lote - fecha juliana"
+                            name="lote_modal2" id="lote_modal2">
                         </div>
                     </div>
                     
@@ -281,19 +283,17 @@
                     <div class="row m-4 justify-content-center">
                         <label for="denominacion" class="col-sm-4 col-form-label">Denominacion</label>
                         <div class="col-sm-8">
-                            <input list="denominacion_opciones" required type="text" 
+                            <input list="denominacion_opciones_modal3" required type="text" 
                             class="form-control" name="denominacion_modal3" id="denominacion_modal3"
-                            onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
+                            onblur="validarMarcaCorreccion()" oninput="actualizarValoresOcultosCorreccion()">
                             <input type="hidden" id="cod_cls_modal3" name="cod_cls_modal3">
                             <input type="hidden" id="cod_mae_modal3" name="cod_mae_modal3">
-                            <datalist id="denominacion_opciones">
+                            <datalist id="denominacion_opciones_modal3">
                                 {% for p in productos_arballon %}
-                                    {% if 'pasta' in (p.den | lower) or 'extracto' in (p.den | lower) %}
-                                        <option value="{{ p.den | trim }}" 
-                                                data-cod-cls="{{ p.cod_cls | trim }}" 
-                                                data-cod-mae="{{ p.cod_mae | trim }}">
-                                        </option>
-                                    {% endif %}
+                                    <option value="{{ p.den | trim }}" 
+                                            data-cod-cls="{{ p.cod_cls | trim }}" 
+                                            data-cod-mae="{{ p.cod_mae | trim }}">
+                                    </option>
                                 {% endfor %}
                             </datalist>
                         </div>

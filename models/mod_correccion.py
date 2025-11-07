@@ -11,7 +11,6 @@ def guardar_correccion():
     numero_unico_modal3 = request.form.get("numero_unico_modal3")
 
     try:
-        sql = ""
         if numero_unico_modal1 and 'T1' in numero_unico_modal1:
             sql = text(""" 
                         UPDATE mercaderia
@@ -24,7 +23,8 @@ def guardar_correccion():
                             fecha_etiquetado=:fecha_etiquetado,  
                             fecha_encajonado=:fecha_encajonado, 
                             den=:den,
-                            llenadora_botella=:llenadora_botella
+                            llenadora_botella=:llenadora_botella,
+                            vto = (SELECT id FROM vencimiento WHERE producto = :cod_cls)
                         WHERE 
                             numero_unico=:numero_unico; 
                        """)
@@ -40,7 +40,8 @@ def guardar_correccion():
                                                 "fecha_encajonado":f"{request.form["fecha_modal1"]} {request.form["hora_modal1"]}" if 'tipo_fecha_encajonado' in request.form["tipo_fecha_modal1"] else None,
                                                 "den":request.form["denominacion_modal1"],
                                                 "numero_unico":request.form["numero_unico_modal1"],
-                                                "llenadora_botella":request.form.get("llenadora_botella") or None
+                                                "llenadora_botella":request.form.get("llenadora_botella") or None,
+                                                "cod_cls":request.form["cod_cls_modal1"]
                                             })
         elif numero_unico_modal2 and 'H1' in numero_unico_modal2:
             sql = text(""" 
@@ -53,7 +54,8 @@ def guardar_correccion():
                             lote_cuerpo=:lote_cuerpo, 
                             lote_tapa=:lote_tapa, 
                             fecha_elaboracion=:fecha_elaboracion, 
-                            den=:den
+                            den=:den,
+                            vto_meses = (SELECT id FROM vencimiento WHERE producto = :cod_cls)
                         WHERE 
                             numero_unico=:numero_unico; 
                        """)
@@ -63,12 +65,13 @@ def guardar_correccion():
                                                 "producto":request.form["cod_mae_modal2"],
                                                 "observacion":request.form["observaciones_modal2"],
                                                 "cantidad":request.form["cantidad_modal2"],
-                                                "lote": f"{request.form["lote_a_modal2"]}-{request.form["lote_b_modal2"]}-{request.form["lote_c_modal2"]}",
-                                                "lote_cuerpo": f"{request.form["lote_a_modal2"]}-{request.form["lote_b_modal2"]}-{request.form["lote_c_modal2"]}",
-                                                "lote_tapa": f"{request.form["lote_a_modal2"]}-{request.form["lote_b_modal2"]}-{request.form["lote_c_modal2"]}",
+                                                "lote": request.form["lote_modal2"],
+                                                "lote_cuerpo": None,
+                                                "lote_tapa": None,
                                                 "fecha_elaboracion": f"{request.form["fecha_modal2"]} {request.form["hora_modal2"]}",
                                                 "den":request.form["denominacion_modal2"],
                                                 "numero_unico":request.form["numero_unico_modal2"],
+                                                "cod_cls":request.form["cod_cls_modal2"]
                                             })
         if numero_unico_modal3 and 'E1' in numero_unico_modal3:
             sql = text(""" 
@@ -80,7 +83,8 @@ def guardar_correccion():
                             lote=:lote, 
                             brix=:brix,
                             numero_recipiente=:numero_recipiente, 
-                            den=:den
+                            den=:den,
+                            vto_meses = (SELECT id FROM vencimiento WHERE producto = :cod_cls)
                         WHERE 
                             numero_unico=:numero_unico; 
                     """)
@@ -95,28 +99,28 @@ def guardar_correccion():
                                                 "numero_recipiente": request.form["numero_recipiente_modal3"],
                                                 "den":request.form["denominacion_modal3"],
                                                 "numero_unico":request.form["numero_unico_modal3"],
+                                                "cod_cls":request.form["cod_cls_modal3"]
                                             })
         
-        db.db.session.commit()
-        
-        sql = text(
-            """
-            INSERT INTO correccion
-            (numero_unico, observaciones, responsable, fecha_registro)
-            VALUES(:numero_unico, :observaciones, :responsable, CURRENT_TIMESTAMP);
-            """
-        )
+        if(result):
+            sql = text(
+                """
+                INSERT INTO correccion
+                (numero_unico, observaciones, responsable, fecha_registro)
+                VALUES(:numero_unico, :observaciones, :responsable, CURRENT_TIMESTAMP);
+                """
+            )
 
-        numero_unico = request.form.get("numero_unico_modal1") or request.form.get("numero_unico_modal2") or request.form.get("numero_unico_modal3")
-        observaciones = request.form.get("observaciones_modal1") or request.form.get("observaciones_modal2") or request.form.get("observaciones_modal3")
-        result = db.db.session.execute(sql, 
-                                            {
-                                                "numero_unico": numero_unico,
-                                                "observaciones": observaciones,
-                                                "responsable": session["id"]
-                                            })
-        db.db.session.commit()
-        return True
+            numero_unico = request.form.get("numero_unico_modal1") or request.form.get("numero_unico_modal2") or request.form.get("numero_unico_modal3")
+            observaciones = request.form.get("observaciones_modal1") or request.form.get("observaciones_modal2") or request.form.get("observaciones_modal3")
+            result = db.db.session.execute(sql, 
+                                                {
+                                                    "numero_unico": numero_unico,
+                                                    "observaciones": observaciones,
+                                                    "responsable": session["id"]
+                                                })
+            db.db.session.commit()
+            return True
     except Exception as e:
         db.db.session.rollback()
         error_message = traceback.format_exc()  # Obtiene la traza completa del error

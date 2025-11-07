@@ -4,7 +4,7 @@ document.getElementById('form_buscar').addEventListener('submit', async function
     
     const numeroUnico = document.getElementById('numero_unico').value;
     const tipo = numeroUnico.match(/-(T1|H1|E1)-/);
-
+    console.log(`tipo: ${tipo}`)
     if (!tipo) {
         alert('El número único no es válido.');
         return;
@@ -28,7 +28,7 @@ document.getElementById('form_buscar').addEventListener('submit', async function
 
         if (tipo[1] === 'T1') {
             modalId = 'modal1';
-        } else if (tipo[2] === 'H1') {
+        } else if (tipo[1] === 'H1') {
             modalId = 'modal2';
         } else {
             modalId = 'modal3';
@@ -100,8 +100,8 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             document.getElementById('observaciones_modal1').value = data['observacion'] || '';
 
             // Popular campos ocultos si existen en los datos
-            document.getElementById('cod_cls_modal1').value = data['cod_cls'] || '';
             document.getElementById('cod_mae_modal1').value = data['producto'] || '';
+            actualizarCodigosDesdeProducto(1, data['producto'])
             document.getElementById('id_modal1').value = data['id'] || '';
             document.getElementById('numero_unico_modal1').value = data['numero_unico'] || '';
         }
@@ -113,8 +113,8 @@ document.getElementById('form_buscar').addEventListener('submit', async function
         
             // Popular la denominación
             document.getElementById('denominacion_modal2').value = data['den'] || '';
-            document.getElementById('cod_cls_modal2').value = data['cod_cls'] || '';
-            document.getElementById('cod_mae_modal2').value = data['cod_mae'] || '';
+            document.getElementById('cod_mae_modal2').value = data['producto'] || '';
+            actualizarCodigosDesdeProducto(2, data['producto'])
         
             // Manejo de la fecha
             const fechaHora = data['fecha_elaboracion'] || '';
@@ -137,7 +137,7 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             document.getElementById('numero_unico_modal2').value = data['numero_unico'] || '';
         
             // Antecedentes
-            document.getElementById('antecedentes_modal2').value = data['antecedentes'] || '';
+            // document.getElementById('antecedentes_modal2').value = data['antecedentes'] || '';
         
             // Cantidad
             document.getElementById('cantidad_modal2').value = data['cantidad'] || '';
@@ -190,8 +190,8 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             document.getElementById('observaciones_modal3').value = data['observaciones'] || '';
             
             // Popular campos ocultos si existen en los datos
-            document.getElementById('cod_cls_modal3').value = data['cod_cls'] || '';
             document.getElementById('cod_mae_modal3').value = data['producto'] || '';
+            actualizarCodigosDesdeProducto(3, data['producto'])
             document.getElementById('id_modal3').value = data['id'] || '';
             document.getElementById('numero_unico_modal3').value = data['numero_unico'] || '';
         }
@@ -204,6 +204,58 @@ document.getElementById('form_buscar').addEventListener('submit', async function
     }
 });
 
+function validarMarcaCorreccion() {
+    const denominacionInputs = document.querySelectorAll('[id^="denominacion_modal"]');
+
+    denominacionInputs.forEach(input => {
+        // obtengo el id del datalist asociado
+        const listId = input.getAttribute('list');
+        const datalist = document.getElementById(listId);
+
+        if (datalist) {
+            // obtengo todas las opciones del datalist
+            const opciones = Array.from(datalist.options).map(opt => opt.value.trim());
+            const valor = input.value.trim();
+
+            // si el valor no está en las opciones, se borra
+            if (!opciones.includes(valor)) {
+                input.value = '';
+            }
+        }
+    });
+}
+
+
+function actualizarValoresOcultosCorreccion() {
+    // Selecciona todos los inputs con id que empieza en "denominacion_modal"
+    const denominacionInputs = document.querySelectorAll('[id^="denominacion_modal"]');
+
+    denominacionInputs.forEach(input => {
+        const listId = input.getAttribute('list');
+        const datalist = document.getElementById(listId);
+        if (!datalist) return;
+
+        // Busca la opción que coincide con el valor del input
+        const option = Array.from(datalist.options).find(opt => opt.value.trim() === input.value.trim());
+
+        // Extrae el número (por ej. "1" de "denominacion_modal1")
+        const sufijo = input.id.replace('denominacion_modal', '');
+
+        // Obtiene los inputs ocultos correspondientes
+        const codClsInput = document.getElementById(`cod_cls_modal${sufijo}`);
+        const codMaeInput = document.getElementById(`cod_mae_modal${sufijo}`);
+
+        if (option) {
+            // Si hay coincidencia, actualiza los ocultos
+            if (codClsInput) codClsInput.value = option.getAttribute('data-cod-cls') || '';
+            if (codMaeInput) codMaeInput.value = option.getAttribute('data-cod-mae') || '';
+        } else {
+            // Si no coincide con ninguna opción, limpia los ocultos
+            if (codClsInput) codClsInput.value = '';
+            if (codMaeInput) codMaeInput.value = '';
+        }
+    });
+}
 
 
 function habilitarLlenadora(){
@@ -218,4 +270,26 @@ function habilitarLlenadora(){
     }
     denominacionInput.addEventListener('input', habilitarLlenadora);
 }
+
+function actualizarCodigosDesdeProducto(modalNum, producto) {
+    console.log(`actualizando modal ${modalNum} y producto ${producto}`)
+    const opciones = document.querySelectorAll(`#denominacion_opciones_modal${modalNum} option`);
+
+    // Buscar la opción que coincide con el producto
+    const opcion = Array.from(opciones).find(opt => opt.getAttribute('data-cod-mae').trim() === (producto || '').trim());
+    console.log(`opcion encontrada: ${opcion}`)
+    // Obtener referencias a los campos destino
+    const codClsInput = document.getElementById(`cod_cls_modal${modalNum}`);
+    const codMaeInput = document.getElementById(`cod_mae_modal${modalNum}`);
+
+    if (opcion) {
+        // Si encontró coincidencia, asignar valores
+        codClsInput.value = opcion.getAttribute('data-cod-cls') || '';
+    } else {
+        // Si no hay coincidencia, limpiar
+        codClsInput.value = '';
+        codMaeInput.value = '';
+    }
+}
+
 
