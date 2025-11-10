@@ -3,7 +3,7 @@ document.getElementById('form_buscar').addEventListener('submit', async function
     e.preventDefault();
     
     const numeroUnico = document.getElementById('numero_unico').value;
-    const tipo = numeroUnico.match(/-(T1|H1|E1)-/);
+    const tipo = numeroUnico.match(/-(T1|H1|E1|T2)-/);
     console.log(`tipo: ${tipo}`)
     if (!tipo) {
         alert('El número único no es válido.');
@@ -30,8 +30,10 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             modalId = 'modal1';
         } else if (tipo[1] === 'H1') {
             modalId = 'modal2';
-        } else {
+        } else if (tipo[1] === 'E1'){
             modalId = 'modal3';
+        } else {
+            modalId = 'modal4';
         }
 
         const modal = new bootstrap.Modal(document.getElementById(modalId));
@@ -196,6 +198,15 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             document.getElementById('numero_unico_modal3').value = data['numero_unico'] || '';
         }
 
+        // Popular los campos del formulario (modal3 en este caso)
+        if (modalId === 'modal4') {
+            document.getElementById('id_modal4').value = data['id'] || '';
+            document.getElementById('numero_unico_modal4').value = data['numero_unico'] || '';
+            document.getElementById('denominacion_modal4').value = data['nueva_den'] || '';
+            document.getElementById('observaciones_modal4').value = data['observaciones'] || '';
+            document.getElementById('tipo_reacondicionado_modal4').value = data['tipo_reacondicionado'] || '';
+        }
+
     habilitarLlenadora();
 
     } catch (error) {
@@ -223,6 +234,16 @@ function validarMarcaCorreccion() {
             }
         }
     });
+}
+
+function validarTipoDeReacondicionadoCorreccion() {
+    const denominacionInput = document.getElementById('tipo_reacondicionado_modal4');
+    const denominacion_opciones = document.getElementById('tipo_reacondicionado_opciones_modal4');
+    const opciones = Array.from(denominacion_opciones.options).map(option => option.value);
+
+    if (!opciones.includes(denominacionInput.value)) {
+        denominacionInput.value = '';
+    }
 }
 
 

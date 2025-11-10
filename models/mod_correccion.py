@@ -9,6 +9,7 @@ def guardar_correccion():
     numero_unico_modal1 = request.form.get("numero_unico_modal1")
     numero_unico_modal2 = request.form.get("numero_unico_modal2")
     numero_unico_modal3 = request.form.get("numero_unico_modal3")
+    numero_unico_modal4 = request.form.get("numero_unico_modal4")
 
     try:
         if numero_unico_modal1 and 'T1' in numero_unico_modal1:
@@ -73,7 +74,7 @@ def guardar_correccion():
                                                 "numero_unico":request.form["numero_unico_modal2"],
                                                 "cod_cls":request.form["cod_cls_modal2"]
                                             })
-        if numero_unico_modal3 and 'E1' in numero_unico_modal3:
+        elif numero_unico_modal3 and 'E1' in numero_unico_modal3:
             sql = text(""" 
                         UPDATE extracto
                         SET 
@@ -101,6 +102,24 @@ def guardar_correccion():
                                                 "numero_unico":request.form["numero_unico_modal3"],
                                                 "cod_cls":request.form["cod_cls_modal3"]
                                             })
+        elif numero_unico_modal4 and 'T2' in numero_unico_modal4:
+            sql = text(""" 
+                        UPDATE reacondicionado
+                        SET 
+                            nueva_den=:nueva_den, 
+                            observaciones=:observaciones, 
+                            tipo_reacondicionado=:tipo_reacondicionado 
+                        WHERE 
+                            numero_unico=:numero_unico; 
+                    """)
+        
+            result = db.db.session.execute(sql,
+                                            {
+                                                "nueva_den":request.form["denominacion_modal4"],
+                                                "observaciones":request.form["observaciones_modal4"],
+                                                "tipo_reacondicionado":request.form["tipo_reacondicionado_modal4"],
+                                                "numero_unico":request.form["numero_unico_modal4"]
+                                            })
         
         if(result):
             sql = text(
@@ -111,8 +130,8 @@ def guardar_correccion():
                 """
             )
 
-            numero_unico = request.form.get("numero_unico_modal1") or request.form.get("numero_unico_modal2") or request.form.get("numero_unico_modal3")
-            observaciones = request.form.get("observaciones_modal1") or request.form.get("observaciones_modal2") or request.form.get("observaciones_modal3")
+            numero_unico = request.form.get("numero_unico_modal1") or request.form.get("numero_unico_modal2") or request.form.get("numero_unico_modal3") or request.form.get("numero_unico_modal4")
+            observaciones = request.form.get("observaciones_modal1") or request.form.get("observaciones_modal2") or request.form.get("observaciones_modal3") or request.form.get("observaciones_modal4")
             result = db.db.session.execute(sql, 
                                                 {
                                                     "numero_unico": numero_unico,
@@ -136,6 +155,8 @@ def get_para_corregir(numero_unico):
             sql = text(""" SELECT * FROM hojalata WHERE numero_unico = :numero_unico """)
         elif 'E1' in numero_unico:
             sql = text(""" SELECT * FROM extracto WHERE numero_unico = :numero_unico """)
+        elif 'T2' in numero_unico:
+            sql = text(""" SELECT * FROM reacondicionado WHERE numero_unico = :numero_unico """)
 
         
         result = db.db.session.execute(sql,
