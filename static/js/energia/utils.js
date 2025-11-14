@@ -112,7 +112,7 @@ fetch("estadisticas/filtrar", { method: "POST" })
   })
   .catch(err => {
     console.error("Error al cargar datos:", err);
-    ["acometidas", "gas"].forEach(id => {
+    ["acometidas", "gas", "agua_pozo", "agua_calderas", "efluente_generado"].forEach(id => {
       document.getElementById(id).style.display = "none";
       document.getElementById(id + "_null").textContent =
         "Error al cargar los datos";

@@ -110,7 +110,8 @@ def energia_estadisticas():
 def energia_filtrar():
     print(f"filtro: {request.form}")
     estadisticas = mod_energia.get_estadisticas()
-    if estadisticas:
-        return estadisticas
+    print(f"resultados: {estadisticas}")
+    if estadisticas and len(estadisticas) > 0:
+        return jsonify(estadisticas), 200
     else:
-        return redirect(url_for("energia.energia"))
+        return jsonify([]), 200
