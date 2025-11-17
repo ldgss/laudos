@@ -4,6 +4,7 @@ from flask import url_for
 from utils import helpers
 from flask import Blueprint
 from models import mod_mercaderia
+from models import mod_intervenciones
 from flask import flash
 from flask import request
 from flask import session
@@ -12,12 +13,12 @@ from flask import session
 intervenciones_bp = Blueprint("intervenciones", __name__)
 # cantidad para paginacion
 resultados_por_pagina = 20
+title = 'Intervencion de línea'
 
 @intervenciones_bp.get("/intervenciones")
 def intervenciones():
     if helpers.session_on() and helpers.authorized_to("mantenimiento"):
-        title = "intervenciones"
-        section = "intervenciones"
+        section = "Intervención de línea"
         return render_template("intervenciones/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
@@ -25,13 +26,14 @@ def intervenciones():
 @intervenciones_bp.get("/intervenciones/agregar")
 def intervenciones_agregar():
     if helpers.session_on() and helpers.authorized_to("mantenimiento"):
-        proximo_id = mod_mercaderia.get_ultimo_id()
-        title = "intervenciones"
-        section = "intervenciones"
+        lineas_mantenimiento = mod_intervenciones.get_lineas_mantenimiento()
+        tipo_de_fallo = mod_intervenciones.get_tipo_de_fallo()
+        section = "Agregar intervención de línea"
         return render_template("intervenciones/agregar.html", 
                                title=title, section=section, 
-                               proximo_id=proximo_id,
-                               productos_arballon=session["productos_arballon"])
+                               lineas_mantenimiento = lineas_mantenimiento,
+                               tipo_de_fallo = tipo_de_fallo
+                               )
     else:
         return redirect(url_for("login.login_get"))
     
@@ -43,8 +45,6 @@ def intervenciones_agregar_post():
         # ensamblo el lote
         lote = f"{request.form["lote_a"]}-{request.form["lote_b"]}-{request.form["lote_c"]}"
         barcode = mod_mercaderia.intervenciones(request.form, vto, lote)
-        title = "intervenciones"
-        section = "intervenciones"
         if barcode:
             # enviar a imprimir/detalle el producto recien creado
             return redirect(url_for("intervenciones.intervenciones_imprimir", numero_unico=request.form["numero_unico"]))
@@ -58,8 +58,7 @@ def intervenciones_agregar_post():
 def intervenciones_imprimir(numero_unico):
     if helpers.session_on() and helpers.authorized_to("mantenimiento"):
         intervenciones = mod_mercaderia.intervenciones(numero_unico)
-        title = "intervenciones"
-        section = "intervenciones"
+        section = "Visualizando intervención de línea"
         return render_template("intervenciones/imprimir.html", 
                                title=title, section=section, 
                                intervenciones=intervenciones)
@@ -81,8 +80,7 @@ def intervenciones_listado(terminos_de_busqueda):
         offset = (pagina - 1) * resultados_por_pagina
         
         resultado = mod_mercaderia.intervenciones(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "intervenciones"
-        section = "intervenciones"
+        section = "Listado de intervenciones de línea"
         return render_template("intervenciones/listado.html", 
                                max=max,
                                min=min,

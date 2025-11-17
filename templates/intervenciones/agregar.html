@@ -2,6 +2,7 @@
 
 {% block header %}
     <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/intervenciones/utils.js")}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -9,112 +10,88 @@
 <form action="agregar" method="post">
 
     <div class="row m-4 justify-content-center">
-        <label for="operario" class="col-sm-2 col-form-label">Operario</label>
+        <label for="linea_afectada" class="col-sm-2 col-form-label">Línea afectada</label>
         <div class="col-sm-5">
-            <input readonly maxlength="30" type="text" class="form-control" 
-            name="user_name" id="user_name" value="{{session["nombre"]}}">
-            <input type="hidden" id="user_id" name="user_id" value="{{session["id"]}}">
+            <input list="linea_afectada_opciones" required type="text" 
+            class="form-control" name="linea_afectada" id="linea_afectada"
+            onblur="validarLineaAfectada()">
+            <input type="hidden" id="lineas_mantenimiento_id" name="lineas_mantenimiento_id">
+            <datalist id="linea_afectada_opciones">
+                {% for lm in lineas_mantenimiento %}
+                        <option value="{{ lm.denominacion }}"
+                            data-tipo-de-fallo-id="{{ lm.id }}">
+                        </option>
+                {% endfor %}
+            </datalist>
         </div>
     </div>
 
     <div class="row m-4 justify-content-center">
-        <label for="denominacion" class="col-sm-2 col-form-label">Denominacion</label>
+        <label for="tipo_de_fallo" class="col-sm-2 col-form-label">Tipo de fallo</label>
         <div class="col-sm-5">
-            <input list="denominacion_opciones" required type="text" 
-            class="form-control" name="denominacion" id="denominacion"
-            onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
-            <input type="hidden" id="cod_cls" name="cod_cls">
-            <input type="hidden" id="cod_mae" name="cod_mae">
-            <datalist id="denominacion_opciones">
-                {% for p in productos_arballon %}
-                    {% if 'semi' in (p.den | lower) or 'decom' in (p.den | lower) or 'rep' in (p.den | lower) or 'abo' in (p.den | lower) %}
-                        <option value="{{ p.den | trim }}" 
-                                data-cod-cls="{{ p.cod_cls | trim }}" 
-                                data-cod-mae="{{ p.cod_mae | trim }}">
+            <input list="tipo_de_fallo_opciones" required type="text" 
+            class="form-control" name="tipo_de_fallo" id="tipo_de_fallo"
+            onblur="validarTipoDeFallo()">
+            <input type="hidden" id="tipo_de_fallo_id" name="tipo_de_fallo_id">
+            <datalist id="tipo_de_fallo_opciones">
+                {% for tf in tipo_de_fallo %}
+                        <option value="{{ tf.descripcion }}" 
+                            data-tipo-de-fallo-id="{{ tf.id }}">
                         </option>
-                    {% endif %}
                 {% endfor %}
             </datalist>
         </div>
-
     </div>
 
-    <!-- linea de botella -->
     <div class="row m-4 justify-content-center">
-        <label for="llenadora_botella" class="col-sm-2 col-form-label">Llenadora de botella</label>
-        <div class="col-sm-5">
-            <input list="llenadora_botella_opciones" required type="text" 
-            class="form-control" name="llenadora_botella" id="llenadora_botella"
-            onblur="validarLlenadora()" >
-            <datalist id="llenadora_botella_opciones">
-                {% for p in productos_arballon | reverse %}
-                    {% if 'llena' in (p.den | lower) %}
-                        <option value="{{ p.den | trim }}" 
-                                data-cod-cls="{{ p.cod_cls | trim }}" 
-                                data-cod-mae="{{ p.cod_mae | trim }}">
-                        </option>
-                    {% endif %}
-                {% endfor %}
-            </datalist>
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">Se detuvo</label>
         </div>
-
-    </div> 
-    <!-- linea de botella -->
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="se_detuvo" name="se_detuvo" role="switch">
+            </div>
+        </div>
+    </div>
 
     <div class="row m-4 justify-content-center">
-        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+        <label for="inicio" class="col-sm-2 col-form-label">Inicio</label>
         <div class="col-sm-5">
-            <input required type="date" class="form-control" name="fecha" id="fecha">
+            <input required type="datetime-local" class="form-control" name="inicio" id="inicio">
         </div>
     </div>
     
     <div class="row m-4 justify-content-center">
-        <label for="hora" class="col-sm-2 col-form-label">Hora</label>
+        <label for="fin" class="col-sm-2 col-form-label">Finalización</label>
         <div class="col-sm-5">
-            <input required type="time" class="form-control" name="hora" id="hora">
-        </div>
-    </div>
-    
-    <div class="row m-4 justify-content-center">
-        <label for="lote_a" class="col-sm-2 col-form-label">
-            Lote
-        </label>
-        <div class="col-sm-5 d-flex justify-content-between">
-            <input required type="text" maxlength="1" class="form-control" style="width: 33%;" pattern="^[0-9]$"
-            title="(Ej: 2024 -> 4, 2025 -> 5)"
-            name="lote_a" id="lote_a"
-            >
-            <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
-            title="(Ej: 000 - 999)"
-            name="lote_b" id="lote_b"
-            >
-            <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
-            title="(Ej: 30 de enero -> 030)"
-            name="lote_c" id="lote_c"
-            >
-        </div>
-    </div>
-    <div class="row m-4 justify-content-center">
-        <label for="parte" class="col-sm-2 col-form-label">Numero de parte</label>
-        <div class="col-sm-5">
-            <input required type="text" class="form-control" 
-            value="{{ proximo_id }}"
-            name="numero_unico" id="numero_unico"
-            title="(Ej: 2024-T-000001)" pattern="^\d{4}-(T1|T2)-\d{6}$">
-        </div>
-    </div>
-    <div class="row m-4 justify-content-center">
-        <label for="cantidad" class="col-sm-2 col-form-label">Cantidad</label>
-        <div class="col-sm-5">
-            <input required type="number" min="1" max="1980" class="form-control" name="cantidad" id="cantidad">
+            <input required type="datetime-local" class="form-control" name="fin" id="fin">
         </div>
     </div>
 
     <div class="row m-4 justify-content-center">
-        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">Quedó operativa</label>
+        </div>
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="quedo_operativa" name="quedo_operativa" role="switch">
+            </div>
+        </div>
+    </div>
+    
+    <div class="row m-4 justify-content-center">
+        <label for="detalle" class="col-sm-2 col-form-label">Detalle</label>
         <div class="col-sm-5">
-            <textarea class="form-control" id="observaciones" name="observaciones" 
-            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+            <textarea required class="form-control" id="detalle" name="detalle" 
+            rows="4" maxlength="1000" placeholder="Ingrese detalle"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="imagen" class="col-sm-2 col-form-label">Imagen</label>
+        <div class="col-sm-5">
+            <input required id="imagen" name="imagen" class="form-control"
+            type="file" accept="image/*" capture="environment">
         </div>
     </div>
 
