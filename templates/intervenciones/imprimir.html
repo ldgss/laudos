@@ -1,0 +1,46 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+<script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="row m-4 justify-content-center">
+        <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
+            <table id="descripcion" class="table-bordered col-12">
+                <tr>
+                    <th>id:</th>
+                    <td>{{intervencion["id"]}}</td>
+                </tr>
+                <tr>
+                    <th>Imagenes:</th>
+                    <td>
+                        <ul>
+                            {% for img in imagenes %}
+                                <li>
+                                    <a href="{{ img }}">{{ img.replace('\\', '/').split('/')[-1] }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    </tr>
+                <tr>
+                    <th>Fecha:</th>
+                    <td class="fecha_elaboracion">{{intervencion["fecha_registro"].strftime('%Y-%m-%d %H:%M')}}</td>
+                </tr>
+                <tr>
+                <tr>
+                    <th>Responsable:</th>
+                    <td>{{intervencion["nombre"]}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="m-2 text-center">
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+            
+        </div>
+    </div>
+{% endblock %}

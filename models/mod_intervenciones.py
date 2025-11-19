@@ -5,6 +5,14 @@ from datetime import datetime
 import shlex
 from flask import request
 import traceback
+import os, json
+import string
+import random
+from werkzeug.utils import secure_filename
+from PIL import Image
+from io import BytesIO
+
+UPLOAD_FOLDER = "static/img/intervenciones"
 
 def get_lineas_mantenimiento():
     try:
@@ -38,6 +46,7 @@ def get_tipo_de_fallo():
         print(f"Error: {e}")
         return None
 
+# todo
 def anular_energia():
     # CUIDADO - DANGER - DELETE ZONE
     try:
@@ -57,69 +66,114 @@ def anular_energia():
         print(f"Error: {e}")
         return None   
 
-def guardar_energia():
+def guardar_intervencion():
     try:
+        files = request.files.getlist("imagenes")
+        rutas = []
+
+        # Crear base de carpeta si no existe
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+        for i, file in enumerate(files):
+            if file and file.filename:
+                filename = secure_filename(file.filename)
+                
+                # Nombre único y aleatorio
+                random_part = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+                extension = filename.rsplit(".", 1)[-1]
+                timestamp = datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]  # %f → microsegundos, cortamos a milisegundos
+                new_name = f"{random_part}{session['id']}{timestamp}{i}.{extension}"
+                # extension = filename.rsplit(".", 1)[-1]
+                # new_name = f"{session['id']}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{i}.{extension}"
+                path = os.path.join(UPLOAD_FOLDER, new_name)
+                # file.save(path)
+                guardar_imagen(file, path)
+                rutas.append(f"/{path}")  # Lo que guardarás en PostgreSQL
+
+        rutas_json = json.dumps(rutas)  # Serializar lista de imágenes
+
         sql = text("""
-                    INSERT INTO mediciones_de_energia
-                    (electricidad_acometida_norte_kw, electricidad_acometida_este_kw, gas_natural_m3, 
-                    agua_pozo_m3x100, agua_caldera1_m3, agua_caldera2_m3, 
-                    agua_caldera3_m3, efluente_generado_m3, responsable, 
-                    fecha_registro, observaciones)
-                    VALUES(
-                    :acometida_norte, :acometida_este, :gas_natural,
-                    :agua_pozo, :agua_caldera_1, :agua_caldera_2, :agua_caldera_3,
-                    :efluente_generado, :responsable, CURRENT_TIMESTAMP, :observaciones
-                    )
-                   RETURNING id;
-                """
-                )
-        
-        medicion = db.db.session.execute(sql,
-                                            {
-                                                "acometida_norte": request.form.get("acometida_norte"),
-                                                "acometida_este": request.form.get("acometida_este"),
-                                                "gas_natural": request.form.get("gas_natural"),
-                                                "agua_pozo": request.form.get("agua_pozo"),
-                                                "agua_caldera_1": request.form.get("agua_caldera_1"),
-                                                "agua_caldera_2": request.form.get("agua_caldera_2"),
-                                                "agua_caldera_3": request.form.get("agua_caldera_3"),
-                                                "efluente_generado": request.form.get("efluente_generado"),
-                                                "responsable": session["id"],
-                                                "observaciones": request.form.get("observaciones")
-                                            })
-        new_id = medicion.scalar()
+            INSERT INTO intervencion_linea_productiva
+                (linea_afectada, tipo_de_fallo, se_detuvo, 
+                inicio, fin, quedo_operativa, 
+                detalle, imagenes, responsable, 
+                fecha_registro)
+            VALUES
+                (:linea_afectada, :tipo_de_fallo, :se_detuvo, 
+                :inicio, :fin, :quedo_operativa, 
+                :detalle, :imagenes, :responsable, 
+                CURRENT_TIMESTAMP)
+            RETURNING id;
+        """)
+
+        result = db.db.session.execute(sql, {
+            "linea_afectada": request.form.get("lineas_mantenimiento_id"),
+            "tipo_de_fallo": request.form.get("tipo_de_fallo_id"),
+            "se_detuvo": request.form.get("se_detuvo"),
+            "inicio": request.form.get("inicio"),
+            "fin": request.form.get("fin"),
+            "quedo_operativa": request.form.get("quedo_operativa"),
+            "detalle": request.form.get("detalle"),
+            "imagenes": rutas_json,
+            "responsable": session["id"]
+        })
+
+        new_id = result.scalar()
         db.db.session.commit()
         return new_id
+
     except Exception as e:
         db.db.session.rollback()
-        error_traceback = traceback.format_exc()
-        print(f"e: {e}")
-        print(f"tb: {error_traceback}")
+        print(e)
         return None
     
-def get_energia(id_medicion_energia):
+def guardar_imagen(file, path):
+    max_size_kb=500
+    img = Image.open(file)
+
+    # Convertir a RGB si viene con canal alfa (transparencia)
+    if img.mode in ("RGBA", "P"):
+        background = Image.new("RGB", img.size, (255, 255, 255))
+        background.paste(img, mask=img.split()[3] if img.mode == 'RGBA' else None)
+        img = background
+    else:
+        img = img.convert("RGB")
+
+    # Reducir resolución si es gigante
+    img.thumbnail((1920, 1080))
+
+    output = BytesIO()
+    quality = 85  # calidad inicial
+
+    # Guardar inicialmente
+    img.save(output, format="JPEG", optimize=True, quality=quality)
+
+    # Bajar calidad hasta que entre en el límite
+    while output.getbuffer().nbytes > max_size_kb * 1024 and quality > 20:
+        output = BytesIO()
+        quality -= 5
+        img.save(output, format="JPEG", optimize=True, quality=quality)
+
+    # Guardar en disco
+    with open(path, "wb") as f:
+        f.write(output.getvalue())
+
+def get_intervencion(id_intervenciones):
     try:
         sql = text("""
                     SELECT 
-                    m.electricidad_acometida_norte_kw,
-                    m.electricidad_acometida_este_kw,
-                    m.gas_natural_m3,
-                    m.agua_pozo_m3x100,
-                    m.agua_caldera1_m3,
-                    m.agua_caldera2_m3,
-                    m.agua_caldera3_m3,
-                    m.efluente_generado_m3,
-                    u.nombre as responsable,
-                    m.fecha_registro,
-                    observaciones
-                    FROM mediciones_de_energia m
-                    inner join usuario u on u.id = m.responsable
-                    WHERE m.id = :id
+                        i.id, i.linea_afectada, i.tipo_de_fallo, 
+                        i.se_detuvo, i.inicio, i.fin, 
+                        i.quedo_operativa, i.detalle, i.imagenes, 
+                        i.responsable, i.fecha_registro, u.nombre
+                    FROM intervencion_linea_productiva i
+                    INNER JOIN usuario u on u.id = i.responsable
+                    WHERE i.id = :id
                 """
                 )
         
         medicion = db.db.session.execute(sql,{
-                                                "id": id_medicion_energia
+                                                "id": id_intervenciones
                                         })
         return medicion.mappings().first()
     except Exception as e:
