@@ -47,17 +47,17 @@ def get_tipo_de_fallo():
         return None
 
 # todo
-def anular_energia():
+def anular_intervencion():
     # CUIDADO - DANGER - DELETE ZONE
     try:
         anulacion = text("""
-                    DELETE FROM mediciones_de_energia
+                    DELETE FROM intervencion_linea_productiva
                     WHERE id=:id;
                 """
                 )
         anulacion = db.db.session.execute(anulacion,
                                             {
-                                                "id": request.form["energia_id"]                                                
+                                                "id": request.form["intervencion_id"]                                                
                                             })
         db.db.session.commit()
         return True
@@ -93,16 +93,18 @@ def guardar_intervencion():
         rutas_json = json.dumps(rutas)  # Serializar lista de imágenes
 
         sql = text("""
-            INSERT INTO intervencion_linea_productiva
+            INSERT INTO intervencion_linea_productiva 
                 (linea_afectada, tipo_de_fallo, se_detuvo, 
                 inicio, fin, quedo_operativa, 
                 detalle, imagenes, responsable, 
-                fecha_registro)
-            VALUES
+                fecha_registro, duracion) 
+            VALUES 
                 (:linea_afectada, :tipo_de_fallo, :se_detuvo, 
                 :inicio, :fin, :quedo_operativa, 
                 :detalle, :imagenes, :responsable, 
-                CURRENT_TIMESTAMP)
+                CURRENT_TIMESTAMP, GREATEST(
+                        (:fin)::timestamptz - (:inicio)::timestamptz, INTERVAL '0')
+                    )
             RETURNING id;
         """)
 
@@ -165,9 +167,14 @@ def get_intervencion(id_intervenciones):
                         i.id, i.linea_afectada, i.tipo_de_fallo, 
                         i.se_detuvo, i.inicio, i.fin, 
                         i.quedo_operativa, i.detalle, i.imagenes, 
-                        i.responsable, i.fecha_registro, u.nombre
+                        i.responsable, i.fecha_registro, i.duracion, 
+                        u.nombre,
+                        lm.denominacion as linea,
+                        tf.descripcion as fallo
                     FROM intervencion_linea_productiva i
                     INNER JOIN usuario u on u.id = i.responsable
+                    INNER JOIN lineas_mantenimiento lm on lm.id = i.linea_afectada
+                    INNER JOIN tipo_de_fallo tf on tf.id = i.tipo_de_fallo
                     WHERE i.id = :id
                 """
                 )
@@ -209,7 +216,7 @@ def get_estadisticas():
         print(f"Error: {e}")
         return None
     
-def get_listado_energia(terminos_de_busqueda, resultados_por_pagina, offset):
+def get_listado_intervenciones(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
         # todo 7
         terminos_de_busqueda = shlex.split(terminos_de_busqueda)
@@ -217,9 +224,13 @@ def get_listado_energia(terminos_de_busqueda, resultados_por_pagina, offset):
         
         for termino in terminos_de_busqueda:
             subcondicion = []
-            subcondicion.append(f"med.fecha_registro::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"med.observaciones::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"i.inicio::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"i.fin::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"i.detalle::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"i.fecha_registro::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"lm.denominacion::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"tf.descripcion::TEXT ILIKE '%{termino}%'")
             
             condiciones_ilike.append(f"({' OR '.join(subcondicion)})")
         # refinamos la busqueda
@@ -227,22 +238,20 @@ def get_listado_energia(terminos_de_busqueda, resultados_por_pagina, offset):
 
         query_sql = f"""
             SELECT 
-            med.id, 
-            med.electricidad_acometida_norte_kw, 
-            med.electricidad_acometida_este_kw, 
-            med.gas_natural_m3, 
-            med.agua_pozo_m3x100, 
-            med.agua_caldera1_m3, 
-            med.agua_caldera2_m3, 
-            med.agua_caldera3_m3, 
-            med.efluente_generado_m3, 
-            med.fecha_registro, 
-            med.observaciones, 
-            u.nombre as responsable
-            FROM mediciones_de_energia med
-            JOIN usuario u ON med.responsable = u.id
+                i.id, 
+                i.inicio,
+                i.fin,
+                i.duracion,
+                i.fecha_registro,
+                lm.denominacion as linea,
+                tf.descripcion as fallo,
+                u.nombre as responsable
+            FROM intervencion_linea_productiva i
+            JOIN usuario u ON i.responsable = u.id
+            INNER JOIN lineas_mantenimiento lm ON lm.id = i.linea_afectada
+            INNER JOIN tipo_de_fallo tf ON tf.id = i.tipo_de_fallo
             WHERE {condicion_final_ilike}
-            ORDER BY med.id DESC
+            ORDER BY i.id DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),
@@ -253,84 +262,14 @@ def get_listado_energia(terminos_de_busqueda, resultados_por_pagina, offset):
                                 SELECT COUNT(*)
                                 FROM (
                                     SELECT 
-                                    med.id, 
-                                    med.electricidad_acometida_norte_kw, 
-                                    med.electricidad_acometida_este_kw, 
-                                    med.gas_natural_m3, 
-                                    med.agua_pozo_m3x100, 
-                                    med.agua_caldera1_m3, 
-                                    med.agua_caldera2_m3, 
-                                    med.agua_caldera3_m3, 
-                                    med.efluente_generado_m3, 
-                                    med.fecha_registro, 
-                                    med.observaciones, 
-                                    u.nombre as responsable
-                                    FROM mediciones_de_energia med
-                                    JOIN usuario u ON med.responsable = u.id
-                                    WHERE {condicion_final_ilike}
-                                ) AS total_count;
-                            """
-
-        total_resultados_scalar = db.db.session.execute(text(total_resultados)).scalar()
-        total_paginas = total_resultados_scalar // resultados_por_pagina
-        if total_resultados_scalar % resultados_por_pagina != 0:
-            total_paginas += 1
-        return [resultados.fetchall(), total_paginas]
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-
-    try:
-        # todo 7
-        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
-        condiciones_ilike = []
-        
-        for termino in terminos_de_busqueda:
-            # chequear cada termino en cada columna de extracto
-            subcondicion = []
-            subcondicion.append(f"e.producto::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"e.observaciones::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"e.lote::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"e.brix::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"e.numero_recipiente::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"e.fecha_elaboracion::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"e.responsable::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"e.numero_unico::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"e.vto_meses::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"e.den::TEXT ILIKE '%{termino}%'")
-            
-            # chequear cada termino en nombre usuario
-            subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
-            # chequear cada termino en meses vencimiento
-            subcondicion.append(f"v.meses::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"v.producto::TEXT ILIKE '%{termino}%'")
-            
-            condiciones_ilike.append(f"({' OR '.join(subcondicion)})")
-
-        # refinamos la busqueda
-        condicion_final_ilike = ' AND '.join(condiciones_ilike)
-
-        query_sql = f"""
-            SELECT e.*, u.*, v.*
-            FROM extracto e
-            JOIN usuario u ON e.responsable = u.id
-            JOIN vencimiento v ON e.vto_meses = v.id
-            WHERE {condicion_final_ilike}
-            ORDER BY e.fecha_registro DESC
-            LIMIT :limit OFFSET :offset;
-        """
-        resultados = db.db.session.execute(text(query_sql),
-                    {"limit": resultados_por_pagina, "offset": offset})
-    
-        # calculo el numero de paginas
-        total_resultados = f"""
-                                SELECT COUNT(*)
-                                FROM (
-                                    SELECT e.*, u.*, v.*
-                                    FROM extracto e
-                                    JOIN usuario u ON e.responsable = u.id
-                                    JOIN vencimiento v ON e.vto_meses = v.id
+                                        i.id, 
+                                        lm.denominacion as linea,
+                                        tf.descripcion as fallo,
+                                        u.nombre as responsable
+                                    FROM intervencion_linea_productiva i
+                                    JOIN usuario u ON i.responsable = u.id
+                                    INNER JOIN lineas_mantenimiento lm ON lm.id = i.linea_afectada
+                                    INNER JOIN tipo_de_fallo tf ON tf.id = i.tipo_de_fallo
                                     WHERE {condicion_final_ilike}
                                 ) AS total_count;
                             """

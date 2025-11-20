@@ -24,12 +24,12 @@ fetch("estadisticas/filtrar", { method: "POST" })
         {
           label: "Acometida Norte (kW)",
           data: norte,
-          backgroundColor: "rgba(253, 94, 26, 0.6)",
+          backgroundColor: "rgba(250, 64, 43, 0.6)",
         },
         {
           label: "Acometida Este (kW)",
           data: este,
-          backgroundColor: "rgba(185, 255, 86, 0.6)",
+          backgroundColor: "rgba(255, 251, 44, 0.6)",
         }
       ],
       "kW"
@@ -44,7 +44,7 @@ fetch("estadisticas/filtrar", { method: "POST" })
         {
           label: "Gas Natural (m³)",
           data: gas,
-          backgroundColor: "rgba(241, 247, 74, 0.51)",
+          backgroundColor: "rgba(154, 154, 152, 0.51)",
           tension: 0.3
         }
       ],
@@ -59,7 +59,7 @@ fetch("estadisticas/filtrar", { method: "POST" })
         {
           label: "Agua Pozo (m³x100)",
           data: gas,
-          backgroundColor: "rgba(40, 170, 230, 0.71)",
+          backgroundColor: "rgba(59, 99, 200, 0.71)",
           tension: 0.3
         }
       ],
@@ -76,19 +76,19 @@ fetch("estadisticas/filtrar", { method: "POST" })
         {
           label: "Caldera 1 (m³)",
           data: agua_caldera1_m3,
-          backgroundColor: "rgba(52, 174, 226, 0.52)",
+          backgroundColor: "rgba(104, 52, 226, 0.42)",
           tension: 0.3
         },
         {
           label: "Caldera 2 (m³)",
           data: agua_caldera2_m3,
-          backgroundColor: "rgba(52, 122, 226, 0.52)",
+          backgroundColor: "rgba(104, 52, 226, 0.62)",
           tension: 0.3
         },
         {
           label: "Caldera 3 (m³)",
           data: agua_caldera3_m3,
-          backgroundColor: "rgba(52, 61, 226, 0.52)",
+          backgroundColor: "rgba(104, 52, 226, 0.82)",
           tension: 0.3
         }
       ],
@@ -103,7 +103,7 @@ fetch("estadisticas/filtrar", { method: "POST" })
         {
           label: "Efluente generado (m³)",
           data: efluente_generado,
-          backgroundColor: "rgba(245, 44, 155, 0.56)",
+          backgroundColor: "rgba(51, 136, 36, 0.56)",
           tension: 0.3
         }
       ],

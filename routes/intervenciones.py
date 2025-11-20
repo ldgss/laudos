@@ -80,7 +80,7 @@ def intervenciones_listado(terminos_de_busqueda):
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
         
-        resultado = mod_mercaderia.intervenciones(terminos_de_busqueda, resultados_por_pagina, offset)
+        resultado = mod_intervenciones.get_listado_intervenciones(terminos_de_busqueda, resultados_por_pagina, offset)
         section = "Listado de intervenciones de línea"
         return render_template("intervenciones/listado.html", 
                                max=max,
@@ -91,3 +91,16 @@ def intervenciones_listado(terminos_de_busqueda):
                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
     else:
         return redirect(url_for("login.login_get"))
+    
+@intervenciones_bp.post("/intervenciones/anular")
+def intervenciones_anular_post():
+    if helpers.session_on() and helpers.authorized_to("mantenimiento") and not helpers.authorized_to_action("limitado"):
+        referer = request.headers.get('Referer', '/')
+        result = mod_intervenciones.anular_intervencion()
+        if result:
+            return redirect(referer)
+        else:
+            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
+            return redirect(referer)
+    else:
+        return redirect(url_for("login.login_get"))    

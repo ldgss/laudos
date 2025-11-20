@@ -2,6 +2,7 @@
 
 {% block header %}
     <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/intervenciones/utils.js")}}"></script>
    
 {% endblock %}
 
@@ -12,13 +13,12 @@
             <thead>
                 <tr>
                     <th>N°</th>
-                    <th>Denominacion</th>
-                    <th>Número Único</th>
-                    <th>Fecha Elaboración</th>
-                    <th>Vencimiento</th>
-                    <th>Lote</th>
-                    <th>Cantidad</th>
-                    <th>Observación</th>
+                    <th>Línea</th>
+                    <th>Fallo</th>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Duracion</th>
+                    <th>Detalle</th>
                     <th>Responsable</th>
                     <th>Acción</th>
                 </tr>
@@ -30,33 +30,35 @@
                         {{loop.index + offset}}
                     </td>
                     <td>
-                        {{l.den}}
+                        {{l.linea}}
                     </td>
                     <td>
-                        {{l.numero_unico}}
+                        {{l.fallo}}
                     </td>
                     <td class="fecha_elaboracion">
-                        {{l.fecha_elaboracion.strftime('%Y-%m-%d %H:%M')}}
+                        {{l.inicio.strftime('%Y-%m-%d %H:%M')}}
                     </td>
-                    <td hidden class="meses">
-                        {{l.meses}}
+                    <td class="fecha_elaboracion">
+                        {{l.fin.strftime('%Y-%m-%d %H:%M')}}
                     </td>
-                    <td class="vencimiento">
-                    </td>
-                    <td>
-                        {{l.lote}}
+                    <td class="duracion">
+                        {{l.duracion}}
                     </td>
                     <td>
-                        {{l.cantidad}}
-                    </td>
-                    <td class="observacion_listado">
-                        {{l.observacion}}
+                        {{l.detalle}}
                     </td>
                     <td>
-                        {{l.nombre}}
+                        {{l.responsable}}
                     </td>
                     <td>
-                        <a href="{{url_for('envasado.envasado_imprimir', numero_unico=l.numero_unico)}}" class="btn btn-outline-primary">Ver</a >
+                        <a href="{{url_for('intervenciones.intervenciones_imprimir', id_intervenciones=l.id)}}" class="btn btn-outline-primary">Ver</a >
+                        <button 
+                            class="btn btn-danger btn-anular" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modalConfirmarAnulacion" 
+                            data-id="{{ l.id }}">
+                            Anular
+                        </button>    
                     </td>
                     <td>
                     </td>
@@ -76,14 +78,14 @@
             
             <li class="page-item">
                 {% if pagina_actual > 1 %}
-                <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda, page=pagina_actual - 1) }}">Anterior</a>
+                <a class="page-link" href="{{ url_for('intervenciones.intervenciones_listado', terminos_de_busqueda=terminos_de_busqueda, page=pagina_actual - 1) }}">Anterior</a>
                 {% endif %}
             </li>
             
             {# Mostrar enlace a la primera página si no está cerca del rango #}
             {% if pagina_actual > rango_mostrado + 2 %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda, page=mostrar_inicio) }}">{{ mostrar_inicio }}</a>
+                    <a class="page-link" href="{{ url_for('intervenciones.intervenciones_listado', terminos_de_busqueda=terminos_de_busqueda, page=mostrar_inicio) }}">{{ mostrar_inicio }}</a>
                 </li>
                 <li class="page-item disabled"><span class="page-link">...</span></li>
             {% endif %}
@@ -91,7 +93,7 @@
             {# Páginas cercanas al rango #}
             {% for i in range(max(mostrar_inicio, pagina_actual - rango_mostrado), min(mostrar_final, pagina_actual + rango_mostrado) + 1) %}
                 <li class="page-item {% if i == pagina_actual %}active{% endif %}">
-                    <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda, page=i) }}">{{ i }}</a>
+                    <a class="page-link" href="{{ url_for('intervenciones.intervenciones_listado', terminos_de_busqueda=terminos_de_busqueda, page=i) }}">{{ i }}</a>
                 </li>
             {% endfor %}
             
@@ -99,13 +101,13 @@
             {% if pagina_actual < total_paginas - rango_mostrado - 1 %}
                 <li class="page-item disabled"><span class="page-link">...</span></li>
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda, page=mostrar_final) }}">{{ mostrar_final }}</a>
+                    <a class="page-link" href="{{ url_for('intervenciones.intervenciones_listado', terminos_de_busqueda=terminos_de_busqueda, page=mostrar_final) }}">{{ mostrar_final }}</a>
                 </li>
             {% endif %}
             
             <li class="page-item">
                 {% if pagina_actual < total_paginas %}
-                <a class="page-link" href="{{ url_for('envasado.envasado_listado', terminos_de_busqueda=terminos_de_busqueda, page=pagina_actual + 1) }}">Siguiente</a>
+                <a class="page-link" href="{{ url_for('intervenciones.intervenciones_listado', terminos_de_busqueda=terminos_de_busqueda, page=pagina_actual + 1) }}">Siguiente</a>
                 {% endif %}
             </li>
         </ul>
@@ -115,5 +117,27 @@
 
 </div>
     
+
+<!-- Modal -->
+<div class="modal fade" id="modalConfirmarAnulacion" tabindex="-1" aria-labelledby="modalConfirmarAnulacionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="/intervenciones/anular">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConfirmarAnulacionLabel">Confirmar Anulación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro de que desea anular este registro?</p>
+                    <input type="hidden" name="intervencion_id" id="intervencion_id">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Anular</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

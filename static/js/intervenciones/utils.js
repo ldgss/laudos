@@ -70,9 +70,53 @@ function actualizarValoresTipoDeFallo() {
     }
 }
 
-document.getElementById('imagenes').addEventListener('change', function() {
-    if (this.files.length > 2) {
-        alert("Solo puedes subir hasta 2 imágenes.");
-        this.value = ""; // limpia la selección
+if(document.getElementById('imagenes')){
+    document.getElementById('imagenes').addEventListener('change', function() {
+        if (this.files.length > 2) {
+            alert("Solo puedes subir hasta 2 imágenes.");
+            this.value = ""; // limpia la selección
+        }
+    });
+}
+
+function formatDuracionEs(intervalo) {
+    let totalSegundos;
+
+    if (typeof intervalo === "string") {
+        const match = intervalo.match(/(\d+)\s+days?,\s*(\d+):(\d+):(\d+)/);
+        if (!match) return intervalo;
+
+        const [, d, h, m, s] = match.map(Number);
+        totalSegundos = (((d * 24 + h) * 60) + m) * 60 + s;
+    } else {
+        totalSegundos = intervalo;
     }
+
+    const dias = Math.floor(totalSegundos / 86400);
+    const horas = Math.floor((totalSegundos % 86400) / 3600);
+    const minutos = Math.floor((totalSegundos % 3600) / 60);
+    const segundos = totalSegundos % 60;
+
+    const partes = [];
+    if (dias > 0) partes.push(`${dias} día${dias === 1 ? "" : "s"}`);
+    if (horas > 0) partes.push(`${horas} hora${horas === 1 ? "" : "s"}`);
+    if (minutos > 0) partes.push(`${minutos} minuto${minutos === 1 ? "" : "s"}`);
+    if (segundos > 0 && dias === 0)
+        partes.push(`${segundos} segundo${segundos === 1 ? "" : "s"}`);
+
+    return partes.join(" ");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const celdas = document.querySelectorAll(".duracion");
+    celdas.forEach(td => {
+        td.textContent = formatDuracionEs(td.textContent.trim());
+    });
+});
+
+document.querySelectorAll('.btn-anular').forEach(button => {
+    button.addEventListener('click', function () {
+        const intervencion_id = this.getAttribute('data-id');
+        document.getElementById('intervencion_id').value = intervencion_id;
+    });
 });

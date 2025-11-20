@@ -2,6 +2,7 @@
 
 {% block header %}
 <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+<script defer src="{{url_for("static", filename="js/intervenciones/utils.js")}}"></script>
 
 {% endblock %}
 
@@ -10,24 +11,62 @@
         <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
             <table id="descripcion" class="table-bordered col-12">
                 <tr>
-                    <th>id:</th>
-                    <td>{{intervencion["id"]}}</td>
+                    <th>Línea:</th>
+                    <td>{{intervencion["linea"]}}</td>
+                </tr>
+                <tr>
+                    <th>Fallo:</th>
+                    <td>{{intervencion["fallo"]}}</td>
+                </tr>
+                <tr>
+                    <th>Se detuvo:</th>
+                    <td>
+                        {% if intervencion["se_detuvo"] %}
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %} 
+                    </td>
+                </tr>
+                <tr>
+                    <th>Inicio de la intervención:</th>
+                    <td>{{intervencion["inicio"].strftime('%Y-%m-%d %H:%M')}}</td>
+                </tr>
+                <tr>
+                    <th>Fin de la intervención:</th>
+                    <td>{{intervencion["fin"].strftime('%Y-%m-%d %H:%M')}}</td>
+                </tr>
+                <tr>
+                    <th>Duración:</th>
+                    <td class="duracion">{{intervencion["duracion"]}}</td>
+                </tr>
+                <tr>
+                    <th>Quedó operativa:</th>
+                    <td>
+                        {% if intervencion["quedo_operativa"] %}
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %} 
+                    </td>
                 </tr>
                 <tr>
                     <th>Imagenes:</th>
                     <td>
-                        <ul>
                             {% for img in imagenes %}
-                                <li>
+                                <div>
                                     <a href="{{ img }}">{{ img.replace('\\', '/').split('/')[-1] }}</a>
-                                </li>
+                                </div>
                             {% endfor %}
-                        </ul>
                     </td>
                     </tr>
                 <tr>
-                    <th>Fecha:</th>
-                    <td class="fecha_elaboracion">{{intervencion["fecha_registro"].strftime('%Y-%m-%d %H:%M')}}</td>
+                    <th>Detalle:</th>
+                    <td>{{intervencion["detalle"]}}</td>
+                </tr>
+                <tr>
+                    <th>Registro:</th>
+                    <td>{{intervencion["fecha_registro"].strftime('%Y-%m-%d %H:%M')}}</td>
                 </tr>
                 <tr>
                 <tr>
