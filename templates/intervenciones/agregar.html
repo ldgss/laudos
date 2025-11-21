@@ -90,10 +90,18 @@
     </div>
 
     <div class="row m-4 justify-content-center">
-        <label for="imagenes" class="col-sm-2 col-form-label">Imagenes del incidente</label>
+        <label for="imagenes" class="col-sm-2 col-form-label">Capturar imagen</label>
         <div class="col-sm-5">
-            <input id="imagenes" name="imagenes" class="form-control"
-            type="file" accept="image/*" capture="environment" multiple>
+            <input id="imagenes_camara" name="imagenes" class="form-control mb-2"
+            type="file" accept="image/*" capture="environment">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="imagenes" class="col-sm-2 col-form-label">Imagenes de galería</label>
+        <div class="col-sm-5">
+            <input id="imagenes_galeria" name="imagenes" class="form-control"
+            type="file" accept="image/*" multiple>
         </div>
     </div>
 

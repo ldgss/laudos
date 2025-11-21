@@ -70,10 +70,10 @@ function actualizarValoresTipoDeFallo() {
     }
 }
 
-if(document.getElementById('imagenes')){
-    document.getElementById('imagenes').addEventListener('change', function() {
-        if (this.files.length > 2) {
-            alert("Solo puedes subir hasta 2 imágenes.");
+if(document.getElementById('imagenes_galeria')){
+    document.getElementById('imagenes_galeria').addEventListener('change', function() {
+        if (this.files.length > 5) {
+            alert("Solo puedes subir hasta 5 imágenes.");
             this.value = ""; // limpia la selección
         }
     });

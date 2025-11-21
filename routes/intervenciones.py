@@ -41,9 +41,8 @@ def intervenciones_agregar():
 def intervenciones_agregar_post():
     if helpers.session_on() and helpers.authorized_to("mantenimiento"):
         files = request.files.getlist("imagenes")
-        print(f'request.url = {request.url}')
-        if len(files) > 2:
-            flash("Máximo 2 imágenes permitidas")
+        if len(files) > 5:
+            flash("Máximo 5 imágenes permitidas")
             return redirect(request.url)
         result = mod_intervenciones.guardar_intervencion()
         if result:
