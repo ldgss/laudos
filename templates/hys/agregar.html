@@ -2,6 +2,7 @@
 
 {% block header %}
     <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/hys/utils.js")}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -9,112 +10,144 @@
 <form action="agregar" method="post">
 
     <div class="row m-4 justify-content-center">
-        <label for="operario" class="col-sm-2 col-form-label">Operario</label>
+        <label for="afectado" class="col-sm-2 col-form-label">Afectado</label>
         <div class="col-sm-5">
-            <input readonly maxlength="30" type="text" class="form-control" 
-            name="user_name" id="user_name" value="{{session["nombre"]}}">
-            <input type="hidden" id="user_id" name="user_id" value="{{session["id"]}}">
+            <textarea required class="form-control" id="afectado" name="afectado" 
+            rows="4" maxlength="100" placeholder="Ingrese nombre y apellido"></textarea>
         </div>
     </div>
 
     <div class="row m-4 justify-content-center">
-        <label for="denominacion" class="col-sm-2 col-form-label">Denominacion</label>
+        <label for="incidente" class="col-sm-2 col-form-label">Incidente</label>
         <div class="col-sm-5">
-            <input list="denominacion_opciones" required type="text" 
-            class="form-control" name="denominacion" id="denominacion"
-            onblur="validarMarca(); rellenarCantidad()" oninput="actualizarValoresOcultos()">
-            <input type="hidden" id="cod_cls" name="cod_cls">
-            <input type="hidden" id="cod_mae" name="cod_mae">
-            <datalist id="denominacion_opciones">
-                {% for p in productos_arballon %}
-                    {% if 'semi' in (p.den | lower) or 'decom' in (p.den | lower) or 'rep' in (p.den | lower) or 'abo' in (p.den | lower) %}
-                        <option value="{{ p.den | trim }}" 
-                                data-cod-cls="{{ p.cod_cls | trim }}" 
-                                data-cod-mae="{{ p.cod_mae | trim }}">
-                        </option>
-                    {% endif %}
-                {% endfor %}
+            <textarea required class="form-control" id="incidente" name="incidente" 
+            rows="4" maxlength="1000" placeholder="Ingrese el incidente"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="sector" class="col-sm-2 col-form-label">Sector</label>
+        <div class="col-sm-5">
+            <textarea required class="form-control" id="sector" name="sector" 
+            rows="4" maxlength="1000" placeholder="Ingrese el sector de trabajo"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="tarea_que_realizaba" class="col-sm-2 col-form-label">Tarea que realizaba</label>
+        <div class="col-sm-5">
+            <textarea required class="form-control" id="tarea_que_realizaba" name="tarea_que_realizaba" 
+            rows="4" maxlength="1000" placeholder="Ingrese la tarea que realizaba al momento del incidente"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="detalle" class="col-sm-2 col-form-label">Detalle</label>
+        <div class="col-sm-5">
+            <textarea required class="form-control" id="detalle" name="detalle" 
+            rows="4" maxlength="1000" placeholder="Ingrese detalles"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">Usa EPP (elementos de protección)</label>
+        </div>
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" checked
+                id="epp_si_no" name="epp_si_no" role="switch">
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">El área estaba limpia</label>
+        </div>
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" checked
+                id="area_limpia_si_no" name="area_limpia_si_no" role="switch">
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">Se informó a la ART</label>
+        </div>
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" checked
+                id="informado_art_si_no" name="informado_art_si_no" role="switch">
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">Cuenta con las habilidades</label>
+        </div>
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" checked
+                id="habilidades_si_no" name="habilidades_si_no" role="switch">
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label class="col-sm-2" for="gravedad">Gravedad</label>
+        <div class="col-sm-5">
+            <input list="gravedad_opciones" required type="text" 
+            class="form-control" name="gravedad" id="gravedad"
+            onblur="validarGravedad();"
+            >
+            <datalist id="gravedad_opciones">
+                <option value="a"></option>
+                <option value="b"></option>
+                <option value="c"></option>
             </datalist>
         </div>
-
     </div>
 
-    <!-- linea de botella -->
     <div class="row m-4 justify-content-center">
-        <label for="llenadora_botella" class="col-sm-2 col-form-label">Llenadora de botella</label>
+        <label class="col-sm-2" for="gravedad">Tipo de atención</label>
         <div class="col-sm-5">
-            <input list="llenadora_botella_opciones" required type="text" 
-            class="form-control" name="llenadora_botella" id="llenadora_botella"
-            onblur="validarLlenadora()" >
-            <datalist id="llenadora_botella_opciones">
-                {% for p in productos_arballon | reverse %}
-                    {% if 'llena' in (p.den | lower) %}
-                        <option value="{{ p.den | trim }}" 
-                                data-cod-cls="{{ p.cod_cls | trim }}" 
-                                data-cod-mae="{{ p.cod_mae | trim }}">
-                        </option>
-                    {% endif %}
-                {% endfor %}
+            <input list="tipo_de_atencion_opciones" required type="text" 
+            class="form-control" name="tipo_de_atencion" id="tipo_de_atencion"
+            onblur="validarTipoDeAtencion();"
+            >
+            <datalist id="tipo_de_atencion_opciones">
+                <option value="Servicio medicina interna"></option>
+                <option value="Denuncia ART"></option>
+                <option value="Servicio público hospital"></option>
             </datalist>
         </div>
-
-    </div> 
-    <!-- linea de botella -->
+    </div>
 
     <div class="row m-4 justify-content-center">
-        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+        <label class="col-sm-2" for="gravedad">Agente origen</label>
         <div class="col-sm-5">
-            <input required type="date" class="form-control" name="fecha" id="fecha">
-        </div>
-    </div>
-    
-    <div class="row m-4 justify-content-center">
-        <label for="hora" class="col-sm-2 col-form-label">Hora</label>
-        <div class="col-sm-5">
-            <input required type="time" class="form-control" name="hora" id="hora">
-        </div>
-    </div>
-    
-    <div class="row m-4 justify-content-center">
-        <label for="lote_a" class="col-sm-2 col-form-label">
-            Lote
-        </label>
-        <div class="col-sm-5 d-flex justify-content-between">
-            <input required type="text" maxlength="1" class="form-control" style="width: 33%;" pattern="^[0-9]$"
-            title="(Ej: 2024 -> 4, 2025 -> 5)"
-            name="lote_a" id="lote_a"
+            <input list="agente_origen_opciones" required type="text" 
+            class="form-control" name="agente_origen" id="agente_origen"
+            onblur="validarAgenteOrigen();"
             >
-            <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
-            title="(Ej: 000 - 999)"
-            name="lote_b" id="lote_b"
-            >
-            <input required type="text" maxlength="3" class="form-control" style="width: 33%;" pattern="^\d{3}$"
-            title="(Ej: 30 de enero -> 030)"
-            name="lote_c" id="lote_c"
-            >
-        </div>
-    </div>
-    <div class="row m-4 justify-content-center">
-        <label for="parte" class="col-sm-2 col-form-label">Numero de parte</label>
-        <div class="col-sm-5">
-            <input required type="text" class="form-control" 
-            value="{{ proximo_id }}"
-            name="numero_unico" id="numero_unico"
-            title="(Ej: 2024-T-000001)" pattern="^\d{4}-(T1|T2)-\d{6}$">
-        </div>
-    </div>
-    <div class="row m-4 justify-content-center">
-        <label for="cantidad" class="col-sm-2 col-form-label">Cantidad</label>
-        <div class="col-sm-5">
-            <input required type="number" min="1" max="1980" class="form-control" name="cantidad" id="cantidad">
+            <datalist id="agente_origen_opciones">
+                <option value="Máquina"></option>
+                <option value="Transporte"></option>
+                <option value="Sustancias"></option>
+                <option value="Ambiente"></option>
+            </datalist>
         </div>
     </div>
 
     <div class="row m-4 justify-content-center">
-        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+        <label for="testigos" class="col-sm-2 col-form-label">Testigos</label>
         <div class="col-sm-5">
-            <textarea class="form-control" id="observaciones" name="observaciones" 
-            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+            <textarea required class="form-control" id="testigos" name="testigos" 
+            rows="4" maxlength="1000" placeholder="Ingrese testigos"></textarea>
         </div>
     </div>
 
