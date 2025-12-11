@@ -9,6 +9,7 @@ from flask import flash
 from flask import request
 import socket
 from win32printing import Printer
+import win32print # de pywin32
 
 # la impresora debe estar instalada en el cliente
 # o en el servidor ????????????????????????????
@@ -98,12 +99,13 @@ def bascula_imprimir(id):
 def bascula_imprimir_sticker():
     if helpers.session_on() and helpers.authorized_to("materia"):
         datos = request.json
-        imprimir_texto(datos)
+        # imprimir_texto_win32_printing(datos)
+        imprimir_texto_win32_print(datos)
         return jsonify({"status": "ok", "message": "Impresión enviada"})
     else:
         return redirect(url_for("login.login_get"))
     
-def imprimir_texto(datos):
+def imprimir_texto_win32_printing(datos):
     texto_font = {
         "height": 8,
     }
@@ -119,7 +121,31 @@ def imprimir_texto(datos):
         printer.text(f"DOMINIO: {datos["dominio"]}", font_config=texto_font)
         printer.text(f"IPM: {datos["ipm"]}", font_config=texto_font)
         printer.text(f"PESO: {datos["peso"]} KG", font_config=peso_font)
-    
+
+def imprimir_texto_win32_print(datos):
+    epl = f"""
+N
+q800
+Q250,24
+A50,20,0,3,1,1,N,"FECHA: {datos['fecha']}"
+A50,60,0,3,1,1,N,"CHOFER: {datos['chofer']}"
+A50,100,0,3,1,1,N,"DOMINIO: {datos['dominio']}"
+A50,140,0,4,1,1,N,"PESO: {datos['peso']} KG"
+P1
+"""
+
+    raw = epl.encode("ascii")
+
+    h = win32print.OpenPrinter(IMPRESORA)
+    try:
+        job = win32print.StartDocPrinter(h, 1, ("Sticker", None, "RAW"))
+        win32print.StartPagePrinter(h)
+        win32print.WritePrinter(h, raw)
+        win32print.EndPagePrinter(h)
+        win32print.EndDocPrinter(h)
+    finally:
+        win32print.ClosePrinter(h)
+
 @bascula_bp.get("/bascula/listado/<terminos_de_busqueda>")
 def bascula_listado(terminos_de_busqueda):
     if helpers.session_on() and helpers.authorized_to("materia"):
