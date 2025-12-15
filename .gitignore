@@ -166,3 +166,5 @@ cython_debug/
 
 static/img/intervenciones/*
 !static/img/intervenciones/.gitkeep
+static/img/etiquetasystickers/*
+!static/img/etiquetasystickers/.gitkeep
