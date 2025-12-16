@@ -54,9 +54,13 @@
                     <th>Imagenes:</th>
                     <td>
                             {% for img in imagenes %}
-                                <div>
+                                <!-- <div>
                                     <a href="{{ img }}">{{ img.replace('\\', '/').split('/')[-1] }}</a>
-                                </div>
+                                </div> -->
+                                <img src="{{img.replace('\\', '/')}}"
+                                class="img-thumbnail"
+                                style="max-width: 200px; cursor: pointer;"
+                                onclick="abrirImagenJinja('{{img.replace('\\', '/')}}')">
                             {% endfor %}
                     </td>
                     </tr>
@@ -82,4 +86,16 @@
             
         </div>
     </div>
+
+<!-- Modal para mostrar imágenes -->
+<div class="modal fade" id="modalImagen" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-body p-0 text-center">
+        <img id="imagenAmpliada" src="" class="img-fluid" alt="imagen ampliada">
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

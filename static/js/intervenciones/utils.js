@@ -111,3 +111,9 @@ document.querySelectorAll('.btn-anular').forEach(button => {
         document.getElementById('intervencion_id').value = intervencion_id;
     });
 });
+
+function abrirImagenJinja(src){
+    document.getElementById("imagenAmpliada").src = src;
+    const modal = new bootstrap.Modal(document.getElementById("modalImagen"));
+    modal.show();
+}
