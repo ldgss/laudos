@@ -183,3 +183,40 @@ def get_etiquetasystickers():
         print(f"Error: {e}")
         return None
         
+def get_listado_etiquetasystickers(resultados_por_pagina, offset):
+    try:
+        query_sql = f"""
+            SELECT 
+                eys.id, 
+                eys.codigo, 
+                eys.codigo_clase, 
+                eys.denominacion, 
+                eys.imagen::jsonb ->> 0 AS imagen,
+                u.nombre as responsable, fecha_registro
+            FROM etiquetas_y_stickers eys
+            JOIN usuario u ON u.id = eys.responsable
+            ORDER BY eys.id DESC
+            LIMIT :limit OFFSET :offset;
+        """
+        resultados = db.db.session.execute(text(query_sql),
+                    {"limit": resultados_por_pagina, "offset": offset})
+    
+        # calculo el numero de paginas
+        total_resultados = f"""
+                                SELECT COUNT(*)
+                                FROM (
+                                    SELECT 
+                                        id, codigo, codigo_clase, denominacion, imagen, responsable, fecha_registro
+                                    FROM etiquetas_y_stickers eys
+                                ) AS total_count;
+                            """
+
+        total_resultados_scalar = db.db.session.execute(text(total_resultados)).scalar()
+        total_paginas = total_resultados_scalar // resultados_por_pagina
+        if total_resultados_scalar % resultados_por_pagina != 0:
+            total_paginas += 1
+        return [resultados.fetchall(), total_paginas]
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return None

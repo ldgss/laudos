@@ -29,6 +29,24 @@ def etiquetasystickers():
     else:
         return redirect(url_for("login.login_get"))
     
+@etiquetasystickers_bp.get("/etiquetasystickers/listado")
+def etiquetasystickers_listado():
+    if helpers.session_on() and helpers.authorized_to("etiquetasystickers"):
+        # paginacion
+        pagina = request.args.get('page', 1, type=int)
+        offset = (pagina - 1) * resultados_por_pagina
+        
+        resultado = mod_etiquetasystickers.get_listado_etiquetasystickers(resultados_por_pagina, offset)
+        section = "Lista de etiquetas y stickers"
+        return render_template("etiquetasystickers/listado.html", 
+                               max=max,
+                               min=min,
+                               offset=offset,
+                               title=title, section=section, 
+                               listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
+    else:
+        return redirect(url_for("login.login_get"))
+    
 @etiquetasystickers_bp.post("/etiquetasystickers/buscar")
 def etiquetasystickers_buscar():
     if helpers.session_on() and helpers.authorized_to("etiquetasystickers"):

@@ -113,3 +113,13 @@ function abrirImagen(src) {
     const modal = new bootstrap.Modal(document.getElementById("modalImagen"));
     modal.show();
 }
+
+function abrirImagenJinja(src){
+    src = src.replace(
+        '/static/img/etiquetasystickers',
+        '/static/img/etiquetasystickers/'
+    );
+    document.getElementById("imagenAmpliada").src = src;
+    const modal = new bootstrap.Modal(document.getElementById("modalImagen"));
+    modal.show();
+}
