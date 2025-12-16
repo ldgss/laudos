@@ -95,6 +95,7 @@ document.getElementById("buscar").addEventListener("click", async function (e) {
                     <img src="${ruta}" class="img-thumbnail" alt="imagen existente"
                         style="max-width: 200px; cursor: pointer;"
                         onclick="abrirImagen('${ruta}')">
+                    <input type="hidden" name="imagen_modal" value="${ruta}">
                 `;
 
                 contenedorImagenes.appendChild(div);

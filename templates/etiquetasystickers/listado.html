@@ -29,10 +29,10 @@
                         {{l.denominacion}}
                     </td>
                     <td>
-                        <img src="{{l.imagen}}"
+                        <img src="{{l.imagen.replace('\\', '/')}}"
                             class="img-thumbnail"
                             style="max-width: 200px; cursor: pointer;"
-                            onclick="abrirImagenJinja('{{l.imagen}}')">
+                            onclick="abrirImagenJinja('{{l.imagen.replace('\\', '/')}}')">
                     </td>
                     <td>
                         {{l.responsable}}

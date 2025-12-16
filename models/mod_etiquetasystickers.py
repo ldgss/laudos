@@ -94,7 +94,7 @@ def guardar_etiquetasystickers():
             return new_id
         else:
         # si ya habia id, actualizar
-            evento = f'Usuario {session["id"]} actualiza la etiqueta {request.form["denominacion_modal"]} a {rutas_json}'
+            evento = f'Se actualiza la etiqueta {request.form["denominacion_modal"]} de {request.form["imagen_modal"]} a {rutas_json}'
 
             sql = text("""
                 UPDATE
