@@ -6,10 +6,48 @@ import shlex
 import traceback
     
 def guardar_correccion():
+    # T1
     numero_unico_modal1 = request.form.get("numero_unico_modal1")
+    # H1
     numero_unico_modal2 = request.form.get("numero_unico_modal2")
+    # E1
     numero_unico_modal3 = request.form.get("numero_unico_modal3")
+    # T2
     numero_unico_modal4 = request.form.get("numero_unico_modal4")
+
+    # antes de corregir chequear que el T1, E1, H1, no sean parte de un T2
+    # si es asi, cancelar, y el usuario debe borrar primero el T2
+
+    try:
+        sql_check = text("""
+            SELECT 1
+            FROM reacondicionado_detalle rd
+            LEFT JOIN mercaderia m ON m.id = rd.mercaderia_original
+            LEFT JOIN extracto e  ON e.id = rd.extracto_original
+            WHERE
+                (:t1 IS NOT NULL AND m.numero_unico = :t1)
+            OR (:e1 IS NOT NULL AND e.numero_unico = :e1)
+            LIMIT 1
+        """)
+
+        result = db.db.session.execute(
+            sql_check,
+            {
+                "t1": numero_unico_modal1,
+                "h1": numero_unico_modal2,
+                "e1": numero_unico_modal3
+            }
+        ).fetchone()
+
+        if result:
+            raise ValueError("El T1 es parte de un T2")
+            
+
+    except Exception as e:
+        db.db.session.rollback()
+        error_message = traceback.format_exc()
+        print(f"Error: {error_message}")
+        return None
 
     try:
         if numero_unico_modal1 and 'T1' in numero_unico_modal1:
