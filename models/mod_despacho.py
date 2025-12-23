@@ -15,6 +15,7 @@ def get_fleteros():
                 from genmae
                 where 
                 lower(cod_cls) like '%flete%' or lower(cod_cls) like '%logis%' 
+                or lower(den) like 'generico' 
             """))
             return result.fetchall()
 
