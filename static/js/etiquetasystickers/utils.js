@@ -58,8 +58,7 @@ document.getElementById("buscar").addEventListener("click", async function (e) {
     document.getElementById("clase_modal").value = clase;
     document.getElementById("denominacion_modal").value = valor;
     document.getElementById("denominacion_modal_visible").value = valor;
-    const vigente = document.getElementById("vigente")
-    vigente.checked = existente.vigente? existente.vigente : false;
+    
 
     const contenedorImagenes = document.getElementById("imagenes_existentes");
     contenedorImagenes.innerHTML = "";
@@ -73,7 +72,8 @@ document.getElementById("buscar").addEventListener("click", async function (e) {
         id.value = existente.id
         const observacion = document.getElementById("observacion")
         observacion.value = existente.observacion
-        
+        const vigente = document.getElementById("vigente")
+        vigente.checked = existente.vigente? existente.vigente : false;    
         // hacer imagenes no obligatorio por si solo se quiere actulizar la observacion
         imagenes_1.required = false;
         let imagenes = [];
