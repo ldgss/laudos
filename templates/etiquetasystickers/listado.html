@@ -15,6 +15,7 @@
                     <th>N°</th>
                     <th>Denominación</th>
                     <th>Imagen</th>
+                    <th>Observaciones</th>
                     <th>Responsable</th>
                     <th>Fecha</th>
                 </tr>
@@ -33,6 +34,9 @@
                             class="img-thumbnail"
                             style="max-width: 200px; cursor: pointer;"
                             onclick="abrirImagenJinja('{{l.imagen.replace('\\', '/')}}')">
+                    </td>
+                    <td>
+                        {{l.observacion}}
                     </td>
                     <td>
                         {{l.responsable}}

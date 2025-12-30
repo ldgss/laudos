@@ -46,39 +46,34 @@ def listar_etiquetas_y_stickers_arballon():
 
 def guardar_etiquetasystickers():
     try:
-        print(f"files: {request.files}")
-        print(f"form: {request.form}")
         files = request.files.getlist("imagenes")
         rutas = []
 
-        # Crear base de carpeta si no existe
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        rutas = crear_ruta(files, rutas)
 
-        for i, file in enumerate(files):
-            if file and file.filename:
-                filename = secure_filename(file.filename)
-                
-                # Nombre único y aleatorio
-                random_part = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
-                extension = filename.rsplit(".", 1)[-1]
-                timestamp = datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]  # %f → microsegundos, cortamos a milisegundos
-                new_name = f"{random_part}{session['id']}{timestamp}{i}.{extension}"
-                # extension = filename.rsplit(".", 1)[-1]
-                # new_name = f"{session['id']}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{i}.{extension}"
-                path = os.path.join(UPLOAD_FOLDER, new_name)
-                # file.save(path)
-                guardar_imagen(file, path)
-                rutas.append(f"/{path}")  # Lo que guardarás en PostgreSQL
-
-        rutas_json = json.dumps(rutas)  # Serializar lista de imágenes
+        imagen_modal = request.form.get("imagen_modal")
+        # return point
+        if imagen_modal:
+            if rutas:
+                print(f"cambiando imagen de: {imagen_modal} a {rutas}")
+                imagen_anterior = json.dumps([imagen_modal])
+                imagen_nueva = json.dumps(rutas)    
+            else:
+                print(f"manteniendo imagen de: {imagen_modal} a {rutas}")
+                imagen_anterior = json.dumps([imagen_modal])
+                imagen_nueva = imagen_anterior
+        else:
+            # viene desde carga nueva
+            print(f"primer imagen: {rutas}")
+            imagen_nueva = json.dumps(rutas)
 
         # si no habia id, insert
         if(not request.form["id_modal"]):
             sql = text("""
                 INSERT INTO public.etiquetas_y_stickers
-                    (codigo, codigo_clase, denominacion, imagen, responsable, fecha_registro)
+                    (codigo, codigo_clase, denominacion, imagen, responsable, fecha_registro, observacion)
                 VALUES
-                    (:codigo, :codigo_clase, :denominacion, :imagenes, :responsable, CURRENT_TIMESTAMP)
+                    (:codigo, :codigo_clase, :denominacion, :imagenes, :responsable, CURRENT_TIMESTAMP, :observacion)
                 RETURNING id;
             """)
 
@@ -86,27 +81,30 @@ def guardar_etiquetasystickers():
                 "codigo": request.form.get("codigo_modal"),
                 "codigo_clase": request.form.get("clase_modal"),
                 "denominacion": request.form.get("denominacion_modal"),
-                "imagenes": rutas_json,
-                "responsable": session["id"]
+                "imagenes": imagen_nueva,
+                "responsable": session["id"],
+                "observacion": request.form.get("observacion")
             })
             new_id = result.scalar()
             db.db.session.commit()
             return new_id
         else:
         # si ya habia id, actualizar
-            evento = f'Se actualiza la etiqueta {request.form["denominacion_modal"]} de {request.form["imagen_modal"]} a {rutas_json}'
+            evento = f'Se actualiza la etiqueta {request.form["denominacion_modal"]} de {imagen_anterior} a {imagen_nueva}, observacion: {request.form.get("observacion")}'
 
             sql = text("""
                 UPDATE
                        etiquetas_y_stickers
                 SET 
-                    imagen=:imagenes
+                    imagen=:imagenes,
+                    observacion=:observacion
                 WHERE id=:id
             """)
 
             result = db.db.session.execute(sql, {
                 "id": request.form["id_modal"],
-                "imagenes": rutas_json,
+                "imagenes": imagen_nueva,
+                "observacion": request.form.get("observacion")
             })
             
             # registrar el update
@@ -128,7 +126,22 @@ def guardar_etiquetasystickers():
         db.db.session.rollback()
         print(e)
         return None
-    
+
+def crear_ruta(files, rutas):
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+    for i, file in enumerate(files):
+        if file and file.filename:
+            filename = secure_filename(file.filename)
+            random_part = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+            extension = filename.rsplit(".", 1)[-1]
+            timestamp = datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]  # %f → microsegundos, cortamos a milisegundos
+            new_name = f"{random_part}{session['id']}{timestamp}{i}.{extension}"
+            path = os.path.join(UPLOAD_FOLDER, new_name)
+            guardar_imagen(file, path)
+            rutas.append(f"/{path}")
+    return rutas
+
 def guardar_imagen(file, path):
     max_size_kb=500
     img = Image.open(file)
@@ -167,7 +180,7 @@ def get_etiquetasystickers():
         denominacion = data.get("denominacion")
         sql = text("""
                     SELECT 
-                        id, codigo, codigo_clase, denominacion, imagen, responsable, fecha_registro
+                        id, codigo, codigo_clase, denominacion, imagen, responsable, fecha_registro, observacion
                     FROM etiquetas_y_stickers
                     WHERE 
                         codigo ilike :codigo OR denominacion ilike :denominacion;
@@ -191,6 +204,7 @@ def get_listado_etiquetasystickers(resultados_por_pagina, offset):
                 eys.codigo, 
                 eys.codigo_clase, 
                 eys.denominacion, 
+                eys.observacion,
                 eys.imagen::jsonb ->> 0 AS imagen,
                 u.nombre as responsable, fecha_registro
             FROM etiquetas_y_stickers eys

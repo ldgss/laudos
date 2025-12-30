@@ -42,10 +42,10 @@ document.getElementById("buscar").addEventListener("click", async function (e) {
 
         if (response.ok) {
             const data = await response.json();
-            console.log(`data: ${data}`)
+            
             if (data[0]) {
                 existente = data[0];
-                console.log(`existente: ${existente}`)
+            
             }
         }
     } catch (error) {
@@ -61,11 +61,18 @@ document.getElementById("buscar").addEventListener("click", async function (e) {
 
     const contenedorImagenes = document.getElementById("imagenes_existentes");
     contenedorImagenes.innerHTML = "";
+    const imagenes_1 = document.getElementById("imagenes_1")
+    imagenes_1.required = true;
+    imagenes_1.value = ""
 
     // si ya tenia foto, mostrarla
     if (existente) {
         const id = document.getElementById("id_modal")
         id.value = existente.id
+        const observacion = document.getElementById("observacion")
+        observacion.value = existente.observacion
+        // hacer imagenes no obligatorio por si solo se quiere actulizar la observacion
+        imagenes_1.required = false;
         let imagenes = [];
 
         if (existente.imagen) {
