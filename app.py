@@ -30,6 +30,7 @@ from routes import hys
 from routes import energia
 from routes import intervenciones
 from routes import etiquetasystickers
+from routes import ayuda
 from db import db
 from datetime import timedelta
 from datetime import datetime
@@ -115,6 +116,7 @@ app.register_blueprint(hys.hys_bp)
 app.register_blueprint(energia.energia_bp)
 app.register_blueprint(intervenciones.intervenciones_bp)
 app.register_blueprint(etiquetasystickers.etiquetasystickers_bp)
+app.register_blueprint(ayuda.ayuda_bp)
 
 # swagger
 

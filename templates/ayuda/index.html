@@ -1,9 +1,80 @@
 {% extends "base/base.html" %}
 
 {% block header %}
-    <h1>{% block title %} {{title}} {% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-    <h2> {{body}} </h2>
+
+<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                aria-expanded="true" aria-controls="collapseOne">
+                Presentacion de productos
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <h5>Tetra</h5>
+                    <ul>
+                        <li>1980 unidades por pallet</li>
+                        <li>165 cajas de 12 unidades</li>
+                        <li>25 pallets por equipo</li>
+                    </ul>
+                <h5>Botella 500</h5>
+                    <ul>
+                        <li>1080 unidades por pallets</li>
+                        <li>90 termos de 12 unidades</li>
+                        <li>26 pallets por equipo</li>
+                    </ul>
+                <h5>Botella 910 y 950</h5>
+                    <ul>
+                        <li>840 unidades por equipo (cuisuine 672 unidades por pallet)</li>
+                        <li>105 termos por 8 unidades</li>
+                        <li>26 pallets por equipo</li>
+                    </ul>
+                <h5>Botella 1020</h5>
+                    <ul>
+                        <li>720 unidades por pallet</li>
+                        <li>90 termos de 8 unidades</li>
+                        <li>26 pallets por equipo</li>
+                    </ul>
+                <h5>Lata de 3 kgs</h5>
+                    <ul>
+                        <li>294 unidades por pallet</li>
+                        <li>49 cajas de 6 unidades</li>
+                        <li>26 pallets por equipo</li>
+                    </ul>
+                <h5>Lata de 8 kgs</h5>
+                    <ul>
+                        <li>115 unidades por pallet</li>
+                        <li>sin cajas / sin termos</li>
+                        <li>26 pallets por equipo</li>
+                    </ul>
+                <h5>Sache de pouch</h5>
+                    <ul>
+                        <li>270 unidades por bin semielaborado (sin etiquetar)</li>
+                        <li>400 unidades por bin etiquetado</li>
+                    </ul>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Etiquetas
+            </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <p>
+                    Las fotos de etiquetas, observaciones y vigencia se encuentran en <a href="{{ url_for('etiquetasystickers.etiquetasystickers') }}">Etiquetas.</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
 {% endblock %}
