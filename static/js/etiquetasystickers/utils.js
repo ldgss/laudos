@@ -59,7 +59,7 @@ document.getElementById("buscar").addEventListener("click", async function (e) {
     document.getElementById("denominacion_modal").value = valor;
     document.getElementById("denominacion_modal_visible").value = valor;
     const vigente = document.getElementById("vigente")
-    vigente.checked = existente.vigente;
+    vigente.checked = existente.vigente? existente.vigente : false;
 
     const contenedorImagenes = document.getElementById("imagenes_existentes");
     contenedorImagenes.innerHTML = "";
