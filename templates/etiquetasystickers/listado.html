@@ -16,6 +16,7 @@
                     <th>Denominación</th>
                     <th>Imagen</th>
                     <th>Observaciones</th>
+                    <th>Vigente</th>
                     <th>Responsable</th>
                     <th>Fecha</th>
                 </tr>
@@ -37,6 +38,13 @@
                     </td>
                     <td>
                         {{l.observacion}}
+                    </td>
+                    <td class="vigencia">
+                        {% if l.vigente %}
+                            <img class="vigencia-etiquetas-icon" src="{{ url_for('static', filename='img/icons/checked.png') }}" alt="">
+                        {% else %}
+                            <img class="vigencia-etiquetas-icon" src="{{ url_for('static', filename='img/icons/not-checked.png') }}" alt="">
+                        {% endif %}
                     </td>
                     <td>
                         {{l.responsable}}

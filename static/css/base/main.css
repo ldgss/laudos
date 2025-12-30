@@ -66,4 +66,13 @@ table td {
     min-width: 250px;
 }
 
+.vigencia {
+    text-align: center;
+}
+
+.vigencia-etiquetas-icon{
+    max-width: 2rem;
+    max-height: 2rem;
+}
+
 

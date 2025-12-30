@@ -71,9 +71,9 @@ def guardar_etiquetasystickers():
         if(not request.form["id_modal"]):
             sql = text("""
                 INSERT INTO public.etiquetas_y_stickers
-                    (codigo, codigo_clase, denominacion, imagen, responsable, fecha_registro, observacion)
+                    (codigo, codigo_clase, denominacion, imagen, responsable, fecha_registro, observacion, vigente)
                 VALUES
-                    (:codigo, :codigo_clase, :denominacion, :imagenes, :responsable, CURRENT_TIMESTAMP, :observacion)
+                    (:codigo, :codigo_clase, :denominacion, :imagenes, :responsable, CURRENT_TIMESTAMP, :observacion, :vigente)
                 RETURNING id;
             """)
 
@@ -83,28 +83,31 @@ def guardar_etiquetasystickers():
                 "denominacion": request.form.get("denominacion_modal"),
                 "imagenes": imagen_nueva,
                 "responsable": session["id"],
-                "observacion": request.form.get("observacion")
+                "observacion": request.form.get("observacion"),
+                "vigente": request.form.get("vigente") or False
             })
             new_id = result.scalar()
             db.db.session.commit()
             return new_id
         else:
         # si ya habia id, actualizar
-            evento = f'Se actualiza la etiqueta {request.form["denominacion_modal"]} de {imagen_anterior} a {imagen_nueva}, observacion: {request.form.get("observacion")}'
+            evento = f'Se actualiza la etiqueta {request.form["denominacion_modal"]} de {imagen_anterior} a {imagen_nueva}, observacion: {request.form.get("observacion")}, vigente: {"si" if request.form.get("vigente") else "no"}'
 
             sql = text("""
                 UPDATE
                        etiquetas_y_stickers
                 SET 
                     imagen=:imagenes,
-                    observacion=:observacion
+                    observacion=:observacion,
+                    vigente=:vigente
                 WHERE id=:id
             """)
 
             result = db.db.session.execute(sql, {
                 "id": request.form["id_modal"],
                 "imagenes": imagen_nueva,
-                "observacion": request.form.get("observacion")
+                "observacion": request.form.get("observacion"),
+                "vigente": request.form.get("vigente") or False
             })
             
             # registrar el update
@@ -180,7 +183,7 @@ def get_etiquetasystickers():
         denominacion = data.get("denominacion")
         sql = text("""
                     SELECT 
-                        id, codigo, codigo_clase, denominacion, imagen, responsable, fecha_registro, observacion
+                        id, codigo, codigo_clase, denominacion, imagen, responsable, fecha_registro, observacion, vigente
                     FROM etiquetas_y_stickers
                     WHERE 
                         codigo ilike :codigo OR denominacion ilike :denominacion;
@@ -206,7 +209,9 @@ def get_listado_etiquetasystickers(resultados_por_pagina, offset):
                 eys.denominacion, 
                 eys.observacion,
                 eys.imagen::jsonb ->> 0 AS imagen,
-                u.nombre as responsable, fecha_registro
+                u.nombre as responsable, 
+                eys.fecha_registro,
+                eys.vigente
             FROM etiquetas_y_stickers eys
             JOIN usuario u ON u.id = eys.responsable
             ORDER BY eys.id DESC
