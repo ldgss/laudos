@@ -5,6 +5,7 @@ import shlex
 from flask import request
 import traceback
 from flask import session
+from utils import helpers
 
 
 def get_ultimo_pallet_interno():
@@ -40,20 +41,9 @@ def get_ultimo_id():
         result = db.db.session.execute(sql)
         
         ultimo_id = result.scalar()
-        
-        if not ultimo_id:
-            # si es el primer pallet
-            year = datetime.now().year
-            return f"{year}-H1-000000"
-        else:
-            # si ya existen pallets, aumentar el numero del id
-            prefijo = str(datetime.now().year)
-            sufijo = int(ultimo_id[-6:])
-            nuevo_numero = sufijo + 1
-            nuevo_numero_str = f"{nuevo_numero:06d}"
-            nuevo_codigo = f"{prefijo}-H1-{nuevo_numero_str}"
+        year = datetime.now().year
 
-            return nuevo_codigo
+        return helpers.next_id(ultimo_id, "H1", year)
     except Exception as e:
         print(f"Error: {e}")
         return None

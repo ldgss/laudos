@@ -37,4 +37,21 @@ def authorized_to_action(action):
             return abort(401)
         return False
     return abort(401)
+
+def next_id(ultimo_id, code, year):
+    if not ultimo_id:
+        # primer numero unico
+        return f"{year}-{code}-000000"
+    elif ultimo_id and year != int(ultimo_id[:4]):
+        # cambio de año
+        return f"{year}-{code}-000000"
+    else:
+        # numero unico subsiguiente
+        prefijo = str(year)
+        sufijo = int(ultimo_id[-6:])
+        nuevo_numero = sufijo + 1
+        nuevo_numero_str = f"{nuevo_numero:06d}"
+        nuevo_codigo = f"{prefijo}-{code}-{nuevo_numero_str}"
+
+        return nuevo_codigo
         
