@@ -40,6 +40,81 @@ def get_buscar_insumo_para_guardar():
         print(f"Error: {e}")
         return None
 
+def buscar_insumo_con_laudo():
+    numero_unico = request.form.get("numero_unico")
+
+    try:
+        sql_consumido = text("""
+            SELECT 1
+            FROM hojalata h
+            JOIN insumo_envase ie ON h.numero_unico = ie.insumo
+            WHERE h.numero_unico = :numero_unico
+            LIMIT 1
+        """)
+
+        consumido = db.db.session.execute(
+            sql_consumido,
+            {"numero_unico": numero_unico}
+        ).first()
+
+        if consumido:
+            return {
+                "error": True,
+                "mensaje": "El pallet ya se consumió"
+            }
+
+        if 'T1' in numero_unico:
+            sql = text("SELECT * FROM mercaderia WHERE numero_unico = :numero_unico")
+        elif 'H1' in numero_unico:
+            sql = text("SELECT * FROM hojalata WHERE numero_unico = :numero_unico")
+        elif 'E1' in numero_unico:
+            sql = text("SELECT * FROM extracto WHERE numero_unico = :numero_unico")
+        elif 'T2' in numero_unico:
+            sql = text("SELECT * FROM reacondicionado WHERE numero_unico = :numero_unico")
+        else:
+            return {
+                "error": True,
+                "mensaje": "Tipo de pallet inválido"
+            }
+
+        result = db.db.session.execute(
+            sql,
+            {"numero_unico": numero_unico}
+        )
+
+        return result.mappings().first()
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return {
+            "error": True,
+            "mensaje": "Error interno al buscar el pallet"
+        }
+
+
+# def buscar_insumo_con_laudo():
+#     numero_unico = request.form.get("numero_unico")
+#     try:
+#         sql = ""
+#         if 'T1' in numero_unico:
+#             sql = text(""" SELECT * FROM mercaderia WHERE numero_unico = :numero_unico """)
+#         elif 'H1' in numero_unico:
+#             sql = text(""" SELECT * FROM hojalata WHERE numero_unico = :numero_unico """)
+#         elif 'E1' in numero_unico:
+#             sql = text(""" SELECT * FROM extracto WHERE numero_unico = :numero_unico """)
+#         elif 'T2' in numero_unico:
+#             sql = text(""" SELECT * FROM reacondicionado WHERE numero_unico = :numero_unico """)
+
+        
+#         result = db.db.session.execute(sql,
+#                                             {
+#                                                 "numero_unico": numero_unico,
+#                                             })
+#         return result.mappings().first()
+#     except Exception as e:
+#         print(f"Error: {e}")
+#         return None
+
 def guardar_insumos():
     try:
         reacondicionado = text("""

@@ -26,8 +26,18 @@ def insumos():
 def insumos_agregar():
     if helpers.session_on() and helpers.authorized_to("insumo"):
         title = "Insumos"
-        section = "Insumos"
+        section = "Insumos sin laudos"
         return render_template("insumos/agregar.html", 
+                               title=title, section=section)
+    else:
+        return redirect(url_for("login.login_get"))
+    
+@insumos_bp.get("/insumos/agregar_laudo")
+def insumos_agregar_laudo():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        title = "Insumos"
+        section = "Insumos con laudos"
+        return render_template("insumos/agregar_laudo.html", 
                                title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
@@ -39,6 +49,14 @@ def insumos_buscar_insumo():
         return jsonify(result)
     else:
         return redirect(url_for("login.login_get"))
+    
+@insumos_bp.post("/insumos/buscar_insumo_laudo")
+def insumos_buscar_insumo_laudo():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        result = mod_insumos.buscar_insumo_con_laudo()
+        return jsonify(dict(result))
+    else:
+        return redirect(url_for("login.login_get"))
 
 @insumos_bp.post("/insumos/agregar")
 def insumos_agregar_post():
@@ -46,10 +64,10 @@ def insumos_agregar_post():
         result = mod_insumos.guardar_insumos()
         if result:
             flash("Insumo guardado con éxito")
-            return redirect(url_for("insumos.insumos_agregar"))
+            return redirect(url_for("insumos.insumos"))
         else:
             flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
-            return redirect(url_for("insumos.insumos_agregar"))
+            return redirect(url_for("insumos.insumos"))
     else:
         return redirect(url_for("login.login_get"))
 
