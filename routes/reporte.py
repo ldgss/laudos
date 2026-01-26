@@ -11,6 +11,7 @@ from flask import send_file
 import pandas as pd
 from io import BytesIO
 from flask import current_app as app
+from flask import jsonify
 
 reporte_bp = Blueprint("reporte", __name__)
 
@@ -98,4 +99,33 @@ def generar_reporte(file_path):
         # return f"Error al generar el reporte: {str(e)}", 500
         flash("Nada para mostrar")
         return redirect(url_for("reporte.reporte"))
+    
+@reporte_bp.get("/reporte/dashboard")
+def reporte_dashboard():
+    if helpers.session_on() and helpers.authorized_to("dashboard"):
+        title = "Envasado"
+        section = "Envasado"
+        return render_template("reporte/dashboard.html", title=title, section=section)
+    else:
+        return redirect(url_for("login.login_get"))
+    
+@reporte_bp.post("/reporte/dashboard/stock")
+def reporte_dashboard_stock():
+    print(f"filtro: {request.form}")
+    estadisticas = mod_reporte.dashboard_stock()
+    print(f"resultados: {estadisticas}")
+    if estadisticas and len(estadisticas) > 0:
+        return jsonify(estadisticas), 200
+    else:
+        return jsonify([]), 200
+    
+@reporte_bp.post("/reporte/dashboard/hojalata")
+def reporte_dashboard_hojalata():
+    print(f"filtro: {request.form}")
+    estadisticas = mod_reporte.dashboard_hojalata()
+    print(f"resultados: {estadisticas}")
+    if estadisticas and len(estadisticas) > 0:
+        return jsonify(estadisticas), 200
+    else:
+        return jsonify([]), 200
     

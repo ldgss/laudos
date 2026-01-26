@@ -197,6 +197,8 @@ def get_listado_bloqueo(terminos_de_busqueda, resultados_por_pagina, offset):
         return [resultados.fetchall(), total_paginas]
 
     except Exception as e:
+        db.db.session.rollback()
+        print(f"tb: {traceback.format_exc()}")
         print(f"Error: {e}")
         return None
 

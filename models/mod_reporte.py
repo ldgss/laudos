@@ -250,8 +250,8 @@ def get_extracto():
                         left join despacho d on d.extracto = e.numero_unico 
                         left join vencimiento v on v.id = e.vto_meses
                         where 
-                            (:fecha_inicial IS NULL OR e.fecha_registro >= :fecha_inicial) and
-                            (:fecha_final IS NULL OR e.fecha_registro <= :fecha_final) and
+                            (:fecha_inicial IS NULL OR e.fecha_elaboracion >= :fecha_inicial) and
+                            (:fecha_final IS NULL OR e.fecha_elaboracion <= :fecha_final) and
                             (:responsable IS NULL OR u.nombre ILIKE '%' || :responsable || '%') and
                             (:denominacion IS NULL OR e.den ILIKE '%' || :denominacion || '%') and
                             (:brix_inicial IS NULL OR e.brix >= :brix_inicial) and
@@ -666,6 +666,44 @@ def get_despacho():
         output.seek(0)  # Mover el puntero al inicio del archivo
 
         return output
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    
+def dashboard_stock():
+    try:
+        sql = text("""
+                    select m.den, sum(m.cantidad) as disponible
+                    from mercaderia m 
+                    left join despacho d on m.numero_unico = d.mercaderia 
+                    where d.mercaderia is null
+                    group by m.den, m.producto 
+                    order by disponible desc
+                """
+                )
+        
+        medicion = db.db.session.execute(sql)
+        # return medicion.mappings().fetchall()
+        return [dict(row) for row in medicion.mappings().all()]
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+def dashboard_hojalata():
+    try:
+        sql = text("""
+                    select h.den, sum(h.cantidad ) as disponible
+                    from hojalata h
+                    left join despacho d on h.numero_unico = d.hojalata 
+                    where d.hojalata is null
+                    group by h.den
+                    order by disponible desc
+                """
+                )
+        
+        medicion = db.db.session.execute(sql)
+        # return medicion.mappings().fetchall()
+        return [dict(row) for row in medicion.mappings().all()]
     except Exception as e:
         print(f"Error: {e}")
         return None

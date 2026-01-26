@@ -1,0 +1,35 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="{{url_for("static", filename="js/reporte/utils.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container col-sm-12 col-md-8 col-lg-6">
+
+  
+    <h3 class="text-center">Stock mercaderia</h3>
+    <h6 id="stock_no_hay_datos" class="m-5 text-dark text-center" style="display: none;">
+      No hay datos para mostrar
+    </h6>
+    <div id="stock_container">
+      <canvas id="stock"></canvas>
+    </div>
+
+    <h3 class="text-center">Hojalata</h3>
+    <h6 id="hojalata_no_hay_datos" class="m-5 text-dark text-center" style="display: none;">
+      No hay datos para mostrar
+    </h6>
+    <div id="hojalata_container">
+      <canvas id="hojalata"></canvas>
+    </div>
+
+    
+  <div class="m-3">
+    <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
+  </div>
+</div>
+
+{% endblock %}

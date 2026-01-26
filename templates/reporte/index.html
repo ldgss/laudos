@@ -8,6 +8,11 @@
 {% block content %}
 
 <div class="container col-sm-12 col-md-8 col-lg-6">
+    {% if session["dashboard"] %}
+        <div class="m-3">
+            <a class="btn btn-outline-danger col-12" href="{{ url_for('reporte.reporte_dashboard') }}">Panel</a>
+        </div>
+    {% endif %}
     {% if session["mercaderia"] %}
         <div class="m-3">
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#envasadoModal">Semielaborado</button>

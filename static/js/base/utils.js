@@ -31,6 +31,22 @@ window.addEventListener("DOMContentLoaded", () => {
         break;
       }
     }
+
+    // Versión generalizada para múltiples tipos de input
+    ['date', 'time', 'datetime-local'].forEach(type => {
+        document.querySelectorAll(`input[type="${type}"]`).forEach(input => {
+            input.addEventListener('click', function() {
+                this.showPicker();
+            });
+            
+            input.addEventListener('focus', function() {
+                this.showPicker();
+            });
+            
+            input.style.cursor = 'pointer';
+        });
+    });
+    
 });
 
 // chequear la conexion cada 5 segundos
