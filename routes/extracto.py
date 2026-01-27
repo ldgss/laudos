@@ -12,11 +12,11 @@ from flask import session
 extracto_bp = Blueprint("extracto", __name__)
 # cantidad para paginacion
 resultados_por_pagina = 20
+title = "Extracto"
 
 @extracto_bp.get("/extracto")
 def extracto():
     if helpers.session_on() and helpers.authorized_to("extracto"):
-        title = "Extracto"
         section = "Extracto"
         return render_template("extracto/index.html", title=title, section=section)
     else:
@@ -26,8 +26,7 @@ def extracto():
 def extracto_agregar():
     if helpers.session_on() and helpers.authorized_to("extracto"):
         proximo_id = mod_mercaderia.get_ultimo_id_extracto()
-        title = "Extracto"
-        section = "Extracto"
+        section = "Agregar extracto"
         return render_template("extracto/agregar.html", 
                                title=title, section=section, 
                                proximo_id=proximo_id,
@@ -43,8 +42,6 @@ def extracto_agregar_post():
         # ensamblo el lote
         lote = f"{request.form["lote_a"]}-{request.form["lote_b"]}-{request.form["lote_c"]}"
         barcode = mod_mercaderia.guardar_extracto(request.form, vto, lote)
-        title = "Extracto"
-        section = "Extracto"
         if barcode:
             # enviar a imprimir/detalle el producto recien creado
             return redirect(url_for("extracto.extracto_imprimir", numero_unico=request.form["numero_unico"]))
@@ -58,8 +55,7 @@ def extracto_agregar_post():
 def extracto_imprimir(numero_unico):
     if helpers.session_on() and helpers.authorized_to("extracto"):
         extracto = mod_mercaderia.get_extracto(numero_unico)
-        title = "Extracto"
-        section = "Extracto"
+        section = "Imprimir laudo extracto"
         return render_template("extracto/imprimir.html", 
                                title=title, section=section, 
                                extracto=extracto)
@@ -81,8 +77,7 @@ def extracto_listado(terminos_de_busqueda):
         offset = (pagina - 1) * resultados_por_pagina
         
         resultado = mod_mercaderia.get_listado_extracto(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "Extracto"
-        section = "Extracto"
+        section = "Listado de extracto"
         return render_template("extracto/listado.html", 
                                max=max,
                                min=min,

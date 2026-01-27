@@ -13,11 +13,11 @@ from flask import session
 hojalata_bp = Blueprint("hojalata", __name__)
 # cantidad para paginacion
 resultados_por_pagina = 20
+title = "Hojalata"
 
 @hojalata_bp.get("/hojalata")
 def hojalata():
     if helpers.session_on() and helpers.authorized_to("hojalata"):
-        title = "Hojalata"
         section = "Hojalata"
         return render_template("hojalata/index.html", title=title, section=section)
     else:
@@ -28,8 +28,7 @@ def hojalata_agregar():
     if helpers.session_on() and helpers.authorized_to("hojalata"):
         proximo_id = mod_hojalata.get_ultimo_id()
         proximo_pallet_interno = mod_hojalata.get_ultimo_pallet_interno()
-        title = "Hojalata"
-        section = "Hojalata"
+        section = "Agregar hojalata"
         return render_template("hojalata/agregar.html", 
                                title=title, section=section, 
                                proximo_id=proximo_id,
@@ -57,8 +56,7 @@ def hojalata_agregar_post():
 def hojalata_imprimir(numero_unico):
     if helpers.session_on() and helpers.authorized_to("hojalata"):
         hojalata = mod_hojalata.get_hojalata(numero_unico)
-        title = "Hojalata"
-        section = "Hojalata"
+        section = "Imprimir laudo hojalata"
         return render_template("hojalata/imprimir.html", 
                                title=title, section=section, 
                                hojalata=hojalata)
@@ -80,8 +78,7 @@ def hojalata_listado(terminos_de_busqueda):
         offset = (pagina - 1) * resultados_por_pagina
         
         resultado = mod_hojalata.get_listado_hojalata(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "Hojalata"
-        section = "Hojalata"
+        section = "Listado de hojalata"
         return render_template("hojalata/listado.html", 
                                max=max,
                                min=min,

@@ -12,12 +12,12 @@ from flask import session
 envasado_bp = Blueprint("envasado", __name__)
 # cantidad para paginacion
 resultados_por_pagina = 20
-title = "Semi-Elaborado"
+title = "Semielaborado"
 
 @envasado_bp.get("/envasado")
 def envasado():
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
-        section = "Semi-Elaborado"
+        section = "Semielaborado"
         return render_template("envasado/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
@@ -26,7 +26,7 @@ def envasado():
 def envasado_agregar():
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         proximo_id = mod_mercaderia.get_ultimo_id()
-        section = "Agregar semi elaborado"
+        section = "Agregar semielaborado"
         return render_template("envasado/agregar.html", 
                                title=title, section=section, 
                                proximo_id=proximo_id,
@@ -56,7 +56,7 @@ def envasado_agregar_post():
 def envasado_imprimir(numero_unico):
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         envasado = mod_mercaderia.get_envasado(numero_unico)
-        section = "Imprimir laudo semi elaborado"
+        section = "Imprimir laudo semielaborado"
         return render_template("envasado/imprimir.html", 
                                title=title, section=section, 
                                envasado=envasado)
@@ -78,7 +78,7 @@ def envasado_listado(terminos_de_busqueda):
         offset = (pagina - 1) * resultados_por_pagina
         
         resultado = mod_mercaderia.get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset)
-        section = "Listado de semi elaborado"
+        section = "Listado de semielaborado"
         return render_template("envasado/listado.html", 
                                max=max,
                                min=min,

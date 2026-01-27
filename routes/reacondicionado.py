@@ -14,11 +14,11 @@ from flask import jsonify
 reacondicionado_bp = Blueprint("reacondicionado", __name__)
 # cantidad para paginacion
 resultados_por_pagina = 20
+title = "Reacondicionado"
 
 @reacondicionado_bp.get("/reacondicionado")
 def reacondicionado():
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
-        title = "Reacondicionado"
         section = "Reacondicionado"
         return render_template("reacondicionado/index.html", title=title, section=section)
     else:
@@ -28,8 +28,7 @@ def reacondicionado():
 def reacondicionado_agregar():
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         proximo_id = mod_reacondicionado.get_ultimo_id()
-        title = "Reacondicionado"
-        section = "Reacondicionado"
+        section = "Agregar reacondicionado"
         return render_template("reacondicionado/agregar.html", 
                                title=title, section=section, 
                                proximo_id=proximo_id,
@@ -61,8 +60,7 @@ def reacondicionado_buscart1t2(numero_unico):
 def reacondicionado_imprimir(numero_unico):
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         reacondicionado = mod_reacondicionado.imprimir(numero_unico)
-        title = "Reacondicionado"
-        section = "Reacondicionado"
+        section = "Imprimir laudo reacondicionado"
         return render_template("reacondicionado/imprimir.html", 
                                title=title, section=section, 
                                reacondicionado=reacondicionado)
@@ -84,8 +82,7 @@ def reacondicionado_listado(terminos_de_busqueda):
         offset = (pagina - 1) * resultados_por_pagina
         
         resultado = mod_reacondicionado.get_listado_reacondicionado(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "Reacondicionado"
-        section = "Reacondicionado"
+        section = "Listado de reacondicionado"
         return render_template("reacondicionado/listado.html", 
                                max=max,
                                min=min,

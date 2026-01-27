@@ -12,11 +12,11 @@ from flask import jsonify
 insumos_bp = Blueprint("insumos", __name__)
 # cantidad para paginacion
 resultados_por_pagina = 20
+title = "Insumos"
 
 @insumos_bp.get("/insumos")
 def insumos():
     if helpers.session_on() and helpers.authorized_to("insumo"):
-        title = "Insumos"
         section = "Insumos"
         return render_template("insumos/index.html", title=title, section=section)
     else:
@@ -25,8 +25,7 @@ def insumos():
 @insumos_bp.get("/insumos/agregar")
 def insumos_agregar():
     if helpers.session_on() and helpers.authorized_to("insumo"):
-        title = "Insumos"
-        section = "Insumos sin laudos"
+        section = "Agregar insumos sin laudos"
         return render_template("insumos/agregar.html", 
                                title=title, section=section)
     else:
@@ -35,8 +34,7 @@ def insumos_agregar():
 @insumos_bp.get("/insumos/agregar_laudo")
 def insumos_agregar_laudo():
     if helpers.session_on() and helpers.authorized_to("insumo"):
-        title = "Insumos"
-        section = "Insumos con laudos"
+        section = "Agregar insumos con laudos"
         return render_template("insumos/agregar_laudo.html", 
                                title=title, section=section)
     else:
@@ -86,8 +84,7 @@ def insumos_listado(terminos_de_busqueda):
         offset = (pagina - 1) * resultados_por_pagina
         
         resultado = mod_insumos.get_listado_insumos(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "Insumos"
-        section = "Insumos"
+        section = "Listado de insumos"
         return render_template("insumos/listado.html", 
                                max=max,
                                min=min,

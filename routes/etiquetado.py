@@ -12,11 +12,11 @@ from flask import session
 etiquetado_bp = Blueprint("etiquetado", __name__)
 # cantidad para paginacion
 resultados_por_pagina = 20
+title = "Etiquetado"
 
 @etiquetado_bp.get("/etiquetado")
 def etiquetado():
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
-        title = "Etiquetado"
         section = "Etiquetado"
         return render_template("etiquetado/index.html", title=title, section=section)
     else:
@@ -26,8 +26,7 @@ def etiquetado():
 def etiquetado_agregar():
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         proximo_id = mod_mercaderia.get_ultimo_id()
-        title = "Etiquetado"
-        section = "Etiquetado"
+        section = "Agregar etiquetado"
         return render_template("etiquetado/agregar.html", 
                                title=title, section=section, 
                                proximo_id=proximo_id,
@@ -43,8 +42,6 @@ def etiquetado_agregar_post():
         # ensamblo el lote
         lote = f"{request.form["lote_a"]}-{request.form["lote_b"]}-{request.form["lote_c"]}"
         barcode = mod_mercaderia.guardar_etiquetado(request.form, vto, lote)
-        title = "Etiquetado"
-        section = "Etiquetado"
         if barcode:
             # enviar a imprimir/detalle el producto recien creado
             return redirect(url_for("etiquetado.etiquetado_imprimir", numero_unico=request.form["numero_unico"]))
@@ -58,8 +55,7 @@ def etiquetado_agregar_post():
 def etiquetado_imprimir(numero_unico):
     if helpers.session_on() and helpers.authorized_to("mercaderia"):
         etiquetado = mod_mercaderia.get_etiquetado(numero_unico)
-        title = "Etiquetado"
-        section = "Etiquetado"
+        section = "Imprimir laudo etiquetado"
         return render_template("etiquetado/imprimir.html", 
                                title=title, section=section, 
                                etiquetado=etiquetado)
@@ -80,8 +76,7 @@ def etiquetado_listado(terminos_de_busqueda):
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
         resultado = mod_mercaderia.get_listado_etiquetado(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "Etiquetado"
-        section = "Etiquetado"
+        section = "Listado de etiquetado"
         return render_template("etiquetado/listado.html", 
                                max=max,
                                min=min,
