@@ -42,6 +42,10 @@ def get_ubicacion_nombre():
         sql = text("""
                     SELECT *
                     FROM ubicacion_nombre
+                    WHERE id != 6 and
+                    id != 7 and            
+                    id != 8 and
+                    id != 504
                    ;
                 """
                 )
