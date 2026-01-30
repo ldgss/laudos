@@ -50,9 +50,12 @@ document.getElementById('form_buscar').addEventListener('submit', async function
 
             if (fechaHora) {
                 const fechaObj = new Date(fechaHora); // Convertir la fecha al objeto Date
+                const año = fechaObj.getFullYear();
+                const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+                const dia = String(fechaObj.getDate()).padStart(2, '0');
+                const fecha = `${año}-${mes}-${dia}`;
                 if (!isNaN(fechaObj)) {
                     // Formatear fecha y hora
-                    const fecha = fechaObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
                     const hora = fechaObj.toTimeString().split(' ')[0]; // Formato HH:MM:SS
                     document.getElementById('fecha_modal1').value = fecha;
                     document.getElementById('hora_modal1').value = hora.slice(0, 5); // HH:MM
@@ -122,8 +125,12 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             const fechaHora = data['fecha_elaboracion'] || '';
             if (fechaHora) {
                 const fechaObj = new Date(fechaHora); // Convertir la fecha al objeto Date
+                const año = fechaObj.getFullYear();
+                const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+                const dia = String(fechaObj.getDate()).padStart(2, '0');
+                const fecha = `${año}-${mes}-${dia}`;
                 if (!isNaN(fechaObj)) {
-                    document.getElementById('fecha_modal2').value = fechaObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+                    document.getElementById('fecha_modal2').value = fecha; // Formato YYYY-MM-DD
                     document.getElementById('hora_modal2').value = fechaObj.toTimeString().split(' ')[0].slice(0, 5); // HH:MM
                 }
             } else {
@@ -157,9 +164,12 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             const fechaHora = data['fecha_elaboracion'] || '';
             if (fechaHora) {
                 const fechaObj = new Date(fechaHora); // Convertir la fecha al objeto Date
+                const año = fechaObj.getFullYear();
+                const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+                const dia = String(fechaObj.getDate()).padStart(2, '0');
+                const fecha = `${año}-${mes}-${dia}`;
                 if (!isNaN(fechaObj)) {
                     // Formatear fecha y hora
-                    const fecha = fechaObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
                     const hora = fechaObj.toTimeString().split(' ')[0]; // Formato HH:MM:SS
                     document.getElementById('fecha_modal3').value = fecha;
                     document.getElementById('hora_modal3').value = hora.slice(0, 5); // HH:MM
