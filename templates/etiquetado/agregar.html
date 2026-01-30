@@ -27,7 +27,19 @@
             <input type="hidden" id="cod_mae" name="cod_mae">
             <datalist id="denominacion_opciones">
                 {% for p in productos_arballon %}
-                    {% if 'semi' not in (p.den | lower) and 'llena' not in (p.den | lower) %}
+                    {% if 'semi' not in (p.den | lower) and 
+                        'llena' not in (p.den | lower) and 
+                        'extracto' not in (p.den | lower) and 
+                        'tapa' not in (p.den | lower) and
+                        'hoja' not in (p.den | lower) and
+                        'cuerpo' not in (p.den | lower) and
+                        'envase' not in (p.den | lower) and
+                        'estufado' not in (p.den | lower) and
+                        'testigo' not in (p.den | lower) and
+                        'pasta' not in (p.den | lower) and
+                        'aseptico' not in (p.den | lower) and
+                        'tambor' not in (p.den | lower)
+                    %}
                         <option value="{{ p.den | trim }}" 
                                 data-cod-cls="{{ p.cod_cls | trim }}" 
                                 data-cod-mae="{{ p.cod_mae | trim }}">
