@@ -46,6 +46,7 @@ def get_ubicacion_nombre():
                     id != 7 and            
                     id != 8 and
                     id != 504
+                    ORDER BY posicion ASC
                    ;
                 """
                 )
