@@ -96,3 +96,43 @@ function envioUnico() {
     btnEnviar.disabled = true;
     return true;  // Continúa con el envío del formulario
 }
+
+function validarNumerosUnicos() {
+    const textarea = document.getElementById('numeros_unicos');
+    const valor = textarea.value.trim();
+    const errores = [];
+    
+    if (!valor) {
+        textarea.classList.add('is-invalid');
+        return false;
+    }
+    
+    const lineas = valor.split('\n').filter(linea => linea.trim() !== '');
+    
+    if (lineas.length > 20) {
+        errores.push(`Máximo 20 líneas permitidas (tienes ${lineas.length})`);
+    }
+    
+    const patron = /^\d{4}-(T1|T2|E1|H1)-\d{6}$/;
+    const lineasInvalidas = [];
+    
+    lineas.forEach((linea, index) => {
+        if (!patron.test(linea.trim())) {
+            lineasInvalidas.push(index + 1);
+        }
+    });
+    
+    if (lineasInvalidas.length > 0) {
+        errores.push(`Formato incorrecto en líneas: ${lineasInvalidas.join(', ')}`);
+    }
+    
+    if (errores.length > 0) {
+        textarea.classList.add('is-invalid');
+        alert(errores.join('\n'));
+        return false;
+    }
+    
+    textarea.classList.remove('is-invalid');
+    textarea.classList.add('is-valid');
+    return true;
+}

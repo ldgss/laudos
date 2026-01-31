@@ -339,3 +339,66 @@ def anular_ubicaciones():
         db.db.session.rollback()
         print(f"Error: {e}")
         return None
+    
+def reubicar():
+    posicion = request.form.get('id_ubicacion')
+    numeros_unicos = request.form.get('numeros_unicos')
+    try:
+        numeros_unicos = numeros_unicos.split()
+        for numero in numeros_unicos:
+            if 'T1' in numero:
+                sql = text("""
+                    UPDATE ubicacion
+                    SET ubicacion_fila=:posicion
+                    WHERE mercaderia=:numero_unico
+                """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "numero_unico": numero,
+                            "posicion": posicion
+                        })
+            elif 'T2' in numero:
+                sql = text("""
+                    UPDATE ubicacion
+                    SET ubicacion_fila=:posicion
+                    WHERE reacondicionado=:numero_unico
+                """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "numero_unico": numero,
+                            "posicion": posicion
+                        })
+            elif 'E1' in numero:
+                sql = text("""
+                    UPDATE ubicacion
+                    SET ubicacion_fila=:posicion
+                    WHERE extracto=:numero_unico
+                """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "numero_unico": numero,
+                            "posicion": posicion
+                        })
+            elif 'H1' in numero:
+                sql = text("""
+                    UPDATE ubicacion
+                    SET ubicacion_fila=:posicion
+                    WHERE hojalata=:numero_unico
+                """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "numero_unico": numero,
+                            "posicion": posicion
+                        })
+            else:
+                return False
+        db.db.session.commit()
+        return True
+    except Exception as e:
+        db.db.session.rollback()
+        print(f"Error: {e}")
+        return None
