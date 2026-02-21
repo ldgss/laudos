@@ -236,7 +236,7 @@ def guardar_extracto(form, vto, lote):
                                                 "brix": None,
                                                 "numero_recipiente": form['numero_recipiente'],
                                                 "lote": lote,
-                                                "fecha_elaboracion": f"{form['fecha']} {form['hora']}",
+                                                "fecha_elaboracion": f"{form['fecha_manual']} {form['hora_manual']}",
                                                 "responsable": form['user_id'],
                                                 "numero_unico": form['numero_unico'],
                                                 "vto_meses": vto['id'],

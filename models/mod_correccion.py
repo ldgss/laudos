@@ -134,7 +134,7 @@ def guardar_correccion():
                                                 "observacion":request.form["observaciones_modal3"],
                                                 "fecha_elaboracion": f"{request.form["fecha_modal3"]} {request.form["hora_modal3"]}",
                                                 "lote": f"{request.form["lote_a_modal3"]}-{request.form["lote_b_modal3"]}-{request.form["lote_c_modal3"]}",
-                                                "brix": request.form["brix_modal3"],
+                                                "brix": request.form["brix_modal3"] or None,
                                                 "numero_recipiente": request.form["numero_recipiente_modal3"],
                                                 "den":request.form["denominacion_modal3"],
                                                 "numero_unico":request.form["numero_unico_modal3"],
