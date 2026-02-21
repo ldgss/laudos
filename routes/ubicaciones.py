@@ -117,7 +117,7 @@ def reubicacion_masiva():
 @ubicaciones_bp.post("/ubicaciones/reubicar")
 def reubicar():
     if helpers.session_on() and helpers.authorized_to("ubicacion") and helpers.authorized_to_submodule("correccion"):
-        result = mod_ubicaciones.reubicar()
+        result = mod_ubicaciones.reubicar_i()
         if result:
             flash("Reubicación exitosa.")
             return redirect(url_for("ubicaciones.reubicacion_masiva"))
