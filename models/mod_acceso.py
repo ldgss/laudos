@@ -1,14 +1,14 @@
 from sqlalchemy.sql import text
 from db import db
 
-def guardar_login(ip, dispositivo, id):
+def guardar_login(ip, dispositivo, id, device):
     try:
         sql = text("""
                     INSERT INTO
                     acceso
-                    (ip, dispositivo, usuario, fecha_registro)
+                    (ip, dispositivo, usuario, fecha_registro, dispositivo_manual)
                     VALUES
-                    (:ip, :dispositivo, :usuario, CURRENT_TIMESTAMP)
+                    (:ip, :dispositivo, :usuario, CURRENT_TIMESTAMP, :dispositivo_manual)
                 """
                 )
         
@@ -16,7 +16,8 @@ def guardar_login(ip, dispositivo, id):
                                             {
                                                 "ip" : ip,
                                                 "dispositivo" : dispositivo,
-                                                "usuario" : id
+                                                "usuario" : id,
+                                                "dispositivo_manual" : device or None,
                                             })
         db.db.session.commit()
         return True

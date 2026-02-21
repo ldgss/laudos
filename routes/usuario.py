@@ -18,8 +18,8 @@ resultados_por_pagina = 20
 @usuario_bp.get("/usuario")
 def usuario():
     if helpers.session_on() and helpers.authorized_to("usuario"):
-        title = "Usuario"
-        section = "Usuario"
+        title = "Usuarios"
+        section = "Usuarios activos e identificacion de dispositivo"
         return render_template("usuario/index.html", 
                                title=title, 
                                section=section, 
