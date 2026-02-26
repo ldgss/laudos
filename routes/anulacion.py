@@ -16,7 +16,7 @@ resultados_por_pagina = 20
 
 @anulacion_bp.get("/anulacion")
 def anulacion():
-    if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("anulacion"):
+    if helpers.session_on() and helpers.authorized_to_correccion_anulacion() and helpers.authorized_to_submodule("anulacion"):
         title = "Anulacion"
         section = "Anulacion"
         return render_template("anulacion/index.html", title=title, section=section)
@@ -25,7 +25,7 @@ def anulacion():
     
 @anulacion_bp.post("/anulacion/agregar")
 def anulacion_agregar():
-    if helpers.session_on() and (helpers.authorized_to("mercaderia") or helpers.authorized_to("hojalata")) and helpers.authorized_to_submodule("anulacion"):
+    if helpers.session_on() and helpers.authorized_to_correccion_anulacion() and helpers.authorized_to_submodule("anulacion"):
         resultado = mod_anulacion.guardar_anulacion()
         # un mensaje largo en flash se ignora
         if resultado:
@@ -39,7 +39,7 @@ def anulacion_agregar():
     
 @anulacion_bp.post("/anulacion/detalle_t2")
 def detalle_t2():
-    if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("anulacion"):
+    if helpers.session_on() and helpers.authorized_to_correccion_anulacion() and helpers.authorized_to_submodule("anulacion"):
         resultado = mod_anulacion.detalle_t2()
         if resultado:
             return resultado
@@ -50,14 +50,14 @@ def detalle_t2():
 
 @anulacion_bp.post("/anulacion/buscar")
 def anulacion_buscar():
-    if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("anulacion"):
+    if helpers.session_on() and helpers.authorized_to_correccion_anulacion() and helpers.authorized_to_submodule("anulacion"):
         return redirect(url_for("anulacion.anulacion_listado", terminos_de_busqueda=request.form["buscar"]))
     else:
         return redirect(url_for("login.login_get"))
     
 @anulacion_bp.get("/anulacion/listado/<terminos_de_busqueda>")
 def anulacion_listado(terminos_de_busqueda):
-    if helpers.session_on() and helpers.authorized_to("mercaderia") and helpers.authorized_to_submodule("anulacion"):
+    if helpers.session_on() and helpers.authorized_to_correccion_anulacion() and helpers.authorized_to_submodule("anulacion"):
         # paginacion
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
