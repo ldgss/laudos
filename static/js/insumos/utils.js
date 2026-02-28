@@ -90,3 +90,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+
+const insumos_form = document.getElementById("insumos_form")
+
+insumos_form.addEventListener('submit', function(e) {
+
+  const codigo = document.getElementById('cta_alm');
+  const nombre = document.getElementById('den_fac');
+  const lote = document.getElementById('cod_lot');
+  
+  if (!codigo.value.trim() && !lote.value.trim() && !nombre.value.trim()) {
+    e.preventDefault();
+    alert("El codigo, lote y nombre es requerido.\nRealice la búsqueda.");
+  }
+
+});
