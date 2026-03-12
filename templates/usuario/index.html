@@ -12,7 +12,7 @@
     <ul>
         {% for u in active_users %}
         <li>
-            {{ u["usuario"] }}@{{ session["device_id"] }} - {{ u["ultima_actividad"].strftime('%Y-%m-%d %H:%M') }}
+            {{ u["usuario"] }}@{{ u["dispositivo"] }} - {{ u["ultima_actividad"].strftime('%Y-%m-%d %H:%M') }}
         </li>
         {% endfor %}
     </ul>

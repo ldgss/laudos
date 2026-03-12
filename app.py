@@ -157,6 +157,7 @@ def actualizar_ultima_actividad():
             active_users.append(
                 {
                     "usuario": session["nombre"],
+                    "dispositivo": session["device_id"],
                     "ultima_actividad": ahora
                 }
             )
