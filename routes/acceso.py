@@ -27,7 +27,7 @@ def guardar_login(request):
         dispositivo = json.dumps(dispositivo)
         device = request.cookies.get('device_id')
         result = mod_acceso.guardar_login(ip, dispositivo, session["id"], device)
-        session["device_id"] = device
+        session["device_id"] = device if device else 'no-registrado'
         if result:
             return True
     else:
