@@ -16,7 +16,7 @@
             <!-- tabla para imprimir -->
             <table id="descripcion_reacondicionado" class="table-bordered col-12 fixed-table">
                 <tr>
-                    <td style="text-align: center;">Denominacion: {{reacondicionado["reacondicionado"][0]["nueva_den"]}}</td>
+                    <td id="deno" style="text-align: center;">Denominacion: {{reacondicionado["reacondicionado"][0]["nueva_den"]}}</td>
                     <td style="text-align: center;">Cantidad Total: {{ reacondicionado["reacondicionado"] | map(attribute="cantidad") | map("int") | sum }}</td>
                 </tr>
                 <tr>

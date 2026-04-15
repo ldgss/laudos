@@ -1,5 +1,5 @@
 
-from flask import Flask
+from flask import Flask, request
 from flask_swagger import swagger
 import logging
 from logging.handlers import RotatingFileHandler
@@ -139,6 +139,8 @@ def ping():
 
 @app.before_request
 def actualizar_ultima_actividad():
+    device = request.cookies.get('device_id')
+    print(device)
     if session.get("nombre"):
         ahora = datetime.now()
         # 1 minutos de inactividad
@@ -149,6 +151,7 @@ def actualizar_ultima_actividad():
         for usuario in active_users:
             if usuario["usuario"] == session["nombre"]:
                 usuario["ultima_actividad"] = ahora
+                usuario["dispositivo"] = device if device else 'no-registrado'
                 usuario_encontrado = True
                 break
 
@@ -157,7 +160,7 @@ def actualizar_ultima_actividad():
             active_users.append(
                 {
                     "usuario": session["nombre"],
-                    "dispositivo": session["device_id"],
+                    "dispositivo": device if device else 'no-registrado',
                     "ultima_actividad": ahora
                 }
             )

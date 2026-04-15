@@ -252,6 +252,7 @@ function imprimir_new_tab(){
             const barcodeSvg = document.getElementById('barcode').outerHTML;
             let contenido;
             let id_para_estilo;
+            let deno = document.getElementById("deno").innerHTML;
 
             if (document.getElementById('descripcion')){
                 contenido = document.getElementById('descripcion').outerHTML;
@@ -277,6 +278,9 @@ function imprimir_new_tab(){
 
                 <div class="table-container">
                     ${contenido}
+                    ${deno.toLowerCase().includes("tetra") ? `
+                        <div class="deno">Estimado cliente: se recomienda estibar con un máximo de 11 niveles de <br>
+                        altura para preservar el producto en óptimas condiciones.</div>` : ""}
                 </div>
 
                 <style>
@@ -311,6 +315,12 @@ function imprimir_new_tab(){
                     #${id_para_estilo} thead {
                         background-color: #4CAF50;
                         color: white;
+                    }
+                    
+                    .deno {
+                        text-align:center;
+                        font-weight:bold;
+                        font-style:italic;
                     }
                 </style>
 
