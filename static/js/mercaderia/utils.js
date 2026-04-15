@@ -252,7 +252,10 @@ function imprimir_new_tab(){
             const barcodeSvg = document.getElementById('barcode').outerHTML;
             let contenido;
             let id_para_estilo;
-            let deno = document.getElementById("deno").innerHTML;
+            let deno = document.getElementById("deno")
+            if(deno){
+                deno = deno.innerHTML;
+            }
 
             if (document.getElementById('descripcion')){
                 contenido = document.getElementById('descripcion').outerHTML;
