@@ -281,11 +281,6 @@ function imprimir_new_tab(){
 
                 <div class="table-container">
                     ${contenido}
-                    ${deno.toLowerCase().includes("tetra") ? `
-                        <div class="deno" id="${id_para_estilo}">
-                            <span id="atencion">⚠️</span> Estimado cliente: se recomienda estibar con un máximo de 11 niveles de
-                            altura para preservar el producto en óptimas condiciones.
-                        </div>` : ""}
                 </div>
 
                 <style>
