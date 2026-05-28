@@ -9,9 +9,6 @@ from routes import acceso
 from models import mod_login
 from utils import helpers
 from models import mod_mercaderia
-from models import mod_hojalata
-
-
 
 login_bp = Blueprint('login', __name__)
 
@@ -32,23 +29,23 @@ def login_post():
     if user:
         session.permanent = True  # Marca la sesión como permanente
         session.update(user)
-        acceso.guardar_login(request)
-        
-        productos_arballon = mod_mercaderia.listar_productos_arballon()
-        productos_dict = [
-            {'cod_mae': cod_mae.strip(), 'den': den.strip(), 'cod_cls': cod_cls}
-            for cod_mae, den, cod_cls in productos_arballon
-        ]
-        session["productos_arballon"] = productos_dict
-        productos_arballon_hojalata = mod_hojalata.listar_productos_arballon_hojalata()
-        productos_dict_hojalata = [
-            {'cod_mae': cod_mae.strip(), 'den': den.strip(), 'cod_cls': cod_cls}
-            for cod_mae, den, cod_cls in productos_arballon_hojalata
-        ]
-        session["productos_arballon_hojalata"] = productos_dict_hojalata
-        return redirect(url_for("index.index"))
+        if helpers.esta_activo():    
+            acceso.guardar_login(request)
+            
+            productos_arballon = mod_mercaderia.listar_productos_arballon()
+            productos_dict = [
+                {'cod_mae': cod_mae.strip(), 'den': den.strip(), 'cod_cls': cod_cls}
+                for cod_mae, den, cod_cls in productos_arballon
+            ]
+            session["productos_arballon"] = productos_dict
+            
+            return redirect(url_for("index.index"))
+        else:
+            session.clear()
+            flash("El usuario no esta activo")
+            return redirect(url_for("login.login_get"))
     else:
-        flash("usuario o contraseña incorrecta")
+        flash("Usuario o contraseña incorrecta")
         return redirect(url_for("login.login_get"))
 
 @login_bp.get("/logout")

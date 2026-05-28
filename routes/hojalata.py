@@ -8,24 +8,61 @@ from models import mod_mercaderia
 from flask import flash
 from flask import request
 from flask import session
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 
 hojalata_bp = Blueprint("hojalata", __name__)
 # cantidad para paginacion
-resultados_por_pagina = 10
+resultados_por_pagina = 20
+title = "Hojalata"
 
 @hojalata_bp.get("/hojalata")
 def hojalata():
     if helpers.session_on() and helpers.authorized_to("hojalata"):
-        title = "Hojalata"
         section = "Hojalata"
         return render_template("hojalata/index.html", title=title, section=section)
     else:
         return redirect(url_for("login.login_get"))
     
-
+@hojalata_bp.get("/hojalata/agregar")
+def hojalata_agregar():
+    if helpers.session_on() and helpers.authorized_to("hojalata"):
+        proximo_id = mod_hojalata.get_ultimo_id()
+        proximo_pallet_interno = mod_hojalata.get_ultimo_pallet_interno()
+        section = "Agregar hojalata"
+        return render_template("hojalata/agregar.html", 
+                               title=title, section=section, 
+                               proximo_id=proximo_id,
+                               proximo_pallet_interno=proximo_pallet_interno,
+                               productos_arballon=session["productos_arballon"])
+    else:
+        return redirect(url_for("login.login_get"))
+    
+@hojalata_bp.post("/hojalata/agregar")
+def hojalata_agregar_post():
+    if helpers.session_on() and helpers.authorized_to("hojalata"):
+        vto = mod_mercaderia.get_vencimiento(request.form)
+        lote = f"{request.form["lote_a"]}-{request.form["lote_b"]}-{request.form["lote_c"]}"
+        barcode = mod_hojalata.guardar_hojalata(request.form, vto, lote)
+        if barcode:
+            # enviar a imprimir/detalle el producto recien creado
+            return redirect(url_for("hojalata.hojalata_imprimir", numero_unico=request.form["numero_unico"]))
+        else:
+            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
+            return redirect(url_for("hojalata.hojalata_agregar"))
+    else:
+        return redirect(url_for("login.login_get"))
+    
+@hojalata_bp.get("/hojalata/imprimir/<numero_unico>")
+def hojalata_imprimir(numero_unico):
+    if helpers.session_on() and helpers.authorized_to("hojalata"):
+        hojalata = mod_hojalata.get_hojalata(numero_unico)
+        section = "Imprimir laudo hojalata"
+        return render_template("hojalata/imprimir.html", 
+                               title=title, section=section, 
+                               hojalata=hojalata)
+    else:
+        return redirect(url_for("login.login_get"))
+    
 @hojalata_bp.post("/hojalata/buscar")
 def hojalata_buscar():
     if helpers.session_on() and helpers.authorized_to("hojalata"):
@@ -39,83 +76,15 @@ def hojalata_listado(terminos_de_busqueda):
         # paginacion
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
-      
-        resultado = mod_hojalata.get_listado(terminos_de_busqueda, resultados_por_pagina, offset)
-        title = "Hojalata"
-        section = "Hojalata"
+        
+        resultado = mod_hojalata.get_listado_hojalata(terminos_de_busqueda, resultados_por_pagina, offset)
+        section = "Listado de hojalata"
         return render_template("hojalata/listado.html", 
                                max=max,
                                min=min,
+                               offset=offset,
                                title=title, section=section, 
                                terminos_de_busqueda=terminos_de_busqueda,
                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
     else:
         return redirect(url_for("login.login_get"))
-    
-@hojalata_bp.get("/hojalata/agregar")
-def hojalata_agregar():
-    if helpers.session_on() and helpers.authorized_to("hojalata"):
-        proximo_id = mod_hojalata.get_ultimo_id()
-        title = "Hojalata"
-        section = "Hojalata"
-        return render_template("hojalata/agregar.html", 
-                               title=title, section=section, 
-                               proximo_id=proximo_id,
-                               productos_arballon_hojalata=session["productos_arballon_hojalata"])
-    else:
-        return redirect(url_for("login.login_get"))
-    
-@hojalata_bp.post("/hojalata/agregar")
-def hojalata_agregar_post():
-    if helpers.session_on() and helpers.authorized_to("hojalata"):
-        # obtenemos el id solo del vencimiento necesario
-        vto = mod_mercaderia.get_vencimiento(request.form)
-        # el insert devuelve True si todo salio bien
-        barcode = mod_hojalata.insert_mercaderia(request.form, vto)
-        title = "Hojalata"
-        section = "Hojalata"
-        if barcode:
-            # enviar a imprimir/detalle el producto recien creado
-            return redirect(url_for("hojalata.hojalata_imprimir", numero_unico=request.form["numero_unico"]))
-        else:
-            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
-            return redirect(url_for("hojalata.hojalata_agregar"))
-        
-@hojalata_bp.get("/hojalata/imprimir/<numero_unico>")
-def hojalata_imprimir(numero_unico):
-    if helpers.session_on() and helpers.authorized_to("hojalata"):
-        hojalata = mod_hojalata.get_hojalata(numero_unico)
-        title = "Hojalata"
-        section = "Hojalata"
-        return render_template("hojalata/imprimir.html", 
-                               title=title, section=section, 
-                               hojalata=hojalata)
-    else:
-        return redirect(url_for("login.login_get"))
-    
-@hojalata_bp.get("/hojalata/kpi")
-def hojalata_kpi():
-    if helpers.session_on() and helpers.authorized_to("hojalata"):
-        title = "Hojalata"
-        section = "Hojalata"
-        return render_template("hojalata/kpi.html", 
-                               title=title, section=section,)
-    else:
-        return redirect(url_for("login.login_get"))
-    
-# @hojalata_bp.get("/hojalata/kpi/<terminos_de_busqueda>")
-# def hojalata_kpi(terminos_de_busqueda):
-#     if helpers.session_on() and helpers.authorized_to("hojalata"):
-#         # paginacion
-#         pagina = request.args.get('page', 1, type=int)
-#         offset = (pagina - 1) * resultados_por_pagina
-        
-#         resultado = mod_hojalata.get_listado(terminos_de_busqueda, resultados_por_pagina, offset)
-#         title = "Kpi"
-#         section = "Kpi"
-#         return render_template("hojalata/kpi.html", 
-#                                title=title, section=section, 
-#                                terminos_de_busqueda=terminos_de_busqueda,
-#                                listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
-#     else:
-#         return redirect(url_for("login.login_get"))

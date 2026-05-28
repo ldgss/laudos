@@ -1,0 +1,162 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/hys/utils.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+
+<form action="agregar" method="post">
+
+    <div class="row m-4 justify-content-center">
+        <label for="afectado" class="col-sm-2 col-form-label">Afectado</label>
+        <div class="col-sm-5">
+            <textarea required class="form-control" id="afectado" name="afectado" 
+            rows="4" maxlength="100" placeholder="Ingrese nombre y apellido"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="incidente" class="col-sm-2 col-form-label">Incidente</label>
+        <div class="col-sm-5">
+            <textarea required class="form-control" id="incidente" name="incidente" 
+            rows="4" maxlength="1000" placeholder="Ingrese el incidente"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="sector" class="col-sm-2 col-form-label">Sector</label>
+        <div class="col-sm-5">
+            <textarea required class="form-control" id="sector" name="sector" 
+            rows="4" maxlength="1000" placeholder="Ingrese el sector de trabajo"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="tarea_que_realizaba" class="col-sm-2 col-form-label">Tarea que realizaba</label>
+        <div class="col-sm-5">
+            <textarea required class="form-control" id="tarea_que_realizaba" name="tarea_que_realizaba" 
+            rows="4" maxlength="1000" placeholder="Ingrese la tarea que realizaba al momento del incidente"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="detalle" class="col-sm-2 col-form-label">Detalle</label>
+        <div class="col-sm-5">
+            <textarea required class="form-control" id="detalle" name="detalle" 
+            rows="4" maxlength="1000" placeholder="Ingrese detalles"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">Usa EPP (elementos de protección)</label>
+        </div>
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" checked
+                id="epp_si_no" name="epp_si_no" role="switch">
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">El área estaba limpia</label>
+        </div>
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" checked
+                id="area_limpia_si_no" name="area_limpia_si_no" role="switch">
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">Se informó a la ART</label>
+        </div>
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" checked
+                id="informado_art_si_no" name="informado_art_si_no" role="switch">
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">Cuenta con las habilidades</label>
+        </div>
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" checked
+                id="habilidades_si_no" name="habilidades_si_no" role="switch">
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label class="col-sm-2" for="gravedad">Gravedad</label>
+        <div class="col-sm-5">
+            <input list="gravedad_opciones" required type="text" 
+            class="form-control" name="gravedad" id="gravedad"
+            onblur="validarGravedad();"
+            >
+            <datalist id="gravedad_opciones">
+                <option value="a"></option>
+                <option value="b"></option>
+                <option value="c"></option>
+            </datalist>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label class="col-sm-2" for="gravedad">Tipo de atención</label>
+        <div class="col-sm-5">
+            <input list="tipo_de_atencion_opciones" required type="text" 
+            class="form-control" name="tipo_de_atencion" id="tipo_de_atencion"
+            onblur="validarTipoDeAtencion();"
+            >
+            <datalist id="tipo_de_atencion_opciones">
+                <option value="Servicio medicina interna"></option>
+                <option value="Denuncia ART"></option>
+                <option value="Servicio público hospital"></option>
+            </datalist>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label class="col-sm-2" for="gravedad">Agente origen</label>
+        <div class="col-sm-5">
+            <input list="agente_origen_opciones" required type="text" 
+            class="form-control" name="agente_origen" id="agente_origen"
+            onblur="validarAgenteOrigen();"
+            >
+            <datalist id="agente_origen_opciones">
+                <option value="Máquina"></option>
+                <option value="Transporte"></option>
+                <option value="Sustancias"></option>
+                <option value="Ambiente"></option>
+            </datalist>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="testigos" class="col-sm-2 col-form-label">Testigos</label>
+        <div class="col-sm-5">
+            <textarea required class="form-control" id="testigos" name="testigos" 
+            rows="4" maxlength="1000" placeholder="Ingrese testigos"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/bascula/utils.js")}}"></script>
+    <link href="{{url_for("static", filename="css/bascula/utils.css")}}" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+    
+    <div class="row m-4 justify-content-center">
+        <div class="descripcion_bascula_container col-lg-6 col-md-9 col-sm-12" role="alert">
+            <table id="descripcion_bascula" class="">
+                <tr>
+                    <th>FECHA:</th>
+                    <td>{{ bascula.fecha.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                <tr>
+                    {% set dias = {
+                        'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles',
+                        'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado', 'Sunday': 'Domingo'
+                    } %}
+                    <th>DÍA:</th>
+                    <td>{{ dias[bascula.fecha.strftime('%A')] }}</td>
+                </tr>
+                <tr>
+                    <th>HORA:</th>
+                    <td>{{ bascula.fecha.strftime('%H:%M:%S') }}</td>
+                </tr>
+                <th>MODO:</th>
+                    <td>{{bascula.modo}}</td>
+                </tr>
+                <tr>
+                    <th>CHOFER:</th>
+                    <td>{{bascula.chofer}}</td>
+                </tr>
+                <tr>
+                    <th>DOMINIO:</th>
+                    <td>{{bascula.dominio}}</td>
+                </tr>
+                <tr>
+                    <th>IPM:</th>
+                    <td>{{bascula.ipm}}</td>
+                </tr>
+                <tr class="peso">
+                    <th>PESO BASCULA:</th>
+                    <td>{{bascula.peso}} KG</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="m-2 text-center">
+            <button class="btn btn-primary" onclick="print()">Imprimir</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+            
+        </div>
+    </div>
+{% endblock %}

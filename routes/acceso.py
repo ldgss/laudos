@@ -25,9 +25,9 @@ def guardar_login(request):
         # devicedetector obj no es serializable, por eso lo casteo
         dispositivo = f"{dispositivo.all_details}"
         dispositivo = json.dumps(dispositivo)
-        
-        result = mod_acceso.guardar_login(ip, dispositivo, session["id"])
-        
+        device = request.cookies.get('device_id')
+        result = mod_acceso.guardar_login(ip, dispositivo, session["id"], device)
+        # session["device_id"] = device if device else 'no-registrado'
         if result:
             return True
     else:

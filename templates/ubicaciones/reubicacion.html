@@ -1,0 +1,48 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/ubicaciones/utils.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+
+<form action="reubicar" method="post" onsubmit="return validarNumerosUnicos()">
+    
+    <div class="row m-4 justify-content-center">
+        <label for="ubicacion" class="col-sm-2 col-form-label">Nueva ubicación</label>
+        <div class="col-sm-5">
+            <input list="ubicacion_nombre" required type="text" 
+            class="form-control" name="ubicacion" id="ubicacion"
+            onblur="validarUbicacion()" oninput="actualizarValoresOcultos()">
+            <input type="hidden" id="id_ubicacion" name="id_ubicacion">
+            <datalist id="ubicacion_nombre">
+                {% for u in ubicacion_nombre %}
+                <option value="{{ u.posicion | trim }} - {{u.sector | trim}}" 
+                data-cod-id="{{ u.id | trim }}">
+                </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="ubicacion" class="col-sm-2 col-form-label">Números únicos a reubicar</label>
+        <div class="col-sm-5">
+<textarea rows="20" class="form-control" name="numeros_unicos" id="numeros_unicos">
+2025-T1-XXXXXX
+2025-T1-YYYYYY
+2025-T1-ZZZZZZ</textarea>
+        </div>
+    </div>
+    
+    
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" id="btn-enviar" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

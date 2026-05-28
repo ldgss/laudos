@@ -42,6 +42,7 @@ def get_ubicacion_nombre():
         sql = text("""
                     SELECT *
                     FROM ubicacion_nombre
+                    ORDER BY posicion ASC
                    ;
                 """
                 )
@@ -177,6 +178,7 @@ WITH ubicacion_con_row AS (
         u.ubicacion_profundidad,
         u.ubicacion_altura,
         u.reacondicionado,
+        r.nueva_den as reacondicionado_nueva_den,
         u_n.id as ubicacion_fila_2,
         u_n.posicion,
         u_n.sector,
@@ -185,7 +187,7 @@ WITH ubicacion_con_row AS (
         ROW_NUMBER() OVER (
             PARTITION BY 
                 u.mercaderia, u.reacondicionado,
-                u.extracto
+                u.extracto, u.hojalata
             ORDER BY u.fecha_registro DESC
         ) AS rn
     FROM ubicacion u
@@ -194,6 +196,7 @@ WITH ubicacion_con_row AS (
     left join mercaderia m on m.numero_unico = u.mercaderia
     left join hojalata h on h.numero_unico = u.hojalata
     left join extracto e on e.numero_unico = u.extracto
+    left join reacondicionado r on r.numero_unico = u.reacondicionado
     WHERE 
         {condicion_final_ilike}
 )
@@ -211,6 +214,7 @@ SELECT
         u.ubicacion_profundidad,
         u.ubicacion_altura,
         u.reacondicionado,
+        r.nueva_den as reacondicionado_nueva_den,
         u_n.id as ubicacion_fila_2,
         u_n.posicion,
         u_n.sector,
@@ -222,6 +226,7 @@ LEFT JOIN usuario ON u.responsable = usuario.id
 left join mercaderia m on m.numero_unico = u.mercaderia
 left join hojalata h on h.numero_unico = u.hojalata
 left join extracto e on e.numero_unico = u.extracto
+left join reacondicionado r on r.numero_unico = u.reacondicionado
 WHERE u.rn = 1
 ORDER BY u.fecha_registro DESC
 LIMIT :limit OFFSET :offset;
@@ -258,7 +263,7 @@ WITH ubicacion_con_row AS (
         ROW_NUMBER() OVER (
             PARTITION BY 
                 u.mercaderia, u.reacondicionado,
-                u.extracto
+                u.extracto, u.hojalata
             ORDER BY u.fecha_registro DESC
         ) AS rn
     FROM ubicacion u
@@ -324,6 +329,176 @@ def anular_ubicaciones():
                                             {
                                                 "id": request.form["id"]                                                
                                             })
+        db.db.session.commit()
+        return True
+    except Exception as e:
+        db.db.session.rollback()
+        print(f"Error: {e}")
+        return None
+    
+def reubicar_u():
+    posicion = request.form.get('id_ubicacion')
+    numeros_unicos = request.form.get('numeros_unicos')
+    try:
+        numeros_unicos = numeros_unicos.split()
+        for numero in numeros_unicos:
+            if 'T1' in numero:
+                sql = text("""
+                    UPDATE ubicacion
+                    SET ubicacion_fila=:posicion
+                    WHERE mercaderia=:numero_unico
+                """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "numero_unico": numero,
+                            "posicion": posicion
+                        })
+            elif 'T2' in numero:
+                sql = text("""
+                    UPDATE ubicacion
+                    SET ubicacion_fila=:posicion
+                    WHERE reacondicionado=:numero_unico
+                """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "numero_unico": numero,
+                            "posicion": posicion
+                        })
+            elif 'E1' in numero:
+                sql = text("""
+                    UPDATE ubicacion
+                    SET ubicacion_fila=:posicion
+                    WHERE extracto=:numero_unico
+                """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "numero_unico": numero,
+                            "posicion": posicion
+                        })
+            elif 'H1' in numero:
+                sql = text("""
+                    UPDATE ubicacion
+                    SET ubicacion_fila=:posicion
+                    WHERE hojalata=:numero_unico
+                """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "numero_unico": numero,
+                            "posicion": posicion
+                        })
+            else:
+                return False
+        db.db.session.commit()
+        return True
+    except Exception as e:
+        db.db.session.rollback()
+        print(f"Error: {e}")
+        return None
+    
+def reubicar_i():
+    posicion = request.form.get('id_ubicacion')
+    numeros_unicos = request.form.get('numeros_unicos')
+    try:
+        numeros_unicos = numeros_unicos.split()
+        for numero in numeros_unicos:
+            if 'T1' in numero:
+                sql = text("""
+                    INSERT INTO ubicacion
+                        (ubicacion_fila, mercaderia, hojalata, extracto, 
+                        responsable, fecha_registro, insumo_envase, 
+                        ubicacion_profundidad, ubicacion_altura, reacondicionado)
+                    VALUES(:ubicacion_fila, :mercaderia, :hojalata, :extracto, 
+                        :responsable, CURRENT_TIMESTAMP, :insumo_envase, 
+                        :ubicacion_profundidad, :ubicacion_altura, :reacondicionado);
+                    """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "ubicacion_fila": posicion,
+                            "mercaderia": numero,
+                            "hojalata": None,
+                            "extracto": None,
+                            "responsable": session["id"],
+                            "insumo_envase": None,
+                            "ubicacion_profundidad": 1,
+                            "ubicacion_altura": 1,
+                            "reacondicionado": None
+                        })
+            elif 'T2' in numero:
+                sql = text("""
+                    INSERT INTO ubicacion
+                        (ubicacion_fila, mercaderia, hojalata, extracto, 
+                        responsable, fecha_registro, insumo_envase, 
+                        ubicacion_profundidad, ubicacion_altura, reacondicionado)
+                    VALUES(:ubicacion_fila, :mercaderia, :hojalata, :extracto, 
+                        :responsable, CURRENT_TIMESTAMP, :insumo_envase, 
+                        :ubicacion_profundidad, :ubicacion_altura, :reacondicionado);
+                    """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "ubicacion_fila": posicion,
+                            "mercaderia": None,
+                            "hojalata": None,
+                            "extracto": None,
+                            "responsable": session["id"],
+                            "insumo_envase": None,
+                            "ubicacion_profundidad": 1,
+                            "ubicacion_altura": 1,
+                            "reacondicionado": numero
+                        })
+            elif 'E1' in numero:
+                sql = text("""
+                    INSERT INTO ubicacion
+                        (ubicacion_fila, mercaderia, hojalata, extracto, 
+                        responsable, fecha_registro, insumo_envase, 
+                        ubicacion_profundidad, ubicacion_altura, reacondicionado)
+                    VALUES(:ubicacion_fila, :mercaderia, :hojalata, :extracto, 
+                        :responsable, CURRENT_TIMESTAMP, :insumo_envase, 
+                        :ubicacion_profundidad, :ubicacion_altura, :reacondicionado);
+                    """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "ubicacion_fila": posicion,
+                            "mercaderia": None,
+                            "hojalata": None,
+                            "extracto": numero,
+                            "responsable": session["id"],
+                            "insumo_envase": None,
+                            "ubicacion_profundidad": 1,
+                            "ubicacion_altura": 1,
+                            "reacondicionado": None
+                        })
+            elif 'H1' in numero:
+                sql = text("""
+                    INSERT INTO ubicacion
+                        (ubicacion_fila, mercaderia, hojalata, extracto, 
+                        responsable, fecha_registro, insumo_envase, 
+                        ubicacion_profundidad, ubicacion_altura, reacondicionado)
+                    VALUES(:ubicacion_fila, :mercaderia, :hojalata, :extracto, 
+                        :responsable, CURRENT_TIMESTAMP, :insumo_envase, 
+                        :ubicacion_profundidad, :ubicacion_altura, :reacondicionado);
+                    """
+                )
+                result = db.db.session.execute(sql,
+                        {
+                            "ubicacion_fila": posicion,
+                            "mercaderia": None,
+                            "hojalata": numero,
+                            "extracto": None,
+                            "responsable": session["id"],
+                            "insumo_envase": None,
+                            "ubicacion_profundidad": 1,
+                            "ubicacion_altura": 1,
+                            "reacondicionado": None
+                        })
+            else:
+                return False
         db.db.session.commit()
         return True
     except Exception as e:

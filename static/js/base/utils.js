@@ -15,3 +15,75 @@
 //         $('#loading').hide(); 
 //     });
 // });
+
+// autofocus en el primer input
+
+window.addEventListener("DOMContentLoaded", () => {
+    const inputs = document.querySelectorAll("form input:not([type='hidden']), form textarea, form select");
+
+    for (let input of inputs) {
+      const isDisabled = input.disabled;
+      const isReadOnly = input.readOnly;
+      const hasValue = input.value && input.value.trim() !== "";
+
+      if (!isDisabled && !isReadOnly && !hasValue) {
+        input.focus();
+        break;
+      }
+    }
+
+    // Versión generalizada para múltiples tipos de input
+    ['date', 'time', 'datetime-local'].forEach(type => {
+        document.querySelectorAll(`input[type="${type}"]`).forEach(input => {
+            input.addEventListener('click', function() {
+                this.showPicker();
+            });
+            
+            input.addEventListener('focus', function() {
+                this.showPicker();
+            });
+            
+            input.style.cursor = 'pointer';
+        });
+    });
+    
+});
+
+// chequear la conexion cada 5 segundos
+
+let isDisconnected = false;
+let toastEl = document.getElementById("connection-toast");
+let toastBody = document.getElementById("toast-message");
+let toast = new bootstrap.Toast(toastEl, { autohide: false });
+
+function checkConnection() {
+    fetch("/ping", { method: "GET", cache: "no-store" })
+        .then(response => {
+            if (response.ok) {
+                if (isDisconnected) {
+                    updateToast("Conectado nuevamente", "bg-success");
+                    isDisconnected = false;
+                }
+            } else {
+                showDisconnectionToast();
+            }
+        })
+        .catch(() => {
+            showDisconnectionToast();
+        });
+}
+
+function showDisconnectionToast() {
+    if (!isDisconnected) {
+        updateToast("Sin conexión al servidor.", "bg-danger");
+        isDisconnected = true;
+    }
+}
+
+function updateToast(message, className) {
+    toastBody.textContent = message;
+    toastEl.className = `toast align-items-center text-white border-0 ${className}`;
+    toast.show();
+}
+
+setInterval(checkConnection, 10000);

@@ -8,6 +8,11 @@
 {% block content %}
 
 <div class="container col-sm-12 col-md-8 col-lg-6">
+    {% if session["dashboard"] %}
+        <div class="m-3">
+            <a class="btn btn-outline-danger col-12" href="{{ url_for('reporte.reporte_dashboard') }}">Panel</a>
+        </div>
+    {% endif %}
     {% if session["mercaderia"] %}
         <div class="m-3">
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#envasadoModal">Semielaborado</button>
@@ -15,14 +20,24 @@
         <div class="m-3">
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#etiquetadoModal">Etiquetado</button>
         </div>
-        <div class="m-3">
+        <!-- <div class="m-3">
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#encajonadoModal">Encajonado</button>
-        </div>
+        </div> -->
         <div class="m-3">
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#reacondicionadoModal">Reacondicionado</button>
         </div>
         <div class="m-3">
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#extractoModal">Extracto</button>
+        </div>
+    {% endif %}
+    {% if session["hojalata"] %}
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#hojalataModal">Hojalata</button>
+        </div>
+    {% endif %}
+    {% if session["bloqueo"] %}
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#bloqueoModal">Bloqueo</button>
         </div>
     {% endif %}
     {% if session["insumo"] %}
@@ -33,6 +48,11 @@
     {% if session["ubicacion"] %}
         <div class="m-3">
             <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#ubicacionModal">Ubicaciones</button>
+        </div>
+    {% endif %}
+    {% if session["despacho"] %}
+        <div class="m-3">
+            <button class="btn btn-outline-danger col-12" data-bs-toggle="modal" data-bs-target="#despachoModal">Despachos</button>
         </div>
     {% endif %}
     <div class="m-3">
@@ -289,7 +309,103 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal hojalata -->
+  <div class="modal fade" id="hojalataModal" tabindex="-1" aria-labelledby="hojalataModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="hojalataModalLabel">Hojalata</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+            <form method="POST" action="/reporte/exportar/hojalata">
+                <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+                <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+            
+                <label class="col-form-label" for="fecha_final">Fecha final</label>
+                <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+            
+                <label class="col-form-label" for="responsable">Responsable</label>
+                <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+                
+                <label class="col-form-label" for="denominacion">Denominacion</label>
+                <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
+                
+                <label class="col-form-label" for="lote_inicial">Lote inicial</label>
+                <input class="form-control" type="text" maxlength="20" name="lote_inicial" id="lote_inicial">
+
+                <label class="col-form-label" for="lote_final">Lote final</label>
+                <input class="form-control" type="text" maxlength="20" name="lote_final" id="lote_final">
+
+                <label class="col-form-label" for="numero_pallet_interno_inicial">Numero de pallet interno inicial</label>
+                <input class="form-control" type="text" maxlength="20" name="numero_pallet_interno_inicial" id="numero_pallet_interno_inicial">
+
+                <label class="col-form-label" for="numero_pallet_interno_final">Numero de pallet interno final</label>
+                <input class="form-control" type="text" maxlength="20" name="numero_pallet_interno_final" id="numero_pallet_interno_final">
+
+                <div class="row m-3">
+                    <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+                </div>
+            </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
   
+  <!-- Modal bloqueo -->
+  <div class="modal fade" id="bloqueoModal" tabindex="-1" aria-labelledby="bloqueoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bloqueoModalLabel">Bloqueo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+            <form method="POST" action="/reporte/exportar/bloqueo">
+                <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+                <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+            
+                <label class="col-form-label" for="fecha_final">Fecha final</label>
+                <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+            
+                <label class="col-form-label" for="estado">Estado</label>
+                <input class="form-control" type="text" maxlength="20" name="estado" id="estado">
+                
+                <label class="col-form-label" for="numero_planilla">Numero de planilla</label>
+                <input class="form-control" type="text" maxlength="20" name="numero_planilla" id="numero_planilla">
+                
+                <label class="col-form-label" for="motivo">Motivo</label>
+                <input class="form-control" type="text" maxlength="20" name="motivo" id="motivo">
+                
+                <label class="col-form-label" for="observaciones">Observaciones</label>
+                <input class="form-control" type="text" maxlength="20" name="observaciones" id="observaciones">
+                
+                <label class="col-form-label" for="responsable">Responsable</label>
+                <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+                
+                <label class="col-form-label" for="numero_unico">Numero unico</label>
+                <input class="form-control" type="text" maxlength="20" name="numero_unico" id="numero_unico">
+                
+                <label class="col-form-label" for="denominacion">Denominacion</label>
+                <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
+                
+                <label class="col-form-label" for="lote">Lote</label>
+                <input class="form-control" type="text" maxlength="20" name="lote" id="lote">
+
+                <div class="row m-3">
+                    <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+                </div>
+            </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Ubicaciones -->
   <div class="modal fade" id="ubicacionModal" tabindex="-1" aria-labelledby="ubicacionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -310,6 +426,12 @@
                 <label class="col-form-label" for="responsable">Responsable</label>
                 <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
                 
+                <label class="col-form-label" for="lote_inicial">Lote inicial</label>
+                <input class="form-control" type="text" maxlength="20" name="lote_inicial" id="lote_inicial">
+
+                <label class="col-form-label" for="lote_final">Lote final</label>
+                <input class="form-control" type="text" maxlength="20" name="lote_final" id="lote_final">
+
                 <label class="col-form-label" for="denominacion">Denominacion</label>
                 <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
 
@@ -323,4 +445,51 @@
     </div>
   </div>
 
+  <!-- Modal despachos -->
+  <div class="modal fade" id="despachoModal" tabindex="-1" aria-labelledby="despachoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="despachoModalLabel">Despachos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+            <form method="POST" action="/reporte/exportar/despacho">
+                <label class="col-form-label" for="fecha_inicial">Fecha inicial</label>
+                <input class="form-control" type="datetime-local" name="fecha_inicial" id="fecha_inicial">
+            
+                <label class="col-form-label" for="fecha_final">Fecha final</label>
+                <input class="form-control" type="datetime-local" name="fecha_final" id="fecha_final">
+            
+                <label class="col-form-label" for="responsable">Responsable</label>
+                <input class="form-control" type="text" maxlength="20" name="responsable" id="responsable">
+                
+                <label class="col-form-label" for="fletero_codigo">Fletero codigo</label>
+                <input class="form-control" type="text" maxlength="20" name="fletero_codigo" id="fletero_codigo">
+                
+                <label class="col-form-label" for="fletero_nombre">Fletero nombre</label>
+                <input class="form-control" type="text" maxlength="20" name="fletero_nombre" id="fletero_nombre">
+
+                <label class="col-form-label" for="lote_inicial">Lote inicial</label>
+                <input class="form-control" type="text" maxlength="20" name="lote_inicial" id="lote_inicial">
+
+                <label class="col-form-label" for="lote_final">Lote final</label>
+                <input class="form-control" type="text" maxlength="20" name="lote_final" id="lote_final">
+                
+                <label class="col-form-label" for="observaciones">Observaciones</label>
+                <input class="form-control" type="text" maxlength="200" name="observaciones" id="observaciones">
+                
+                <label class="col-form-label" for="denominacion">Denominacion</label>
+                <input class="form-control" type="text" maxlength="20" name="denominacion" id="denominacion">
+
+                <div class="row m-3">
+                    <button type="submit" class="form-control btn btn-success">Exportar reporte</button>
+                </div>
+            </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

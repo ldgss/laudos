@@ -13,21 +13,40 @@
     </div>
     <div class="row m-4 justify-content-center">
         <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
-            <!-- tabla para impresion -->
-            <table id="descripcion_reacondicionado" class="table-bordered col-12">
+            <!-- tabla para imprimir -->
+            <table id="descripcion_reacondicionado" class="table-bordered col-12 fixed-table">
                 <tr>
-                    <td>Denominacion: {{reacondicionado["reacondicionado"][0]["nueva_den"]}}</td>
-                    <td>Cantidad Total: {{ reacondicionado["reacondicionado"] | map(attribute="cantidad") | map("int") | sum }}</td>
+                    <td id="deno" style="text-align: center;">Denominacion: {{reacondicionado["reacondicionado"][0]["nueva_den"]}}</td>
+                    <td style="text-align: center;">Cantidad Total: {{ reacondicionado["reacondicionado"] | map(attribute="cantidad") | map("int") | sum }}</td>
                 </tr>
                 <tr>
                     <td colspan="3" style="background-color: #f0f0f0; height: 10px;"></td>
                 </tr>                
 
-                {% for r in reacondicionado["reacondicionado"]%}
-                {% if r["cantidad"]|int > 0 %}
+                {% for item in reacondicionado["reacondicionado"]%}
+                {% if item["cantidad"]|int > 0 %}
                 <tr>
-                    <td>Numero único: {{r["numero_unico_original"]}}</td>
-                    <td>Cantidad: {{r["cantidad"]}}</td>
+                    <td style="display: flex;justify-content: space-around;">
+                        <span>
+                            {{item["m_numero_unico"] or item["e_numero_unico"] or item["m2_numero_unico"] or item["e2_numero_unico"]}}
+                        </span>
+
+                        <span>
+                            <strong>
+                                {{item["m_lote"] or item["e_lote"] or item["m2_lote"] or item["e2_lote"]}}
+                            </strong>
+                        </span>
+
+                        <span>
+                            {{item["m_vto_elaboracion"] or item["m_vto_etiquetado"] or 
+                            item["e_vto"] or 
+                            item["m2_vto_elaboracion"] or item["m2_vto_etiquetado"] or 
+                            item["e2_vto"]
+                            }}
+                        </span>
+
+                    </td>
+                    <td style="text-align: center;">Cantidad: {{item["cantidad"]}}</td>
                 </tr>
                 
                 <tr>
@@ -37,86 +56,84 @@
                 {% endfor %}
             </table>
             <!-- tabla para mostrar -->
-            <table class="table-bordered col-12">
+            <table class="table-bordered col-12 fixed-table">
+                <!-- Datos principales del producto -->
                 <tr>
-                    <th>Denominacion:</th>
-                    <td>{{reacondicionado["reacondicionado"][0]["nueva_den"]}}</td>
+                    <td>Número único</td>
+                    <td>{{ reacondicionado["reacondicionado"][0]["numero_unico"] }}</td>
                 </tr>
                 <tr>
-                    <th>Tipo de reacondicionado:</th>
-                    <td>{{reacondicionado["reacondicionado"][0]["tipo_reacondicionado"]}}</td>
+                    <td>Denominación</td>
+                    <td>{{ reacondicionado["reacondicionado"][0]["nueva_den"] }}</td>
                 </tr>
                 <tr>
-                    <th>Cantidad Total:</th>
-                    <td>{{ reacondicionado["reacondicionado"] | map(attribute="cantidad") | map("int") | sum }}</td>
+                    <td>Tipo de reacondicionado</td>
+                    <td>{{ reacondicionado["reacondicionado"][0]["tipo_reacondicionado"] }}</td>
                 </tr>
                 <tr>
-                    <th>Observacion:</th>
-                    <td>{{ reacondicionado["reacondicionado"][0]["observaciones"]}}</td>
-                </tr>
-                
-
-                <tr>
-                    <td colspan="3" style="background-color: #f0f0f0; height: 5px;"></td>
-                </tr>                
-
-                {% for r in reacondicionado["reacondicionado"]%}
-                {% if r["cantidad"]|int > 0 %}
-                <tr>
-                    <th>Denominacion:</th>
-                    <td>{{r["den"]}}</td>
+                    <td>Cantidad</td>
+                        <td>
+                            {{ reacondicionado["reacondicionado"] | sum(attribute="cantidad") }}
+                        </td>
                 </tr>
                 <tr>
-                    <th>Numero único:</th>
-                    <td>{{r["numero_unico_original"]}}</td>
-                </tr>
-
-                {% if r["fecha_elaboracion"] %}
-                    <tr>
-                        <th>Fecha de Elaboración:</th>
-                        <td class="fecha_elaboracion">{{ r["fecha_elaboracion"].strftime('%Y-%m-%d %H:%M') }}</td>
-                    </tr>
-                {% elif r["fecha_etiquetado"] %}
-                    <tr>
-                        <th>Fecha de Etiquetado:</th>
-                        <td class="fecha_etiquetado">{{ r["fecha_etiquetado"].strftime('%Y-%m-%d %H:%M') }}</td>
-                    </tr>
-                {% elif r["fecha_encajonado"] %}
-                    <tr>
-                        <th>Fecha de Encajonado:</th>
-                        <td class="fecha_encajonado">{{ r["fecha_encajonado"].strftime('%Y-%m-%d %H:%M') }}</td>
-                    </tr>
-                {% endif %}
-
-
-                
-                <tr>
-                    <th>Vencimiento:</th>
-                    <td hidden class="meses">{{r["meses"]}}</td>
-                    <td class="vencimiento"></td>
+                    <td>Observaciones</td>
+                    <td>{{ reacondicionado["reacondicionado"][0]["observaciones"] }}</td>
                 </tr>
                 <tr>
-                    <th>Lote:</th>
-                    <td>{{r["lote"]}}</td>
+                    <td>Responsable</td>
+                    <td>{{ reacondicionado["reacondicionado"][0]["nombre"] }}</td>
                 </tr>
                 <tr>
-                    <th>Cantidad:</th>
-                    <td>{{r["cantidad"]}}</td>
+                    <td>Fecha de registro</td>
+                    <td>{{ reacondicionado["reacondicionado"][0]["fecha_registro"] }}</td>
                 </tr>
-                <tr>
-                    <th>Observaciones:</th>
-                    <td>{{r["observacion"]}}</td>
-                </tr>
-                <tr>
-                    <th>Responsable:</th>
-                    <td>{{r["nombre"]}}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" style="background-color: #f0f0f0; height: 5px;"></td>
-                </tr>
-                {% endif %}
-                {% endfor %}
             </table>
+            
+            <hr> <!-- Separador entre los datos del producto y la composición -->
+            
+            <!-- Iterar sobre las composiciones -->
+            {% for item in reacondicionado["reacondicionado"] %}
+                <table class="table-bordered col-12 fixed-table">
+                    <tr>
+                        <td>Denominacion</td>
+                        <td>{{item["m_den"] or item["e_den"] or item["m2_den"] or item["e2_den"]}}</td>
+                    </tr>
+                    <tr>
+                        <td>Número único</td>
+                        <td>{{item["m_numero_unico"] or item["e_numero_unico"] or item["m2_numero_unico"] or item["e2_numero_unico"]}}</td>
+                    </tr>
+                    <tr>
+                        <td>Fecha de elaboración</td>
+                        <td>
+                            {{
+                                item["m_fecha_elaboracion"] or item["e_fecha_elaboracion"] or item["m2_fecha_elaboracion"] or item["e2_fecha_elaboracion"] or
+                                item["m_fecha_etiquetado"] or item["e_fecha_etiquetado"] or item["m2_fecha_etiquetado"] or item["e2_fecha_etiquetado"]
+                            }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Lote</td>
+                        <td>{{item["m_lote"] or item["e_lote"] or item["m2_lote"] or item["e2_lote"]}}</td>
+                    </tr>
+                    <tr>
+                        <td>Observaciones</td>
+                        <td>{{item["m_observacion"] or item["e_observaciones"] or item["m2_observacion"] or item["e2_observaciones"] or ''}}</td>
+                    </tr>
+                    <tr>
+                        <td>Cantidad</td>
+                        <td>{{item["cantidad"]}}</td>
+                    </tr>
+                    <tr>
+                        <td>Responsable</td>
+                        <td>{{item["m_responsable"] or item["e_responsable"] or item["m2_responsable"] or item["e2_responsable"]}}</td>
+                    </tr>
+                </table>
+                {% if not loop.last %}
+                    <hr> <!-- Separador entre cada composición -->
+                {% endif %}
+            {% endfor %}
+            
         </div>
     </div>
     <div class="row justify-content-center">

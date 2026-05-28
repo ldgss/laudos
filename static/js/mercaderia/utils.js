@@ -19,6 +19,27 @@ function validarMarca() {
     });
 }
 
+function validarLlenadora() {
+    // Seleccionar todos los elementos cuyo id comienza con "llenadora_botella"
+    const denominacionInputs = document.querySelectorAll('[id^="llenadora_botella"]');
+    
+    // Capturar el elemento fijo "llenadora_botella_opciones"
+    const denominacionOpciones = document.getElementById('llenadora_botella_opciones');
+    
+    // Validar que el elemento de opciones exista
+    if (!denominacionOpciones) return;
+
+    // Obtener las opciones como un array
+    const opciones = Array.from(denominacionOpciones.options).map(option => option.value);
+
+    // Validar cada input cuyo id comienza con "denominacion"
+    denominacionInputs.forEach(input => {
+        if (!opciones.includes(input.value)) {
+            input.value = '';
+        }
+    });
+}
+
 // function validarMarca() {
 //     const denominacionInput = document.querySelector('[id^="denominacion"]');
 //     const denominacion_opciones = document.getElementById('denominacion_opciones');
@@ -102,6 +123,15 @@ function rellenarCantidad() {
         switch (denominacion) {
             case 'MI TT Botella 910 CUISUINE & CO T.OFF':
                 cantidadInput.value = 672;
+                break;
+            case 'MI PT Tetra 520 CUISUINE & CO':
+                cantidadInput.value = 1800;
+                break;
+            case 'MI TT Botella 1020 ATALAIA T.OFF':
+                cantidadInput.value = 720;
+                break;
+            case 'Semi-Elaborado Botella 1020 T.OFF':
+                cantidadInput.value = 720;
                 break;
             default:
                 console.log("La cantidad no está definida");
@@ -192,7 +222,18 @@ function julianoAutomatico(){
     const year = fechaActual.getFullYear();
     const fechaInicial = new Date(year, 0, 1);
     const hoy = Math.floor((fechaActual - fechaInicial) / (1000 * 60 * 60 * 24)) + 1;
-    lote_c.value = hoy;
+    lote_c.value = fixdaylength(hoy);
+}
+
+function fixdaylength(dia){
+    dia_string = dia.toString()
+    dia_length = dia_string.length
+    if(dia_length == 1){
+        dia_string = '00'+dia
+    }else if(dia_length == 2){
+        dia_string = '0'+dia
+    }
+    return dia_string
 }
 
 function imprimir(){
@@ -211,6 +252,10 @@ function imprimir_new_tab(){
             const barcodeSvg = document.getElementById('barcode').outerHTML;
             let contenido;
             let id_para_estilo;
+            let deno = document.getElementById("deno")
+            if(deno){
+                deno = deno.innerHTML;
+            }
 
             if (document.getElementById('descripcion')){
                 contenido = document.getElementById('descripcion').outerHTML;
@@ -236,6 +281,11 @@ function imprimir_new_tab(){
 
                 <div class="table-container">
                     ${contenido}
+                    ${deno.toLowerCase().includes("tetra") ? `
+                        <div class="deno" id="${id_para_estilo}">
+                            <span id="atencion">⚠️</span> Estimado cliente: se recomienda estibar con un máximo de 11 niveles de
+                            altura para preservar el producto en óptimas condiciones.
+                        </div>` : ""}
                 </div>
 
                 <style>
@@ -270,6 +320,19 @@ function imprimir_new_tab(){
                     #${id_para_estilo} thead {
                         background-color: #4CAF50;
                         color: white;
+                    }
+                    
+                    .deno {
+                        text-align:center;
+                        font-weight:bold;
+                        font-style:italic;
+                        border-top:none !important;
+                        box-sizing:border-box;
+                        padding:15px;
+                    }
+
+                    #atencion{
+                        font-style:normal;
                     }
                 </style>
 
@@ -342,6 +405,7 @@ function actualizar_vencimiento_unico() {
     const elementosFechaElaboracion = document.querySelectorAll('.fecha_elaboracion');
     const elementosFechaEtiquetado = document.querySelectorAll('.fecha_etiquetado');
     const elementosFechaEncajonado = document.querySelectorAll('.fecha_encajonado');
+    const elementosFechaExtracto = document.querySelectorAll('.extracto_fecha_elaboracion');
     const elementosMeses = document.querySelectorAll('.meses');
     const elementosVencimiento = document.querySelectorAll('.vencimiento');
     
@@ -349,12 +413,13 @@ function actualizar_vencimiento_unico() {
     const cantidadElementos = Math.max(
         elementosFechaElaboracion.length, 
         elementosFechaEtiquetado.length, 
-        elementosFechaEncajonado.length
+        elementosFechaEncajonado.length,
+        elementosFechaExtracto.length
     );
 
     for (let i = 0; i < cantidadElementos; i++) {
         // Selecciona la fecha disponible (la primera que esté presente)
-        let fecha = elementosFechaElaboracion[i] || elementosFechaEtiquetado[i] || elementosFechaEncajonado[i];
+        let fecha = elementosFechaElaboracion[i] || elementosFechaEtiquetado[i] || elementosFechaEncajonado[i] || elementosFechaExtracto[i];
         
         if (fecha) {
             const fechaValor = fecha.innerText;
@@ -367,7 +432,22 @@ function actualizar_vencimiento_unico() {
     }
 }
 
+function habilitarLlenadora(){
+    const denominacionInput = document.getElementById("denominacion");
+    const llenadoraBotellaInput = document.getElementById("llenadora_botella");
 
+    function toggleLlenadoraBotella() {
+        if (denominacionInput.value.toLowerCase().includes("botella")) {
+            llenadoraBotellaInput.removeAttribute("disabled");
+        } else {
+            llenadoraBotellaInput.setAttribute("disabled", "true");
+            llenadoraBotellaInput.value = ""; // Limpiar el campo si se deshabilita
+        }
+    }
+
+    denominacionInput.addEventListener("input", toggleLlenadoraBotella);
+    toggleLlenadoraBotella(); // Ejecutar la función al cargar la página
+}
 
 try {
     window.addEventListener('load', actualizarFechaYHora);
@@ -377,6 +457,7 @@ try {
     window.addEventListener('load', imprimir_new_tab);
     window.addEventListener('load', actualizar_vencimiento_en_listado);
     window.addEventListener('load', actualizar_vencimiento_unico);
+    window.addEventListener('load', habilitarLlenadora);
 } catch (error) {
     // console.log(error)
 }

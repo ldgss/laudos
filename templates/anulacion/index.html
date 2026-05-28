@@ -1,54 +1,75 @@
 {% extends "base/base.html" %}
 
 {% block header %}
-    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+
+<script defer src="{{url_for("static", filename="js/mercaderia/utils.js" )}}"></script>
+<script defer src="{{url_for("static", filename="js/anulacion/utils.js" )}}"></script>
 
 {% endblock %}
 
 {% block content %}
 
 <div class="container col-sm-12 col-md-8 col-lg-6">
-
     <form action="/anulacion/buscar" method="post">
         <div class="m-3">
             <label class="form-label" for="buscar">Buscar productos anulados</label>
-            <input class="form-control" required
-            placeholder="Ingrese numero único, observaciones" 
-            type="text" id="buscar" name="buscar">
+            <input class="form-control" required 
+            placeholder="Ingrese numero único, observaciones" type="text"
+            id="buscar" name="buscar">
         </div>
         <div class="m-3">
             <button type="submit" class="btn btn-primary col-12">Buscar</button>
         </div>
     </form>
-
-    <form action="/anulacion/agregar" method="post">
+    
+    <form id="anulacion_form" action="/anulacion/agregar" method="post">
         <div class="m-3">
             <label class="form-label" for="numero_unico">Numero único a anular</label>
-            <input class="form-control" required
-            placeholder="Ingrese numero único" 
-            title="(Ej: 2024-T1-000001, 2024-H1-000001, 2024-E1-000001)" 
-            pattern="^\d{4}-(T1|H1|E1)-\d{6}$"
-            type="text" id="numero_unico" name="numero_unico">
+            <input class="form-control" required placeholder="Ingrese numero único"
+            title="(Ej: 2024-T1-000001, 2024-E1-000001, 2024-T2-000001, 2024-H1-000001)"
+            pattern="^\d{4}-(T1|E1|T2|H1)-\d{6}$" type="text" 
+            id="numero_unico" name="numero_unico">
         </div>
         <div class="m-3">
             <label class="form-label" for="observaciones">Observaciones</label>
-            <textarea maxlength="300" class="form-control" 
-            rows="4" cols="50" required placeholder="Describa el motivo de la anulacion" 
+            <textarea maxlength="300" class="form-control" rows="4" cols="50" 
+            required placeholder="Describa el motivo de la anulacion" 
             id="observaciones" name="observaciones"></textarea>
         </div>
         <div class="m-3">
             <button type="submit" class="btn btn-danger col-12">Anular</button>
         </div>
-    </form>
 
-    
+        <!-- Modal de confirmación -->
+        <div class="modal fade" id="anulacion_modal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteLabel">Confirmar eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            ¿Estás seguro de que deseas eliminar el pallet <span id="pallet_modal"></span>?
+                        </div>
+                        <div>
+                            Esta acción no se puede deshacer.
+                        </div>
+                        <div id="detalle_modal">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" id="boton_confirmar_modal">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
     <div class="m-3">
         <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
-
     </div>
-    
-
-
-
 </div>
+
+
 {% endblock %}

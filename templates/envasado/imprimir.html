@@ -16,7 +16,7 @@
             <table id="descripcion" class="table-bordered col-12">
                 <tr>
                     <th>Denominacion:</th>
-                    <td>{{envasado["den"]}}</td>
+                    <td id="deno">{{envasado["den"]}}</td>
                 </tr>
                 <tr>
                     <th>Numero único:</th>
@@ -43,6 +43,13 @@
                     <th>Observaciones:</th>
                     <td>{{envasado["observacion"]}}</td>
                 </tr> -->
+                {% if envasado["llenadora_botella"] %}
+                    <tr>
+                        <th>Mqn:</th>
+                        <td>{{'LL1' if 'tey' in envasado["llenadora_botella"] | lower else 'LL2'}}</td>
+                    </tr>
+                <tr>
+                {% endif %}
                 <tr>
                     <th>Responsable:</th>
                     <td>{{envasado["nombre"]}}</td>

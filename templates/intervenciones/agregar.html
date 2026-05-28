@@ -1,0 +1,140 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/intervenciones/utils.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+
+<form action="agregar" method="post" enctype="multipart/form-data">
+
+    <div class="row m-4 justify-content-center">
+        <label for="linea_afectada" class="col-sm-2 col-form-label">Línea afectada</label>
+        <div class="col-sm-5">
+            <input list="linea_afectada_opciones" required type="text" 
+            class="form-control" name="linea_afectada" id="linea_afectada"
+            onblur="validarLineaAfectada()" oninput="actualizarValoresLineaAfectada()">
+            <input type="hidden" id="lineas_mantenimiento_id" name="lineas_mantenimiento_id">
+            <datalist id="linea_afectada_opciones">
+                {% for lm in lineas_mantenimiento %}
+                        <option value="{{ lm.denominacion }}"
+                            data-lineas-mantenimiento-id="{{ lm.id }}">
+                        </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="tipo_de_fallo" class="col-sm-2 col-form-label">Tipo de fallo</label>
+        <div class="col-sm-5">
+            <input list="tipo_de_fallo_opciones" required type="text" 
+            class="form-control" name="tipo_de_fallo" id="tipo_de_fallo"
+            onblur="validarTipoDeFallo()" oninput="actualizarValoresTipoDeFallo()">
+            <input type="hidden" id="tipo_de_fallo_id" name="tipo_de_fallo_id">
+            <datalist id="tipo_de_fallo_opciones">
+                {% for tf in tipo_de_fallo %}
+                        <option value="{{ tf.descripcion }}" 
+                            data-tipo-de-fallo-id="{{ tf.id }}">
+                        </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">Se detuvo</label>
+        </div>
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" checked
+                id="se_detuvo" name="se_detuvo" role="switch">
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="inicio" class="col-sm-2 col-form-label">Inicio</label>
+        <div class="col-sm-5">
+            <input required type="datetime-local" class="form-control" name="inicio" id="inicio">
+        </div>
+    </div>
+    
+    <div class="row m-4 justify-content-center">
+        <label for="fin" class="col-sm-2 col-form-label">Finalización</label>
+        <div class="col-sm-5">
+            <input required type="datetime-local" class="form-control" name="fin" id="fin">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="col-sm-2 mb-3">
+            <label class="form-check-label">Quedó operativa</label>
+        </div>
+        <div class="col-sm-5 mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" checked
+                id="quedo_operativa" name="quedo_operativa" role="switch">
+            </div>
+        </div>
+    </div>
+    
+    <div class="row m-4 justify-content-center">
+        <label for="detalle" class="col-sm-2 col-form-label">Detalle</label>
+        <div class="col-sm-5">
+            <textarea required class="form-control" id="detalle" name="detalle" 
+            rows="4" maxlength="1000" placeholder="Ingrese detalle"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="imagenes" class="col-sm-2 col-form-label">Capturar imagen</label>
+        <div class="col-sm-5">
+            <input id="imagenes_1" name="imagenes" class="form-control mb-2"
+            type="file" accept="image/*" capture="environment">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="imagenes" class="col-sm-2 col-form-label">Capturar imagen</label>
+        <div class="col-sm-5">
+            <input id="imagenes_1" name="imagenes" class="form-control mb-2"
+            type="file" accept="image/*" capture="environment">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="imagenes" class="col-sm-2 col-form-label">Capturar imagen</label>
+        <div class="col-sm-5">
+            <input id="imagenes_1" name="imagenes" class="form-control mb-2"
+            type="file" accept="image/*" capture="environment">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="imagenes" class="col-sm-2 col-form-label">Capturar imagen</label>
+        <div class="col-sm-5">
+            <input id="imagenes_1" name="imagenes" class="form-control mb-2"
+            type="file" accept="image/*" capture="environment">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="imagenes" class="col-sm-2 col-form-label">Capturar imagen</label>
+        <div class="col-sm-5">
+            <input id="imagenes_1" name="imagenes" class="form-control mb-2"
+            type="file" accept="image/*" capture="environment">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

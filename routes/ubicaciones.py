@@ -100,3 +100,30 @@ def ubicaciones_anular_post():
 
     else:
         return redirect(url_for("login.login_get"))
+    
+@ubicaciones_bp.get("/ubicaciones/reubicacionmasiva")
+def reubicacion_masiva():
+    if helpers.session_on() and helpers.authorized_to("ubicacion") and helpers.authorized_to_submodule("correccion"):
+        ubicacion_nombre = mod_ubicaciones.get_ubicacion_nombre()
+        title = "Ubicaciones"
+        section = "Reubicación masiva"
+        return render_template("ubicaciones/reubicacion.html", 
+                               title=title, section=section, 
+                               ubicacion_nombre=ubicacion_nombre,
+                               productos_arballon=session["productos_arballon"])
+    else:
+        return redirect(url_for("login.login_get"))
+    
+@ubicaciones_bp.post("/ubicaciones/reubicar")
+def reubicar():
+    if helpers.session_on() and (session["nombre"] == 'ldellagaspera' or session["nombre"] == 'rgil'):
+    # if helpers.session_on() and helpers.authorized_to("ubicacion") and helpers.authorized_to_submodule("correccion"):
+        result = mod_ubicaciones.reubicar_u()
+        if result:
+            flash("Reubicación exitosa.")
+            return redirect(url_for("ubicaciones.reubicacion_masiva"))
+        else:
+            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
+            return redirect(url_for("ubicaciones.reubicacion_masiva"))
+    else:
+        return redirect(url_for("login.login_get"))

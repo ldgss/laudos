@@ -1,0 +1,162 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <style>
+        #interactive {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+        }
+        canvas, video {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        @keyframes blink_button {
+            0%   { box-shadow: 0 0 0px rgba(13,110,253,0.7); }
+            50%  { box-shadow: 0 0 15px 6px rgba(13,110,253,0.9); }
+            100% { box-shadow: 0 0 0px rgba(13,110,253,0.7); }
+        }
+
+        .boton-destello {
+            animation: blink_button 1s infinite;
+        }
+    </style>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script defer src="{{url_for("static", filename="js/insumos/utils_insumos_laudos.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<form id="buscar_insumo">
+    
+    <div class="row m-4 justify-content-center">
+            <div class="col-sm-7">
+                <div id="interactive" class="viewport"></div>
+            </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="numero_unico" class="col-sm-2 col-form-label">Numero de parte</label>
+        <div class="col-sm-5">
+            <input required type="text" class="form-control" 
+            name="numero_unico" id="numero_unico"
+            title="(Ej: 2025-H1-000001)" pattern="^\d{4}-(H1)-\d{6}$">
+        </div>
+    </div>    
+
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary" id="btnBuscar">Buscar</button>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <hr class="col-7">
+    </div>
+</form>
+
+<form id="insumos_form" action="agregar" method="post">
+    <div class="row m-4 justify-content-center">
+        <label for="cta_alm" class="col-sm-2 col-form-label">Codigo Insumo</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="cta_alm" id="cta_alm" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="cod_lot" class="col-sm-2 col-form-label">Lote Insumo</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="cod_lot" id="cod_lot" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="den_fac" class="col-sm-2 col-form-label">Insumo</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="den_fac" id="den_fac" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="can" class="col-sm-2 col-form-label">Cantidad</label>
+        <div class="col-sm-5">
+            <input required type="number" class="form-control" 
+            name="can" id="can" min="1" max="100000">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="fecha_hora" class="col-sm-2 col-form-label">Fecha y hora</label>
+        <div class="col-sm-5">
+            <input required type="datetime-local" class="form-control" 
+            name="fecha_hora" id="fecha_hora">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+<!-- modal -->
+
+<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="resultModalLabel">Seleccionar Insumo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Codigo insumo</th>
+                <th>Lote insumo</th>
+                <th>Insumo</th>
+                <!-- <th>Cantidad</th> -->
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="resultTableBody">
+              <!-- Aquí se llenarán los resultados -->
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+<div class="modal fade" id="interactionModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Atención</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <strong>
+                        🚨 Escanee con la mejor luz posible
+                    </strong>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+  
+
+{% endblock %}

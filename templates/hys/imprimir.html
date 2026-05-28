@@ -1,0 +1,105 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+<script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="row m-4 justify-content-center">
+        <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
+            <table id="descripcion" class="table-bordered col-12">
+                <tr>
+                    <th>Afectado:</th>
+                    <td>{{hys["afectado"]}}</td>
+                </tr>
+                <tr>
+                    <th>Incidente:</th>
+                    <td>{{hys["incidente"]}}</td>
+                </tr>
+                <tr>
+                    <th>sector:</th>
+                    <td>{{hys["sector"]}}</td>
+                </tr>
+                <tr>
+                    <th>Tarea que realizaba:</th>
+                    <td>{{hys["tarea_que_realizaba"]}}</td>
+                </tr>
+                <tr>
+                    <th>Detalle:</th>
+                    <td>{{hys["detalle"]}}</td>
+                </tr>
+                <tr>
+                    <th>Usaba EPP:</th>
+                    <td>
+                        {% if hys["epp_si_no"] %}
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %} 
+                    </td>
+                </tr>
+                <tr>
+                    <th>Área limpia:</th>
+                    <td>
+                        {% if hys["area_limpia_si_no"] %}
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %} 
+                    </td>
+                </tr>
+                <tr>
+                    <th>Informado a ART:</th>
+                    <td>
+                        {% if hys["informado_art_si_no"] %}
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %} 
+                    </td>
+                </tr>
+                <tr>
+                    <th>Habilidades:</th>
+                    <td>
+                        {% if hys["habilidades_si_no"] %}
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %} 
+                    </td>
+                </tr>
+                <tr>
+                    <th>Gravedad:</th>
+                    <td>{{hys["gravedad"]}}</td>
+                </tr>
+                <tr>
+                    <th>Tipo de atención:</th>
+                    <td>{{hys["tipo_de_atencion"]}}</td>
+                </tr>
+                <tr>
+                    <th>Agente origen:</th>
+                    <td>{{hys["agente_origen"]}}</td>
+                </tr>
+                <tr>
+                    <th>Testigos:</th>
+                    <td>{{hys["testigos"]}}</td>
+                </tr>
+                <tr>
+                    <th>Responsable:</th>
+                    <td>{{hys["responsable"]}}</td>
+                </tr>
+                <tr>
+                    <th>Fecha de registro:</th>
+                    <td>{{hys["fecha_registro"].strftime('%Y-%m-%d %H:%M')}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="m-2 text-center">
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+            
+        </div>
+    </div>
+{% endblock %}

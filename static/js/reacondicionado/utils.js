@@ -10,8 +10,8 @@ document.getElementById("btn_agregar").addEventListener("click", function() {
         <div class="col-sm-5 d-flex align-items-center">
             <input required type="text" class="form-control me-1 w-75"
                 name="numeros_unicos"
-                title="(Ej: 2024-T1-000001, 2024-T2-000001)" 
-                pattern="^\\d{4}-(T1|T2)-\\d{6}$">
+                title="(Ej: 2024-T1-000001, 2024-T2-000001, 2024-E1-000001)" 
+                pattern="^\\d{4}-(T1|T2|E1)-\\d{6}$">
 
             <button type="button" class="btn btn-outline-secondary btn-sm p-2 me-1" onclick="buscarParte(this)">
                 Buscar
@@ -57,7 +57,7 @@ function buscarParte(button) {
                 cantidades_placeholder.innerHTML = ""; // Limpia antes de insertar
 
                 const nuevoDiv = document.createElement("div");
-                if(data["reacondicionado"].length > 1){
+                if(data["reacondicionado"].length > 0){
 
                     for (let i = 0; i < data["reacondicionado"].length; i++) {
                         console.log(`detalle id: ${data["reacondicionado"][i]["id"]}`)
@@ -67,16 +67,17 @@ function buscarParte(button) {
                         <div class="row m-4 justify-content-center">
                             <label for="cantidad" class="col-sm-2 col-form-label">Detalle</label>
                             <div class="col-sm-5 d-flex align-items-center">
-                                ${data["reacondicionado"][i]["lote"]}
+                                ${data["reacondicionado"][i]["mlote"] ? data["reacondicionado"][i]["mlote"] : data["reacondicionado"][i]["elote"]}
                             </div>
                         </div>
                         <div class="row m-4 justify-content-center">
                             <label for="cantidad" class="col-sm-2 col-form-label">Cantidades</label>
                             <div class="col-sm-5 d-flex align-items-center cantidades">
-                                <input hidden name="id_a_tomar" type="text" value="${data["reacondicionado"][i]["id"]}">
-                                <input hidden name="mercaderia_original" type="text" value="${data["reacondicionado"][i]["mercaderia_original"]}">
-                                <input type="number" class="form-control me-1" placeholder="Cantidad disponible" name="cantidad_disponible" min="0" readonly value="${data["reacondicionado"][i]["cantidad"]}">
-                                <input type="number" class="form-control" placeholder="Cantidad a tomar" name="cantidad_tomar" min="0" required>
+                                <input hidden name="${data["reacondicionado"][i]["numero_unico"]}_id_a_tomar" type="text" value="${data["reacondicionado"][i]["id"]}">
+                                <input hidden name="${data["reacondicionado"][i]["numero_unico"]}_mercaderia_original" type="text" value="${data["reacondicionado"][i]["mercaderia_original"] || ""}">
+                                <input hidden name="${data["reacondicionado"][i]["numero_unico"]}_extracto_original" type="text" value="${data["reacondicionado"][i]["extracto_original"] || ""}">
+                                <input type="number" class="form-control me-1" placeholder="Cantidad disponible" name="${data["reacondicionado"][i]["numero_unico"]}_cantidad_disponible" min="0" readonly value="${data["reacondicionado"][i]["cantidad"]}">
+                                <input type="number" class="form-control" placeholder="Cantidad a tomar" name="${data["reacondicionado"][i]["numero_unico"]}_cantidad_tomar" min="0" required>
                             </div>
                         </div>
                         `
@@ -93,10 +94,11 @@ function buscarParte(button) {
                         <div class="row m-4 justify-content-center">
                             <label for="cantidad" class="col-sm-2 col-form-label">Cantidades</label>
                             <div class="col-sm-5 d-flex align-items-center cantidades">
-                                <input hidden name="id_a_tomar" type="text" value="${data["id"]}">
-                                <input hidden name="mercaderia_original" type="text" value="${data["id"]}">
-                                <input type="number" class="form-control me-1" placeholder="Cantidad disponible" name="cantidad_disponible" min="0" readonly value="${data["cantidad"]}">
-                                <input type="number" class="form-control" placeholder="Cantidad a tomar" name="cantidad_tomar" min="0" required>
+                                <input hidden name="${data["numero_unico"]}_id_a_tomar" type="text" value="${data["id"]}">
+                                <input hidden name="${data["numero_unico"]}_mercaderia_original" type="text" value="${data["numero_unico"].includes("T1") ? data["id"] : ""}">
+                                <input hidden name="${data["numero_unico"]}_extracto_original" type="text" value="${data["numero_unico"].includes("E1") ? data["id"] : ""}">
+                                <input type="number" class="form-control me-1" placeholder="Cantidad disponible" name="${data["numero_unico"]}_cantidad_disponible" min="0" readonly value="${data["cantidad"]}">
+                                <input type="number" class="form-control" placeholder="Cantidad a tomar" name="${data["numero_unico"]}_cantidad_tomar" min="0" required>
                             </div>
                         </div>
                         `

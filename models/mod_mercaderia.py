@@ -2,25 +2,49 @@ from sqlalchemy.sql import text
 from db import db
 from datetime import datetime
 import shlex
+from flask import request
+import traceback
+from utils import helpers
+
 
 def listar_productos_arballon():
     # cambiar a sqlserver para llamar a arballon
     try:
         with db.db.get_engine(bind='sqlserver').connect() as connection:
             result = connection.execute(text("""
-                SELECT cod_mae, den, cod_cls FROM genmae
-                WHERE tip_mae = 4 AND (
-                    cod_cls = 'Extrac' OR
-                    cod_cls = 'Pas500' OR
-                    cod_cls = 'Pelado' OR
-                    cod_cls = 'Pulpa' OR
-                    cod_cls = 'Pure' OR
-                    cod_cls = 'Tri500' OR
-                    cod_cls = 'Tri8' OR
-                    cod_cls = 'Tri910' OR
-                    cod_cls = 'Tri950' OR
-                    cod_cls = 'Tritur'
-                )
+                SELECT 
+                    cod_mae, den, cod_cls FROM genmae
+                WHERE 
+                    (
+	                    tip_mae = 4 and
+                        (
+                                cod_cls = 'Extrac' OR
+                                cod_cls = 'Pas500' OR
+                                cod_cls = 'Pelado' OR
+                                cod_cls = 'Pulpa' OR
+                                cod_cls = 'Pure' OR
+                                cod_cls = 'SalLis' OR
+                                cod_cls = 'Salsa' OR
+                                cod_cls = 'Tri500' OR
+                                cod_cls = 'Tri8' OR
+                                cod_cls = 'Tri910' OR
+                                cod_cls = 'Tri950' OR
+                                cod_cls = 'Tritur' OR
+                                cod_cls = 'TriP2K' OR
+                                cod_cls = 'TriPou' OR
+                                cod_cls = 'Tr1020'
+                        )
+	                ) 
+                    OR 
+                        cod_mae = '1460618' OR
+                        cod_mae = '127105'
+                    OR
+                        cod_cls = 'Hojala' AND NOT
+                        lower(den) like '%jumba%' OR 
+                        cod_mae = '902013' OR 
+                        cod_mae = '9111001' OR 
+                        cod_mae = '902005' OR 
+                        cod_mae = '1061001001'
             """))
             return result.fetchall()
 
@@ -33,7 +57,7 @@ def get_ultimo_id():
         sql = text("""
                     SELECT numero_unico
                     FROM mercaderia
-                    ORDER BY id DESC
+                    ORDER BY numero_unico DESC
                     LIMIT 1
                    ;
                 """
@@ -42,20 +66,9 @@ def get_ultimo_id():
         result = db.db.session.execute(sql)
         
         ultimo_id = result.scalar()
-        
-        if not ultimo_id:
-            # si es el primer pallet
-            year = datetime.now().year
-            return f"{year}-T1-000000"
-        else:
-            # si ya existen pallets, aumentar el numero del id
-            prefijo = str(datetime.now().year)
-            sufijo = int(ultimo_id[-6:])
-            nuevo_numero = sufijo + 1
-            nuevo_numero_str = f"{nuevo_numero:06d}"
-            nuevo_codigo = f"{prefijo}-T1-{nuevo_numero_str}"
+        year = datetime.now().year
 
-            return nuevo_codigo
+        return helpers.next_id(ultimo_id, "T1", year)
     except Exception as e:
         print(f"Error: {e}")
         return None
@@ -65,7 +78,7 @@ def get_ultimo_id_extracto():
         sql = text("""
                     SELECT numero_unico
                     FROM extracto
-                    ORDER BY id DESC
+                    ORDER BY numero_unico DESC
                     LIMIT 1
                    ;
                 """
@@ -74,20 +87,9 @@ def get_ultimo_id_extracto():
         result = db.db.session.execute(sql)
         
         ultimo_id = result.scalar()
-        
-        if not ultimo_id:
-            # si es el primer pallet
-            year = datetime.now().year
-            return f"{year}-E1-000000"
-        else:
-            # si ya existen pallets, aumentar el numero del id
-            prefijo = str(datetime.now().year)
-            sufijo = int(ultimo_id[-6:])
-            nuevo_numero = sufijo + 1
-            nuevo_numero_str = f"{nuevo_numero:06d}"
-            nuevo_codigo = f"{prefijo}-E1-{nuevo_numero_str}"
+        year = datetime.now().year
 
-            return nuevo_codigo
+        return helpers.next_id(ultimo_id, "E1", year)
     except Exception as e:
         print(f"Error: {e}")
         return None
@@ -115,11 +117,11 @@ def guardar_envasado(form, vto, lote):
                     mercaderia
                     (producto, observacion, cantidad, lote, fecha_elaboracion, 
                     responsable, numero_unico, vto, fecha_registro,
-                    den)
+                    den, llenadora_botella)
                     VALUES
                     (:producto, :observacion, :cantidad, :lote, :fecha_elaboracion, 
                     :responsable, :numero_unico, :vto, CURRENT_TIMESTAMP,
-                    :den)
+                    :den, :llenadora_botella)
                 """
                 )
         
@@ -133,13 +135,16 @@ def guardar_envasado(form, vto, lote):
                                                 "responsable": form['user_id'],
                                                 "numero_unico": form['numero_unico'],
                                                 "vto": vto['id'],
-                                                "den": form['denominacion']
+                                                "den": form['denominacion'],
+                                                "llenadora_botella": request.form.get("llenadora_botella") or None
                                             })
         db.db.session.commit()
         return True
     except Exception as e:
         db.db.session.rollback()
-        print(f"Error: {e}")
+        error_traceback = traceback.format_exc()
+        print(f"e: {e}")
+        print(f"tb: {error_traceback}")
         return None
     
 def guardar_etiquetado(form, vto, lote):
@@ -149,11 +154,11 @@ def guardar_etiquetado(form, vto, lote):
                     mercaderia
                     (producto, observacion, cantidad, lote, fecha_etiquetado, 
                     responsable, numero_unico, vto, fecha_registro,
-                    den)
+                    den, llenadora_botella)
                     VALUES
                     (:producto, :observacion, :cantidad, :lote, :fecha_etiquetado, 
                     :responsable, :numero_unico, :vto, CURRENT_TIMESTAMP,
-                    :den)
+                    :den, :llenadora_botella)
                 """
                 )
         
@@ -167,7 +172,8 @@ def guardar_etiquetado(form, vto, lote):
                                                 "responsable": form['user_id'],
                                                 "numero_unico": form['numero_unico'],
                                                 "vto": vto['id'],
-                                                "den": form['denominacion']
+                                                "den": form['denominacion'],
+                                                "llenadora_botella": request.form.get("llenadora_botella") or None
                                             })
         db.db.session.commit()
         return True
@@ -216,25 +222,26 @@ def guardar_extracto(form, vto, lote):
                     INSERT INTO
                     extracto
                     (numero_unico, producto, fecha_elaboracion, lote, brix, numero_recipiente,
-                    observaciones, vto_meses, responsable, fecha_registro, den)
+                    observaciones, vto_meses, responsable, fecha_registro, den, cantidad)
                     VALUES
                     (:numero_unico, :producto, :fecha_elaboracion, :lote, :brix, :numero_recipiente,
-                    :observaciones, :vto_meses, :responsable, CURRENT_TIMESTAMP, :den)
+                    :observaciones, :vto_meses, :responsable, CURRENT_TIMESTAMP, :den, :cantidad)
                 """
                 )
-        
+        # a partir de mayo de 2025 los brix los lleva calidad
         envasado = db.db.session.execute(sql,
                                             {
                                                 "producto": form['cod_mae'],
                                                 "observaciones": form['observaciones'],
-                                                "brix": form['brix'],
+                                                "brix": None,
                                                 "numero_recipiente": form['numero_recipiente'],
                                                 "lote": lote,
-                                                "fecha_elaboracion": f"{form['fecha']} {form['hora']}",
+                                                "fecha_elaboracion": f"{form['fecha_manual']} {form['hora_manual']}",
                                                 "responsable": form['user_id'],
                                                 "numero_unico": form['numero_unico'],
                                                 "vto_meses": vto['id'],
-                                                "den": form['denominacion']
+                                                "den": form['denominacion'],
+                                                "cantidad" : 1
                                             })
         db.db.session.commit()
         return True
@@ -339,6 +346,7 @@ def get_listado_envasado(terminos_de_busqueda, resultados_por_pagina, offset):
             subcondicion.append(f"m.numero_unico::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.vto::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.den::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.llenadora_botella::TEXT ILIKE '%{termino}%'")
             
             # chequear cada termino en nombre usuario
             subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
@@ -407,6 +415,7 @@ def get_listado_etiquetado(terminos_de_busqueda, resultados_por_pagina, offset):
             subcondicion.append(f"m.numero_unico::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.vto::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"m.den::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"m.llenadora_botella::TEXT ILIKE '%{termino}%'")
             
             # chequear cada termino en nombre usuario
             subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")

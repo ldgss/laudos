@@ -1,0 +1,44 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/bascula/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container col-sm-12 col-md-8 col-lg-6">
+    <div class="d-flex justify-content-center align-items-center m-3" 
+        style="font-size: 3rem">
+        <div class="m-3 spinner-grow text-danger" role="status">
+            <span class="sr-only"></span>
+          </div>
+        <span id="peso_en_tiempo_real">0</span> 
+        <span>kg</span>
+    </div>
+    
+    <form action="/bascula/buscar" method="post">
+        <div class="m-3">
+            <label class="form-label" for="buscar">Buscar pesajes, IPMs</label>
+            <input class="form-control" required
+            placeholder="Ingrese fechas, ipms, dominios (patentes)" 
+            type="text" id="buscar" name="buscar">
+        </div>
+        <div class="m-3">
+            <button type="submit" class="btn btn-primary col-12">Buscar</button>
+        </div>
+    </form>
+
+    <div class="m-3">
+        <a href="{{url_for('bascula.bascula_agregar')}}" class="btn btn-success col-12">Agregar</a>
+    </div>
+    <div class="m-3">
+        <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
+
+    </div>
+    
+
+
+
+</div>
+{% endblock %}

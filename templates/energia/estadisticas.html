@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="{{url_for("static", filename="js/energia/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container col-sm-12 col-md-8 col-lg-6">
+    <h3 class="text-center">Electricidad</h3>
+    <h6 id="acometidas_null" class="m-5 text-dark text-center" style="display: none;">
+      No hay datos para mostrar
+    </h6>
+    <canvas id="acometidas"></canvas>
+
+    <!-- gas natural -->
+    <h3 class="text-center">Gas</h3>
+    <h6 id="gas_null" class="m-5 text-dark text-center" style="display: none;">
+      No hay datos para mostrar
+    </h6>
+    <canvas id="gas"></canvas>
+
+    <!-- agua pozo -->
+    <h3 class="text-center">Agua pozo</h3>
+    <h6 id="agua_pozo_null" class="m-5 text-dark text-center" style="display: none;">
+      No hay datos para mostrar
+    </h6>
+    <canvas id="agua_pozo"></canvas>
+
+    <!-- agua calderas -->
+    <h3 class="text-center">Agua de calderas</h3>
+    <h6 id="agua_calderas_null" class="m-5 text-dark text-center" style="display: none;">
+      No hay datos para mostrar
+    </h6>
+    <canvas id="agua_calderas"></canvas>
+
+    <!-- efluente generado -->
+    <h3 class="text-center">Efluente generado</h3>
+    <h6 id="efluente_generado_null" class="m-5 text-dark text-center" style="display: none;">
+      No hay datos para mostrar
+    </h6>
+    <canvas id="efluente_generado"></canvas>
+  <div class="m-3">
+    <a href="javascript:void(0);" class="btn btn-secondary col-12" onclick="boton_volver()">Volver</a>
+  </div>
+</div>
+{% endblock %}

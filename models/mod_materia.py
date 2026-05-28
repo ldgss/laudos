@@ -12,9 +12,18 @@ def get_productores():
     try:
         with db.db.get_engine(bind='sqlserver').connect() as connection:
             result = connection.execute(text("""
-                select cod_mae, den, cod_cls from genmae
-                where lower(cod_cls) like '%finca%' or cod_cls =  'AGRICO'  
+                select 
+                    cod_mae, den, cod_cls 
+                from genmae
+                where lower(cod_cls) like '%finca%' or 
+                    (
+                    cod_cls =  'AGRICO'  and tip_mae = 3
+                    )
             """))
+            # result = connection.execute(text("""
+            #     select cod_mae, den, cod_cls from genmae
+            #     where lower(cod_cls) like '%finca%' or cod_cls =  'AGRICO'  
+            # """))
             return result.fetchall()
 
     except Exception as e:

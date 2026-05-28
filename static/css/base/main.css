@@ -47,4 +47,32 @@ table td {
     35%, 100% { opacity: 1; } /* Tercer parpadeo apagado seguido de pausa */
 }
 
+.fixed-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.fixed-table td {
+    width: 50%;
+    word-wrap: break-word;
+}
+
+#connection-toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1050;
+    min-width: 250px;
+}
+
+.vigencia {
+    text-align: center;
+}
+
+.vigencia-etiquetas-icon{
+    max-width: 2rem;
+    max-height: 2rem;
+}
+
 

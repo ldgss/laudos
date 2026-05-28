@@ -1,9 +1,10 @@
+
 document.getElementById('form_buscar').addEventListener('submit', async function (e) {
     e.preventDefault();
-
+    
     const numeroUnico = document.getElementById('numero_unico').value;
-    const tipo = numeroUnico.match(/-(T1|H1|E1)-/);
-
+    const tipo = numeroUnico.match(/-(T1|H1|E1|T2)-/);
+    console.log(`tipo: ${tipo}`)
     if (!tipo) {
         alert('El número único no es válido.');
         return;
@@ -27,10 +28,12 @@ document.getElementById('form_buscar').addEventListener('submit', async function
 
         if (tipo[1] === 'T1') {
             modalId = 'modal1';
-        } else if (tipo[2] === 'H1') {
+        } else if (tipo[1] === 'H1') {
             modalId = 'modal2';
-        } else {
+        } else if (tipo[1] === 'E1'){
             modalId = 'modal3';
+        } else {
+            modalId = 'modal4';
         }
 
         const modal = new bootstrap.Modal(document.getElementById(modalId));
@@ -39,16 +42,20 @@ document.getElementById('form_buscar').addEventListener('submit', async function
         // Popular los campos del formulario (modal1 en este caso)
         if (modalId === 'modal1') {
             document.getElementById('denominacion_modal1').value = data['den'] || '';
-
+            document.getElementById('llenadora_botella').value = data['llenadora_botella'] || '';
+            
             // Manejo de fecha y hora
             const fechaHora = data['fecha_elaboracion'] || data['fecha_etiquetado'] || data['fecha_encajonado'] || '';
             let tipoFechaSeleccionada = '';
 
             if (fechaHora) {
                 const fechaObj = new Date(fechaHora); // Convertir la fecha al objeto Date
+                const año = fechaObj.getFullYear();
+                const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+                const dia = String(fechaObj.getDate()).padStart(2, '0');
+                const fecha = `${año}-${mes}-${dia}`;
                 if (!isNaN(fechaObj)) {
                     // Formatear fecha y hora
-                    const fecha = fechaObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
                     const hora = fechaObj.toTimeString().split(' ')[0]; // Formato HH:MM:SS
                     document.getElementById('fecha_modal1').value = fecha;
                     document.getElementById('hora_modal1').value = hora.slice(0, 5); // HH:MM
@@ -98,8 +105,8 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             document.getElementById('observaciones_modal1').value = data['observacion'] || '';
 
             // Popular campos ocultos si existen en los datos
-            document.getElementById('cod_cls_modal1').value = data['cod_cls'] || '';
             document.getElementById('cod_mae_modal1').value = data['producto'] || '';
+            actualizarCodigosDesdeProducto(1, data['producto'])
             document.getElementById('id_modal1').value = data['id'] || '';
             document.getElementById('numero_unico_modal1').value = data['numero_unico'] || '';
         }
@@ -111,15 +118,19 @@ document.getElementById('form_buscar').addEventListener('submit', async function
         
             // Popular la denominación
             document.getElementById('denominacion_modal2').value = data['den'] || '';
-            document.getElementById('cod_cls_modal2').value = data['cod_cls'] || '';
-            document.getElementById('cod_mae_modal2').value = data['cod_mae'] || '';
+            document.getElementById('cod_mae_modal2').value = data['producto'] || '';
+            actualizarCodigosDesdeProducto(2, data['producto'])
         
             // Manejo de la fecha
             const fechaHora = data['fecha_elaboracion'] || '';
             if (fechaHora) {
                 const fechaObj = new Date(fechaHora); // Convertir la fecha al objeto Date
+                const año = fechaObj.getFullYear();
+                const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+                const dia = String(fechaObj.getDate()).padStart(2, '0');
+                const fecha = `${año}-${mes}-${dia}`;
                 if (!isNaN(fechaObj)) {
-                    document.getElementById('fecha_modal2').value = fechaObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+                    document.getElementById('fecha_modal2').value = fecha; // Formato YYYY-MM-DD
                     document.getElementById('hora_modal2').value = fechaObj.toTimeString().split(' ')[0].slice(0, 5); // HH:MM
                 }
             } else {
@@ -135,7 +146,7 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             document.getElementById('numero_unico_modal2').value = data['numero_unico'] || '';
         
             // Antecedentes
-            document.getElementById('antecedentes_modal2').value = data['antecedentes'] || '';
+            // document.getElementById('antecedentes_modal2').value = data['antecedentes'] || '';
         
             // Cantidad
             document.getElementById('cantidad_modal2').value = data['cantidad'] || '';
@@ -153,9 +164,12 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             const fechaHora = data['fecha_elaboracion'] || '';
             if (fechaHora) {
                 const fechaObj = new Date(fechaHora); // Convertir la fecha al objeto Date
+                const año = fechaObj.getFullYear();
+                const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+                const dia = String(fechaObj.getDate()).padStart(2, '0');
+                const fecha = `${año}-${mes}-${dia}`;
                 if (!isNaN(fechaObj)) {
                     // Formatear fecha y hora
-                    const fecha = fechaObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
                     const hora = fechaObj.toTimeString().split(' ')[0]; // Formato HH:MM:SS
                     document.getElementById('fecha_modal3').value = fecha;
                     document.getElementById('hora_modal3').value = hora.slice(0, 5); // HH:MM
@@ -188,14 +202,125 @@ document.getElementById('form_buscar').addEventListener('submit', async function
             document.getElementById('observaciones_modal3').value = data['observaciones'] || '';
             
             // Popular campos ocultos si existen en los datos
-            document.getElementById('cod_cls_modal3').value = data['cod_cls'] || '';
             document.getElementById('cod_mae_modal3').value = data['producto'] || '';
+            actualizarCodigosDesdeProducto(3, data['producto'])
             document.getElementById('id_modal3').value = data['id'] || '';
             document.getElementById('numero_unico_modal3').value = data['numero_unico'] || '';
         }
+
+        // Popular los campos del formulario (modal3 en este caso)
+        if (modalId === 'modal4') {
+            document.getElementById('id_modal4').value = data['id'] || '';
+            document.getElementById('numero_unico_modal4').value = data['numero_unico'] || '';
+            document.getElementById('denominacion_modal4').value = data['nueva_den'] || '';
+            document.getElementById('observaciones_modal4').value = data['observaciones'] || '';
+            document.getElementById('tipo_reacondicionado_modal4').value = data['tipo_reacondicionado'] || '';
+        }
+
+    habilitarLlenadora();
 
     } catch (error) {
         console.error('Error:', error);
         alert('Hubo un problema al comunicarse con el servidor.');
     }
 });
+
+function validarMarcaCorreccion() {
+    const denominacionInputs = document.querySelectorAll('[id^="denominacion_modal"]');
+
+    denominacionInputs.forEach(input => {
+        // obtengo el id del datalist asociado
+        const listId = input.getAttribute('list');
+        const datalist = document.getElementById(listId);
+
+        if (datalist) {
+            // obtengo todas las opciones del datalist
+            const opciones = Array.from(datalist.options).map(opt => opt.value.trim());
+            const valor = input.value.trim();
+
+            // si el valor no está en las opciones, se borra
+            if (!opciones.includes(valor)) {
+                input.value = '';
+            }
+        }
+    });
+}
+
+function validarTipoDeReacondicionadoCorreccion() {
+    const denominacionInput = document.getElementById('tipo_reacondicionado_modal4');
+    const denominacion_opciones = document.getElementById('tipo_reacondicionado_opciones_modal4');
+    const opciones = Array.from(denominacion_opciones.options).map(option => option.value);
+
+    if (!opciones.includes(denominacionInput.value)) {
+        denominacionInput.value = '';
+    }
+}
+
+
+function actualizarValoresOcultosCorreccion() {
+    // Selecciona todos los inputs con id que empieza en "denominacion_modal"
+    const denominacionInputs = document.querySelectorAll('[id^="denominacion_modal"]');
+
+    denominacionInputs.forEach(input => {
+        const listId = input.getAttribute('list');
+        const datalist = document.getElementById(listId);
+        if (!datalist) return;
+
+        // Busca la opción que coincide con el valor del input
+        const option = Array.from(datalist.options).find(opt => opt.value.trim() === input.value.trim());
+
+        // Extrae el número (por ej. "1" de "denominacion_modal1")
+        const sufijo = input.id.replace('denominacion_modal', '');
+
+        // Obtiene los inputs ocultos correspondientes
+        const codClsInput = document.getElementById(`cod_cls_modal${sufijo}`);
+        const codMaeInput = document.getElementById(`cod_mae_modal${sufijo}`);
+
+        if (option) {
+            // Si hay coincidencia, actualiza los ocultos
+            if (codClsInput) codClsInput.value = option.getAttribute('data-cod-cls') || '';
+            if (codMaeInput) codMaeInput.value = option.getAttribute('data-cod-mae') || '';
+        } else {
+            // Si no coincide con ninguna opción, limpia los ocultos
+            if (codClsInput) codClsInput.value = '';
+            if (codMaeInput) codMaeInput.value = '';
+        }
+    });
+}
+
+
+function habilitarLlenadora(){
+    let denominacionInput = document.getElementById("denominacion_modal1");
+    let llenadoraBotellaInput = document.getElementById("llenadora_botella");
+    
+    if (denominacionInput.value.toLowerCase().includes("botella")) {
+        llenadoraBotellaInput.removeAttribute("disabled");
+    } else {
+        llenadoraBotellaInput.setAttribute("disabled", "true");
+        llenadoraBotellaInput.value = ""; // Limpiar el campo si se deshabilita
+    }
+    denominacionInput.addEventListener('input', habilitarLlenadora);
+}
+
+function actualizarCodigosDesdeProducto(modalNum, producto) {
+    console.log(`actualizando modal ${modalNum} y producto ${producto}`)
+    const opciones = document.querySelectorAll(`#denominacion_opciones_modal${modalNum} option`);
+
+    // Buscar la opción que coincide con el producto
+    const opcion = Array.from(opciones).find(opt => opt.getAttribute('data-cod-mae').trim() === (producto || '').trim());
+    console.log(`opcion encontrada: ${opcion}`)
+    // Obtener referencias a los campos destino
+    const codClsInput = document.getElementById(`cod_cls_modal${modalNum}`);
+    const codMaeInput = document.getElementById(`cod_mae_modal${modalNum}`);
+
+    if (opcion) {
+        // Si encontró coincidencia, asignar valores
+        codClsInput.value = opcion.getAttribute('data-cod-cls') || '';
+    } else {
+        // Si no hay coincidencia, limpiar
+        codClsInput.value = '';
+        codMaeInput.value = '';
+    }
+}
+
+

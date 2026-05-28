@@ -16,11 +16,15 @@
             <table id="descripcion" class="table-bordered col-12">
                 <tr>
                     <th>Denominacion:</th>
-                    <td>{{hojalata["den"]}}</td>
+                    <td id="deno">{{hojalata["den"]}}</td>
                 </tr>
                 <tr>
                     <th>Numero único:</th>
                     <td>{{hojalata["numero_unico"]}}</td>
+                </tr>
+                <tr>
+                    <th>Numero pallet interno:</th>
+                    <td>{{hojalata["numero_pallet_interno"]}}</td>
                 </tr>
                 <tr>
                     <th>Fecha de Elaboracion:</th>
@@ -35,17 +39,25 @@
                     <th>Lote:</th>
                     <td>{{hojalata["lote"]}}</td>
                 </tr>
+                <!-- <tr>
+                    <th>Lote cuerpo:</th>
+                    <td>{{hojalata["lote_cuerpo"]}}</td>
+                </tr>
+                <tr>
+                    <th>Lote tapa:</th>
+                    <td>{{hojalata["lote_tapa"]}}</td>
+                </tr> -->
                 <tr>
                     <th>Cantidad:</th>
                     <td>{{hojalata["cantidad"]}}</td>
                 </tr>
-                <tr>
+                <!-- <tr>
                     <th>Observaciones:</th>
                     <td>{{hojalata["observacion"]}}</td>
-                </tr>
+                </tr> -->
                 <tr>
                     <th>Responsable:</th>
-                    <td>{{hojalata["nombre"]}}</td>
+                    <td>{{hojalata["responsable_nombre"]}}</td>
                 </tr>
             </table>
         </div>

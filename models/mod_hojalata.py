@@ -2,28 +2,27 @@ from sqlalchemy.sql import text
 from db import db
 from datetime import datetime
 import shlex
+from flask import request
+import traceback
+from flask import session
+from utils import helpers
 
-def listar_productos_arballon_hojalata():
-    # cambiar a sqlserver para llamar a arballon
+
+def get_ultimo_pallet_interno():
     try:
-        with db.db.get_engine(bind='sqlserver').connect() as connection:
-            result = connection.execute(text("""SELECT cod_mae, den, cod_cls 
-                FROM genmae
-                WHERE tip_mae = 4 AND (cod_cls = 'Extrac' OR
-                                             cod_cls = 'Pas500' OR
-                                             cod_cls = 'Pelado' OR
-                                             cod_cls = 'Pulpa' OR
-                                             cod_cls = 'Pure' OR
-                                             cod_cls = 'Tri500' OR
-                                             cod_cls = 'Tri8' OR
-                                             cod_cls = 'Tri910' OR
-                                             cod_cls = 'Tri950' OR
-                                             cod_cls = 'Tritur') 
-                                             AND (cod_mae > '901010'
-                                             )
-            """))
-            return result.fetchall()
-
+        sql = text("""
+                    SELECT numero_pallet_interno
+                    FROM hojalata
+                    ORDER BY numero_pallet_interno DESC
+                    LIMIT 1
+                   ;
+                """
+                )
+        
+        result = db.db.session.execute(sql)
+        
+        ultimo_numero_pallet_interno = result.scalar()
+        return int(ultimo_numero_pallet_interno) + 1 if ultimo_numero_pallet_interno is not None else 0
     except Exception as e:
         print(f"Error: {e}")
         return None
@@ -33,7 +32,7 @@ def get_ultimo_id():
         sql = text("""
                     SELECT numero_unico
                     FROM hojalata
-                    ORDER BY id DESC
+                    ORDER BY numero_unico DESC
                     LIMIT 1
                    ;
                 """
@@ -42,108 +41,84 @@ def get_ultimo_id():
         result = db.db.session.execute(sql)
         
         ultimo_id = result.scalar()
-        
-        if not ultimo_id:
-            # si es el primer pallet
-            year = datetime.now().year
-            return f"{year}-H1-000000"
-        else:
-            # si ya existen pallets, aumentar el numero del id
-            prefijo = str(datetime.now().year)
-            sufijo = int(ultimo_id[-6:])
-            nuevo_numero = sufijo + 1
-            nuevo_numero_str = f"{nuevo_numero:06d}"
-            nuevo_codigo = f"{prefijo}-H1-{nuevo_numero_str}"
-            return nuevo_codigo
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
+        year = datetime.now().year
 
-def get_vencimiento(form):
-    try:
-        sql = text("""
-                    SELECT *
-                    FROM vencimiento
-                    WHERE producto = :producto
-                    ORDER BY id DESC;
-                """
-                )
-        
-        vencimiento = db.db.session.execute(sql,{"producto": form["cod_cls"]})
-        return vencimiento.mappings().first()
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-
-def get_vencimiento_meses(vto_id):
-    try:
-        sql = text("""
-                    SELECT *
-                    FROM vencimiento
-                    WHERE id = :id
-                """
-                )
-        
-        vencimiento = db.db.session.execute(sql,{"id": vto_id})
-        return vencimiento.mappings().first()
+        return helpers.next_id(ultimo_id, "H1", year)
     except Exception as e:
         print(f"Error: {e}")
         return None
     
-def insert_mercaderia(form, vto):
+def guardar_hojalata(form, vto, lote):
     try:
         sql = text("""
-                    INSERT INTO
-                    hojalata
-                   (producto, observacion, fecha_elaboracion, lote, lote_cuerpo, lote_tapa, cantidad,   
-                    numero_unico, responsable, vto_meses, fecha_registro, den)
+                    INSERT INTO public.hojalata
+                        (producto, observacion, fecha_elaboracion, 
+                        lote, lote_cuerpo, lote_tapa, cantidad, 
+                        numero_unico, responsable, vto_meses, 
+                        fecha_registro, den, numero_pallet_interno)
                     VALUES
-                    (:producto, :observacion, :fecha_elaboracion, :lote, :lote_cuerpo, :lote_tapa, :cantidad,
-                    :numero_unico, :responsable,  :vto_meses, CURRENT_TIMESTAMP, :den)
+                        (:producto, :observacion, :fecha_elaboracion, 
+                        :lote, :lote_cuerpo, :lote_tapa, :cantidad, 
+                        :numero_unico, :responsable, :vto_meses, 
+                        CURRENT_TIMESTAMP, :den, :numero_pallet_interno)
                 """
                 )
         
-        hojalata = db.db.session.execute(sql,
+        envasado = db.db.session.execute(sql,
                                             {
                                                 "producto": form['cod_mae'],
                                                 "observacion": form['observaciones'],
-                                                "fecha_elaboracion": f"{form['fecha']} {form['hora']}",
-                                                "lote": form['lote'],
-                                                "lote_cuerpo": form['lote'],
-                                                "lote_tapa": form['lote'],
+                                                "fecha_elaboracion": f"{form['fecha']}",
+                                                "lote": lote,
+                                                "lote_cuerpo": None,
+                                                "lote_tapa": None,
                                                 "cantidad": form['cantidad'],
                                                 "numero_unico": form['numero_unico'],
-                                                "responsable": form['user_id'],                                                
+                                                "responsable": session["id"],
                                                 "vto_meses": vto['id'],
-                                                "den": form['denominacion']
+                                                "den": form['denominacion'],
+                                                "numero_pallet_interno": form['numero_pallet_interno']
                                             })
         db.db.session.commit()
         return True
     except Exception as e:
         db.db.session.rollback()
-        print(f"Error: {e}")
+        error_traceback = traceback.format_exc()
+        print(f"e: {e}")
+        print(f"tb: {error_traceback}")
         return None
-    
+
 def get_hojalata(numero_unico):
     try:
         sql = text("""
-                    SELECT h.*, v.*, u.*
+                    SELECT 
+                        h.numero_unico,
+                        h.den,
+                        h.numero_pallet_interno,
+                        h.fecha_elaboracion,
+                        v.meses as meses,
+                        h.lote,
+                        h.lote_cuerpo,
+                        h.lote_tapa,
+                        h.cantidad,
+                        u.nombre as responsable_nombre
                     FROM hojalata h
                     JOIN vencimiento v ON h.vto_meses = v.id
                     JOIN usuario u ON h.responsable = u.id
-                    WHERE numero_unico = :numero_unico
+                    WHERE numero_unico = :numero_unico 
+                    ORDER BY h.fecha_registro DESC
                 """
                 )
         
-        hojalata = db.db.session.execute(sql,{"numero_unico": numero_unico})
-        return hojalata.mappings().first()
+        envasado = db.db.session.execute(sql,{"numero_unico": numero_unico})
+        return envasado.mappings().first()
     except Exception as e:
         print(f"Error: {e}")
         return None
     
-def get_listado(terminos_de_busqueda, resultados_por_pagina, offset):
+def get_listado_hojalata(terminos_de_busqueda, resultados_por_pagina, offset):
     try:
-        # todo
+        # todo 7
         terminos_de_busqueda = shlex.split(terminos_de_busqueda)
         condiciones_ilike = []
         
@@ -152,14 +127,17 @@ def get_listado(terminos_de_busqueda, resultados_por_pagina, offset):
             subcondicion = []
             subcondicion.append(f"h.producto::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"h.observacion::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"h.cantidad::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"h.lote::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"h.fecha_elaboracion::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"h.responsable::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"h.lote::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"h.lote_cuerpo::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"h.lote_tapa::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"h.cantidad::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"h.numero_unico::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"h.responsable::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"h.vto_meses::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"h.fecha_registro::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"h.den::TEXT ILIKE '%{termino}%'")
-            
+            subcondicion.append(f"h.numero_pallet_interno::TEXT ILIKE '%{termino}%'")
             # chequear cada termino en nombre usuario
             subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
             # chequear cada termino en meses vencimiento
@@ -177,6 +155,7 @@ def get_listado(terminos_de_busqueda, resultados_por_pagina, offset):
             JOIN usuario u ON h.responsable = u.id
             JOIN vencimiento v ON h.vto_meses = v.id
             WHERE {condicion_final_ilike}
+            ORDER BY h.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
         resultados = db.db.session.execute(text(query_sql),
@@ -203,4 +182,3 @@ def get_listado(terminos_de_busqueda, resultados_por_pagina, offset):
     except Exception as e:
         print(f"Error: {e}")
         return None
-

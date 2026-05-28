@@ -1,0 +1,112 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/retiro/utils.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+
+<form action="agregar" method="post">
+
+    <div class="row m-4 justify-content-center">
+        <label for="transporte" class="col-sm-2 col-form-label">Transporte</label>
+        <div class="col-sm-5">
+            <input list="transporte_opciones" required type="text" 
+            class="form-control" name="transporte" id="transporte"
+            onblur="validarTransporte()" oninput="actualizarCuit()">
+            <datalist id="transporte_opciones">
+                {% for c in clientes_proveedores %}
+                    <option value="{{ c.den | trim }}" 
+                            data-cuit="{{ c.cuit | trim }}" 
+                    </option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="cuit" class="col-sm-2 col-form-label">Cuit</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" name="cuit" id="cuit">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+        <div class="col-sm-5">
+            <input required type="datetime-local" class="form-control" name="fecha" id="fecha">
+        </div>
+    </div>
+    
+    <div class="row m-4 justify-content-center">
+        <label for="chofer" class="col-sm-2 col-form-label">Chofer</label>
+        <div class="col-sm-5">
+            <input required type="text" maxlength="40" class="form-control" name="chofer" id="chofer">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="cuil_chofer" class="col-sm-2 col-form-label">Cuil Chofer</label>
+        <div class="col-sm-5">
+            <input required type="text" class="form-control" name="cuil_chofer" id="cuil_chofer" 
+                   pattern="^\d{2}-\d{8}-\d{1}$" title="Formato: 20-12345678-8">
+        </div>
+    </div>
+    
+    <div class="row m-4 justify-content-center">
+        <label for="celular" class="col-sm-2 col-form-label">Celular</label>
+        <div class="col-sm-5">
+            <input required type="text" class="form-control" name="celular" id="celular" 
+            pattern="^\d{10,15}$" maxlength="15" title="Formato: 2622123456 (solo números, hasta 15 dígitos)"
+            inputmode="numeric">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
+        <div class="col-sm-5">
+            <input required type="text" maxlength="40" class="form-control" name="cliente" id="cliente">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="patente_tractor" class="col-sm-2 col-form-label">Patente tractor</label>
+        <div class="col-sm-5">
+            <input required type="text" 
+            class="form-control" name="patente_tractor" id="patente_tractor">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="marca_tractor" class="col-sm-2 col-form-label">Marca tractor</label>
+        <div class="col-sm-5">
+            <input required type="text" maxlength="40"
+            class="form-control" name="marca_tractor" id="marca_tractor">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="patente_semi" class="col-sm-2 col-form-label">Patente semi</label>
+        <div class="col-sm-5">
+            <input required type="text" 
+            class="form-control" name="patente_semi" id="patente_semi">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+        <div class="col-sm-5">
+            <textarea class="form-control" id="observaciones" name="observaciones" 
+            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

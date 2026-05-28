@@ -1,0 +1,77 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+
+<form action="agregar" method="post">
+
+    
+    <div class="row m-4 justify-content-center">
+        <label for="acometida_norte" class="col-sm-2 col-form-label">Acometida norte (Kw)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="10000" step="0.01" class="form-control" name="acometida_norte" id="acometida_norte">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="acometida_este" class="col-sm-2 col-form-label">Acometida este (Kw)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="10000" step="0.01" class="form-control" name="acometida_este" id="acometida_este">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="gas_natural" class="col-sm-2 col-form-label">Gas natural (m3)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="100000" step="0.01" class="form-control" name="gas_natural" id="gas_natural">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="agua_pozo" class="col-sm-2 col-form-label">Agua pozo (m3 x 100)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="20000" step="0.01" class="form-control" name="agua_pozo" id="agua_pozo">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="agua_caldera_1" class="col-sm-2 col-form-label">Agua caldera 1 (m3)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="5000" step="0.01" class="form-control" name="agua_caldera_1" id="agua_caldera_1">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="agua_caldera_2" class="col-sm-2 col-form-label">Agua caldera 2 (m3)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="5000" step="0.01" class="form-control" name="agua_caldera_2" id="agua_caldera_2">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="agua_caldera_3" class="col-sm-2 col-form-label">Agua caldera 3 (m3)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="5000" step="0.01" class="form-control" name="agua_caldera_3" id="agua_caldera_3">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="efluente_generado" class="col-sm-2 col-form-label">Efluente generado (m3)</label>
+        <div class="col-sm-5">
+            <input required type="number" min="0" max="50000" step="0.01" class="form-control" name="efluente_generado" id="efluente_generado">
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+        <div class="col-sm-5">
+            <textarea class="form-control" id="observaciones" name="observaciones" 
+            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+        </div>
+    </div>
+
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

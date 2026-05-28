@@ -12,8 +12,9 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <link href="{{url_for("static", filename="css/base/main.css")}}" rel="stylesheet">
   </head>
+  <!-- emp footer -->
+  <body class="d-flex flex-column min-vh-100">
   <body>
-
     <!-- nav -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
@@ -34,18 +35,24 @@
             
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Productos
+                Producción
               </a>
               <ul class="dropdown-menu">
+                <li class="">
+                  <a class="dropdown-item" href="/etiquetasystickers">Etiquetas y Stickers</a>
+                </li>
+                <!-- <li class="">
+                  <a class="dropdown-item" href="/plansemanal">Plan semanal</a>
+                </li> -->
                 <li class="">
                   <a class="dropdown-item" href="/envasado">Semielaborado (línea)</a>
                 </li>
                 <li class="">
                   <a class="dropdown-item" href="/etiquetado">Etiquetado (línea)</a>
                 </li>
-                <li class="">
+                <!-- <li class="">
                   <a class="dropdown-item" href="/encajonado">Encajonado (línea)</a>
-                </li>
+                </li> -->
                 <li class="">
                   <a class="dropdown-item" href="/extracto">Extracto</a>
                 </li>
@@ -77,7 +84,10 @@
               </a>
               <ul class="dropdown-menu">
                 <li class="">
-                  <a class="dropdown-item" href="/bloqueos">Bloqueos</a>
+                  <a class="dropdown-item" href="/bloqueo">Bloqueos produccion</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/hys">Higiene y seguridad</a>
                 </li>
                 <li class="">
                   <a class="dropdown-item" href="/motivosbloqueo">Motivos de bloqueo</a>
@@ -95,7 +105,7 @@
               <a class="nav-link" href="/reporte">Reportes</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/despachos">Despachos</a>
+              <a class="nav-link" href="/despacho">Despachos</a>
             </li>
 
             <li class="nav-item dropdown">
@@ -110,7 +120,7 @@
                   <a class="dropdown-item" href="/permisos">Permisos</a>
                 </li>
                 <li class="">
-                  <a class="dropdown-item" href="/usuarios">Usuarios</a>
+                  <a class="dropdown-item" href="/usuario">Usuarios</a>
                 </li>
               </ul>
             </li>
@@ -131,14 +141,31 @@
 
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Queue
+                Mantenimiento
               </a>
               <ul class="dropdown-menu">
                 <li class="">
-                  <a class="dropdown-item" href="/nodered">NodeRed</a>
+                  <a class="dropdown-item" href="/intervenciones">Intervencion de línea</a>
                 </li>
                 <li class="">
-                  <a class="dropdown-item" href="/materia">Materia Prima</a>
+                  <a class="dropdown-item" href="/energia">Energía</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Porteria
+              </a>
+              <ul class="dropdown-menu">
+                <li class="">
+                  <a class="dropdown-item" href="/materia">Ingreso de materia</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/bascula">Bascula</a>
+                </li>
+                <li class="">
+                  <a class="dropdown-item" href="/retiro">Retiros de mercaderia</a>
                 </li>
               </ul>
             </li>
@@ -193,6 +220,16 @@
     <div id="loading" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
         <img src="{{ url_for('static', filename='img/loading.gif') }}" alt="Cargando...">
     </div>
+
+    <!-- Toast de conexión/desconexión -->
+    <div id="connection-toast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toast-message">
+                Sin conexión al servidor.
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
     
     <div class="container">
 
@@ -200,7 +237,8 @@
       {% endblock %}
       
     </div>
-    
-
+    <footer class="bg-body-tertiary text-center py-2 mt-auto shadow-lg border-top">
+      <small class="text-muted">pre14c43</small>
+    </footer>
 </body>
 </html>

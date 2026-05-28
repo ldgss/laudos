@@ -1,0 +1,71 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/retiro/utils.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="row m-4 justify-content-center">
+        <div class="alert alert-light col-lg-6 col-md-9 col-sm-12" role="alert">
+            <table id="descripcion" class="table-bordered col-12">
+                <tr>
+                    <th>Transporte:</th>
+                    <td>{{retiro["transporte"]}}</td>
+                </tr>
+                <tr>
+                    <th>Cuit:</th>
+                    <td>{{retiro["cuit"]}}</td>
+                </tr>
+                <tr>
+                    <th>Fecha:</th>
+                    <td>{{retiro["fecha"].strftime('%Y-%m-%d %H:%M')}}</td>
+                </tr>
+                <tr>
+                    <th>Chofer:</th>
+                    <td>{{retiro["chofer"]}}</td>
+                </tr>
+                <tr>
+                    <th>Cuil:</th>
+                    <td>{{retiro["cuil_chofer"]}}</td>
+                </tr>
+                <tr>
+                    <th>Celular:</th>
+                    <td>{{retiro["celular"]}}</td>
+                </tr>
+                <tr>
+                    <th>Cliente:</th>
+                    <td>{{retiro["cliente"]}}</td>
+                </tr>
+                <tr>
+                    <th>Patente tractor:</th>
+                    <td>{{retiro["patente_tractor"]}}</td>
+                </tr>
+                <tr>
+                    <th>Marca tractor:</th>
+                    <td>{{retiro["marca_tractor"]}}</td>
+                </tr>
+                <tr>
+                    <th>Patente semi:</th>
+                    <td>{{retiro["patente_semi"]}}</td>
+                </tr>
+                <tr>
+                    <th>Observaciones:</th>
+                    <td>{{retiro["observaciones"]}}</td>
+                </tr>
+                <tr>
+                    <th>Responsable:</th>
+                    <td>{{retiro["responsable"]}}</td>
+                </tr>
+                <tr>
+                    <th>Fecha de registro:</th>
+                    <td>{{retiro["fecha_registro"].strftime('%Y-%m-%d %H:%M')}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="m-2 text-center">
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+{% endblock %}

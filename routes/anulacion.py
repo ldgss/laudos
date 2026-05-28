@@ -7,6 +7,7 @@ from models import mod_anulacion
 from flask import flash
 from flask import request
 from flask import session
+from flask import jsonify
 
 
 anulacion_bp = Blueprint("anulacion", __name__)
@@ -15,7 +16,7 @@ resultados_por_pagina = 20
 
 @anulacion_bp.get("/anulacion")
 def anulacion():
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to_correccion_anulacion() and helpers.authorized_to_submodule("anulacion"):
         title = "Anulacion"
         section = "Anulacion"
         return render_template("anulacion/index.html", title=title, section=section)
@@ -24,28 +25,39 @@ def anulacion():
     
 @anulacion_bp.post("/anulacion/agregar")
 def anulacion_agregar():
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
-        
+    if helpers.session_on() and helpers.authorized_to_correccion_anulacion() and helpers.authorized_to_submodule("anulacion"):
         resultado = mod_anulacion.guardar_anulacion()
+        # un mensaje largo en flash se ignora
         if resultado:
-            flash("El producto se anulo con exito")
+            flash("Anulacion guardada con exito")
             return redirect(url_for("anulacion.anulacion"))
         else:
-            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
-            return redirect(url_for("anulacion.anulacion_agregar"))
+            flash("Se ha producido un error en la anulacion")
+            return redirect(url_for("anulacion.anulacion"))
     else:
         return redirect(url_for("login.login_get"))
     
+@anulacion_bp.post("/anulacion/detalle_t2")
+def detalle_t2():
+    if helpers.session_on() and helpers.authorized_to_correccion_anulacion() and helpers.authorized_to_submodule("anulacion"):
+        resultado = mod_anulacion.detalle_t2()
+        if resultado:
+            return resultado
+        else:
+            return jsonify({'error': 'Pallet no encontrado'}), 404
+    else:
+        return redirect(url_for("login.login_get"))
+
 @anulacion_bp.post("/anulacion/buscar")
 def anulacion_buscar():
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to_correccion_anulacion() and helpers.authorized_to_submodule("anulacion"):
         return redirect(url_for("anulacion.anulacion_listado", terminos_de_busqueda=request.form["buscar"]))
     else:
         return redirect(url_for("login.login_get"))
     
 @anulacion_bp.get("/anulacion/listado/<terminos_de_busqueda>")
 def anulacion_listado(terminos_de_busqueda):
-    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+    if helpers.session_on() and helpers.authorized_to_correccion_anulacion() and helpers.authorized_to_submodule("anulacion"):
         # paginacion
         pagina = request.args.get('page', 1, type=int)
         offset = (pagina - 1) * resultados_por_pagina
