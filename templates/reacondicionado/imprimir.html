@@ -22,38 +22,39 @@
                 <tr>
                     <td colspan="3" style="background-color: #f0f0f0; height: 10px;"></td>
                 </tr>                
+                {% if 'pouch' not in (reacondicionado["reacondicionado"][0]["nueva_den"]|lower) %}
+                    {% for item in reacondicionado["reacondicionado"]%}
+                    {% if item["cantidad"]|int > 0 %}
+                    <tr>
+                        <td style="display: flex;justify-content: space-around;">
+                            <span>
+                                {{item["m_numero_unico"] or item["e_numero_unico"] or item["m2_numero_unico"] or item["e2_numero_unico"]}}
+                            </span>
 
-                {% for item in reacondicionado["reacondicionado"]%}
-                {% if item["cantidad"]|int > 0 %}
-                <tr>
-                    <td style="display: flex;justify-content: space-around;">
-                        <span>
-                            {{item["m_numero_unico"] or item["e_numero_unico"] or item["m2_numero_unico"] or item["e2_numero_unico"]}}
-                        </span>
+                            <span>
+                                <strong>
+                                    {{item["m_lote"] or item["e_lote"] or item["m2_lote"] or item["e2_lote"]}}
+                                </strong>
+                            </span>
 
-                        <span>
-                            <strong>
-                                {{item["m_lote"] or item["e_lote"] or item["m2_lote"] or item["e2_lote"]}}
-                            </strong>
-                        </span>
+                            <span>
+                                {{item["m_vto_elaboracion"] or item["m_vto_etiquetado"] or 
+                                item["e_vto"] or 
+                                item["m2_vto_elaboracion"] or item["m2_vto_etiquetado"] or 
+                                item["e2_vto"]
+                                }}
+                            </span>
 
-                        <span>
-                            {{item["m_vto_elaboracion"] or item["m_vto_etiquetado"] or 
-                            item["e_vto"] or 
-                            item["m2_vto_elaboracion"] or item["m2_vto_etiquetado"] or 
-                            item["e2_vto"]
-                            }}
-                        </span>
-
-                    </td>
-                    <td style="text-align: center;">Cantidad: {{item["cantidad"]}}</td>
-                </tr>
-                
-                <tr>
-                    <td colspan="3" style="background-color: #f0f0f0; height: 5px;"></td>
-                </tr>
+                        </td>
+                        <td style="text-align: center;">Cantidad: {{item["cantidad"]}}</td>
+                    </tr>
+                    
+                    <tr>
+                        <td colspan="3" style="background-color: #f0f0f0; height: 5px;"></td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
                 {% endif %}
-                {% endfor %}
             </table>
             <!-- tabla para mostrar -->
             <table class="table-bordered col-12 fixed-table">
