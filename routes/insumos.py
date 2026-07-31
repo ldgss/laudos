@@ -107,3 +107,50 @@ def insumos_anular_post():
             return redirect(referer)
     else:
         return redirect(url_for("login.login_get"))
+    
+@insumos_bp.get("/insumos/generar")
+def insumos_generar():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        section = "Generar stickers para insumos"
+        return render_template("insumos/generar.html", 
+                               title=title, section=section)
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.post("/insumos/generar")
+def insumos_generar_post():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        result = mod_insumos.generar_stickers()
+        if result:
+            flash("Stickers generados con éxito.")
+            # redirigir a los stickers recien generados
+            return redirect(url_for("insumos.insumos_generar"))
+        else:
+            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
+            return redirect(url_for("insumos.insumos_generar"))
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.post("/insumos/buscar_insumo_para_sticker")
+def insumos_buscar_insumo_para_sticker():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        result = mod_insumos.get_buscar_insumo_para_guardar_sticker()
+        return jsonify(result)
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.post("/insumos/buscar_proveedor_para_sticker")
+def insumos_buscar_proveedor_para_sticker():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        result = mod_insumos.get_buscar_proveedor_para_guardar_sticker()
+        return jsonify(result)
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.post("/insumos/lote_previo_sticker")
+def insumos_lote_previo_sticker():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        result = mod_insumos.lote_previo_sticker()
+        return jsonify(result)
+    else:
+        return redirect(url_for("login.login_get"))

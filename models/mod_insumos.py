@@ -5,6 +5,7 @@ from flask import request
 from itertools import cycle
 from flask import session
 import shlex
+import re
 
 def get_buscar_insumo_para_guardar():
     # cambiar a sqlserver para llamar a arballon
@@ -90,30 +91,6 @@ def buscar_insumo_con_laudo():
             "error": True,
             "mensaje": "Error interno al buscar el pallet"
         }
-
-
-# def buscar_insumo_con_laudo():
-#     numero_unico = request.form.get("numero_unico")
-#     try:
-#         sql = ""
-#         if 'T1' in numero_unico:
-#             sql = text(""" SELECT * FROM mercaderia WHERE numero_unico = :numero_unico """)
-#         elif 'H1' in numero_unico:
-#             sql = text(""" SELECT * FROM hojalata WHERE numero_unico = :numero_unico """)
-#         elif 'E1' in numero_unico:
-#             sql = text(""" SELECT * FROM extracto WHERE numero_unico = :numero_unico """)
-#         elif 'T2' in numero_unico:
-#             sql = text(""" SELECT * FROM reacondicionado WHERE numero_unico = :numero_unico """)
-
-        
-#         result = db.db.session.execute(sql,
-#                                             {
-#                                                 "numero_unico": numero_unico,
-#                                             })
-#         return result.mappings().first()
-#     except Exception as e:
-#         print(f"Error: {e}")
-#         return None
 
 def guardar_insumos():
     try:
@@ -260,6 +237,164 @@ def anular_insumos():
                                             {
                                                 "id": request.form["insumo_envase_id"]                                                
                                             })
+        db.db.session.commit()
+        return True
+    except Exception as e:
+        db.db.session.rollback()
+        print(f"Error: {e}")
+        return None
+
+def get_buscar_insumo_para_guardar_sticker():
+    # cambiar a sqlserver para llamar a arballon
+    try:
+        # Conexión al motor de SQL Server
+        with db.db.get_engine(bind='sqlserver').connect() as connection:
+            # Consulta parametrizada
+            query = text("""
+                SELECT
+                    gv.cod_mae as arb_insumo_codigo,
+                    gv.den as arb_insumo_denominacion
+                FROM genmae_v2 gv
+                WHERE lower(gv.den) LIKE :insumo_buscar
+            """)
+
+            data = request.get_json()
+            insumo_buscar = data.get("insumo_buscar")
+
+            # Reemplazar espacios por % para ampliar la query
+            insumo_buscar = re.sub(r"\s+", "%", insumo_buscar)
+            
+            result = connection.execute(query, {
+                'insumo_buscar': f'%{insumo_buscar}%'
+            })
+            
+            # Usar keys() para mapear columnas y valores manualmente
+            columns = result.keys()
+            rows = [dict(zip(columns, row)) for row in result.fetchall()]
+
+            return rows  # Retornar la lista de diccionarios
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+def get_buscar_proveedor_para_guardar_sticker():
+    # cambiar a sqlserver para llamar a arballon
+    try:
+        # Conexión al motor de SQL Server
+        with db.db.get_engine(bind='sqlserver').connect() as connection:
+            # Consulta parametrizada
+            query = text("""
+                SELECT 
+                    p.codigo as arb_proveedor_codigo, 
+                    p.denominacion as arb_proveedor_denominacion, 
+                    p.codigo_clase  as arb_proveedor_clase
+                FROM proveedores p
+                WHERE
+                    (
+                    lower(p.codigo_clase) LIKE '%agrico%' OR
+                    lower(p.codigo_clase) LIKE '%calida%' OR
+                    lower(p.codigo_clase) LIKE '%comerc%' OR
+                    lower(p.codigo_clase) LIKE '%deposi%' OR
+                    lower(p.codigo_clase) LIKE '%flete%' OR
+                    lower(p.codigo_clase) LIKE '%generi%' OR
+                    lower(p.codigo_clase) LIKE '%hojala%' OR
+                    lower(p.codigo_clase) LIKE '%logist%' OR
+                    lower(p.codigo_clase) LIKE '%manten%' OR
+                    lower(p.codigo_clase) LIKE '%produc%'
+                    )
+                and
+                lower(p.denominacion) LIKE :proveedor_buscar
+            """)
+
+            data = request.get_json()
+            proveedor_buscar = data.get("proveedor_buscar")
+
+            # Reemplazar espacios por % para ampliar la query
+            proveedor_buscar = re.sub(r"\s+", "%", proveedor_buscar)
+            print(f"searching {proveedor_buscar}")
+            result = connection.execute(query, {
+                'proveedor_buscar': f'%{proveedor_buscar}%'
+            })
+            
+            # Usar keys() para mapear columnas y valores manualmente
+            columns = result.keys()
+            rows = [dict(zip(columns, row)) for row in result.fetchall()]
+
+            return rows  # Retornar la lista de diccionarios
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+def lote_previo_sticker():
+    try:
+        sql = text("""
+                    SELECT 
+                        lote
+                    FROM sticker_insumo
+                    WHERE 
+                        arb_insumo_codigo = :arb_insumo_codigo OR
+                        arb_insumo_denominacion = :arb_insumo_denominacion
+                    ORDER BY id DESC
+                    LIMIT 1;
+                """
+                )
+
+        data = request.get_json()
+        resultado = db.db.session.execute(sql,
+                                            {
+                                                "arb_insumo_codigo": data.get("codigo"),
+                                                "arb_insumo_denominacion": data.get("denominacion")
+                                            }).mappings().first()
+        if resultado is None:
+            return None
+        return resultado["lote"]
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+def generar_stickers():
+    try:
+        reacondicionado = text("""
+                    INSERT INTO 
+                        public.sticker_insumo
+                        (
+                            arb_insumo_codigo, arb_insumo_denominacion, lote, 
+                            comprobante_tipo, comprobante_numero, 
+                            arb_proveedor_codigo, arb_proveedor_denominacion, arb_proveedor_clase, 
+                            cantidad_total, cantidad_a_imprimir, 
+                            responsable, fecha_registro, fecha_recepcion
+                        )
+                    VALUES
+                        (
+                            :arb_insumo_codigo, :arb_insumo_denominacion, :lote, 
+                            :comprobante_tipo, :comprobante_numero, 
+                            :arb_proveedor_codigo, :arb_proveedor_denominacion, :arb_proveedor_clase, 
+                            :cantidad_total, :cantidad_a_imprimir, 
+                            :responsable, CURRENT_TIMESTAMP, :fecha_recepcion
+                        )
+                """
+                )
+        
+        reacondicionado = db.db.session.execute(reacondicionado,
+                                            {
+                                                "arb_insumo_codigo": request.form.get("arb_insumo_codigo"),
+                                                "arb_insumo_denominacion": request.form.get("arb_insumo_denominacion"),
+                                                "lote": request.form.get("lote"),
+                                                "comprobante_tipo": request.form.get("comprobante_tipo"),
+                                                "comprobante_numero": request.form.get("comprobante_numero"),
+                                                "arb_proveedor_codigo": request.form.get("arb_proveedor_codigo"),
+                                                "arb_proveedor_denominacion": request.form.get("arb_proveedor_denominacion"),
+                                                "arb_proveedor_clase": request.form.get("arb_proveedor_clase"),
+                                                "cantidad_total": request.form.get("cantidad_total"),
+                                                "cantidad_a_imprimir": request.form.get("cantidad_a_imprimir"),
+                                                "responsable": session["id"],
+                                                "fecha_recepcion": request.form.get("fecha_recepcion"),
+                                            })
+        # generar los detalles
+        # definir si la cantidad a imprimir es 0
+
         db.db.session.commit()
         return True
     except Exception as e:
