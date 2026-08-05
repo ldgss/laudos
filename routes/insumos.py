@@ -154,3 +154,43 @@ def insumos_lote_previo_sticker():
         return jsonify(result)
     else:
         return redirect(url_for("login.login_get"))
+
+    
+# todo listado principal /insumos/listado_stickers/<terminos de busqueda>
+
+@insumos_bp.post("/insumos/buscar_stickers")
+def insumos_buscar_sticker():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        return redirect(url_for("insumos.insumos_listado_sticker", terminos_de_busqueda=request.form["buscar_sticker"]))
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.get("/insumos/listado_sticker/<terminos_de_busqueda>")
+def insumos_listado_sticker(terminos_de_busqueda):
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        # paginacion
+        pagina = request.args.get('page', 1, type=int)
+        offset = (pagina - 1) * resultados_por_pagina
+        
+        resultado = mod_insumos.get_listado_insumos_sticker(terminos_de_busqueda, resultados_por_pagina, offset)
+        section = "Listado de stickers generados"
+        return render_template("insumos/listado_sticker.html", 
+                               max=max,
+                               min=min,
+                               offset=offset,
+                               title=title, section=section, 
+                               terminos_de_busqueda=terminos_de_busqueda,
+                               listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.get("/insumos/imprimir_sticker/<id>")
+def imprimir_sticker(id):
+    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+        stickers = mod_insumos.imprimir_sticker(id)
+        section = "Imprimir sticker de insumo"
+        return render_template("insumos/imprimir_sticker.html", 
+                               title=title, section=section, 
+                               stickers=stickers)
+    else:
+        return redirect(url_for("login.login_get"))

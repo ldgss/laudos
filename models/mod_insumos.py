@@ -392,12 +392,121 @@ def generar_stickers():
                                                 "responsable": session["id"],
                                                 "fecha_recepcion": request.form.get("fecha_recepcion"),
                                             })
-        # generar los detalles
-        # definir si la cantidad a imprimir es 0
+        # todo: generar los detalles
+        # 1 buscar el ultimo PR
+        # 2 si no hay, empezar, si hay, incrementar
+        # 3 traer el id recien generado de sticker_insumo
+        # 4 loopear insertando y generando nuevos numeros unicos
 
         db.db.session.commit()
         return True
     except Exception as e:
         db.db.session.rollback()
+        print(f"Error: {e}")
+        return None
+
+def get_listado_insumos_sticker(terminos_de_busqueda, resultados_por_pagina, offset):
+    try:
+        # todo 7
+        terminos_de_busqueda = shlex.split(terminos_de_busqueda)
+        condiciones_ilike = []
+        
+        for termino in terminos_de_busqueda:
+            # chequear cada termino en cada columna de sticker_insumo
+            subcondicion = []
+            subcondicion.append(f"si.arb_insumo_codigo::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.arb_insumo_denominacion::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.lote::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.comprobante_tipo::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.comprobante_numero::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.arb_proveedor_codigo::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.arb_proveedor_denominacion::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.arb_proveedor_clase::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.cantidad_total::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.cantidad_a_imprimir::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.fecha_recepcion::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.fecha_registro::TEXT ILIKE '%{termino}%'")
+
+            # todo: falta el join a sticker_insumo_detalle por numero unico
+            
+            # chequear cada termino en nombre usuario
+            subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
+            
+            condiciones_ilike.append(f"({' OR '.join(subcondicion)})")
+
+        # refinamos la busqueda
+        condicion_final_ilike = ' AND '.join(condiciones_ilike)
+
+        query_sql = f"""
+            SELECT
+                si.id,
+                si.arb_insumo_denominacion as articulo,
+                si.lote,
+                si.arb_proveedor_denominacion as proveedor,
+                si.comprobante_tipo as comprobante,
+                si.comprobante_numero as numero,
+                si.fecha_recepcion as recepcion
+            FROM sticker_insumo si 
+            JOIN usuario u ON u.id = si.responsable 
+            WHERE {condicion_final_ilike}
+            ORDER BY si.fecha_registro DESC
+            LIMIT :limit OFFSET :offset;
+        """
+        resultados = db.db.session.execute(text(query_sql),
+                    {"limit": resultados_por_pagina, "offset": offset})
+    
+        # calculo el numero de paginas
+        total_resultados = f"""
+                                SELECT COUNT(*)
+                                FROM (
+                                    SELECT
+                                        si.id,
+                                        si.arb_insumo_denominacion as articulo,
+                                        si.lote,
+                                        si.arb_proveedor_denominacion as proveedor,
+                                        si.comprobante_tipo as comprobante,
+                                        si.comprobante_numero as numero,
+                                        si.fecha_recepcion as recepcion
+                                    FROM sticker_insumo si 
+                                    JOIN usuario u ON u.id = si.responsable 
+                                    WHERE {condicion_final_ilike}
+                                ) AS total_count;
+                            """
+
+        total_resultados_scalar = db.db.session.execute(text(total_resultados)).scalar()
+        total_paginas = total_resultados_scalar // resultados_por_pagina
+        if total_resultados_scalar % resultados_por_pagina != 0:
+            total_paginas += 1
+        return [resultados.fetchall(), total_paginas]
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+def imprimir_sticker(id):
+    try:
+        sql = text("""
+                    SELECT 
+                        si.arb_insumo_denominacion as articulo,
+                        si.arb_insumo_codigo as codigo,
+                        si.lote,	
+                        sid.numero_unico,
+                        sid.cantidad_parcial,
+                        si.cantidad_total,
+                        si.arb_proveedor_denominacion as proveedor,
+                        si.comprobante_tipo as comprobante,
+                        si.comprobante_numero as numero,
+                        si.fecha_recepcion as recepcion,
+                        u.nombre as responsable
+                    FROM sticker_insumo_detalle sid
+                    JOIN sticker_insumo si ON si.id = sid.sticker_insumo_id
+                    JOIN usuario u ON u.id = si.responsable
+                    WHERE si.id = :id
+                """
+                )
+        
+        envasado = db.db.session.execute(sql,{"id": id})
+        return envasado.mappings().all()
+    except Exception as e:
         print(f"Error: {e}")
         return None

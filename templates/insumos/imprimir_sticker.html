@@ -1,0 +1,70 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+<script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+<script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+<script defer src="{{url_for("static", filename="js/insumos/sticker.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+    
+    {% for sticker in stickers %}
+        <div class="sticker-container row m-4 justify-content-center">
+            <div class="alert alert-light col-lg-6 col-md-9 col-sm-12">
+                <table class="descripcion_sticker table-bordered col-12">
+                    <tr>
+                        <th>Articulo:</th>
+                        <td>{{ sticker["articulo"] }}</td>
+                    </tr>
+                    <tr>
+                        <th>Codigo de articulo:</th>
+                        <td>{{ sticker["codigo"] }}</td>
+                    </tr>
+                    <tr>
+                        <th>Lote:</th>
+                        <td>{{ sticker["lote"] }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cantidad:</th>
+                        <td>{{ sticker["cantidad_parcial"] }} de {{ sticker["cantidad_total"] }}</td>
+                    </tr>
+                    <tr>
+                        <th>Proveedor:</th>
+                        <td>{{ sticker["proveedor"] }}</td>
+                    </tr>
+                    <tr>
+                        <th>Comprobante:</th>
+                        <td>{{ sticker["comprobante"] }}</td>
+                    </tr>
+                    <tr>
+                        <th>Numero compr.:</th>
+                        <td>{{ sticker["numero"] }}</td>
+                    </tr>
+                    <tr>
+                        <th>Recepcion:</th>
+                        <td>{{ sticker["recepcion"].strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Responsable:</th>
+                        <td>{{ sticker["responsable"] }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="text" id="barcode_text" hidden value="{{sticker["numero_unico"]}}">
+                            <svg style="max-width:100% important!;" id="barcode"></svg>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="row justify-content-center">
+        <div class="m-2 text-center">
+            <button class="btn btn-primary" id="print-barcode-sticker">Imprimir Código de Barras</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+            
+        </div>
+    </div>
+{% endblock %}
