@@ -20,6 +20,7 @@ def listar_productos_arballon():
                         (
                                 cod_cls = 'Extrac' OR
                                 cod_cls = 'Pas500' OR
+                                cod_cls = 'Pas700' OR
                                 cod_cls = 'Pelado' OR
                                 cod_cls = 'Pulpa' OR
                                 cod_cls = 'Pure' OR
