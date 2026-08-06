@@ -104,7 +104,8 @@
     <div class="row m-4 justify-content-center">
         <label for="comprobante_numero" class="col-sm-2 col-form-label">Numero de comprobante</label>
         <div class="col-sm-5">
-            <input required type="text" class="form-control" 
+            <input required type="text" class="form-control" pattern="\d{1,10}-\d{1,20}"
+            title="Ingrese un numero de comprobante válido; ej. 123-45678"
             name="comprobante_numero" id="comprobante_numero" maxlength="20">
         </div>
     </div>
@@ -116,10 +117,50 @@
         </div>
     </div>
     <div class="row m-4 justify-content-center">
-        <label for="cantidad_a_imprimir" class="col-sm-2 col-form-label">Cantidad de stickers a imprimir</label>
-        <div class="col-sm-5">
-            <input required type="number" class="form-control" 
-            name="cantidad_a_imprimir" id="cantidad_a_imprimir" min="1" max="100">
+        Composición del total
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="cantidad_a_imprimir" class="col-sm-2 col-md-2 col-lg-2 col-form-label">Pallets/Cajas x Unidades/Kgs</label>
+        <div class="col-sm-5" id="cantidad_a_imprimir">
+            <div class="row mb-4 align-items-center g-2">
+                <div class="col">
+                    <input required type="number" class="form-control" 
+                        name="pallets_1" id="pallets_1" placeholder="Pallets/Cajas" min="1" max="500">
+                </div>
+                <div class="col-auto">
+                    x
+                </div>
+                <div class="col">
+                    <input required type="number" class="form-control" 
+                        name="unidades_1" id="unidades_1" placeholder="Unidades/Kgs, etc" min="1" max="500000">
+                </div>
+            </div>
+            <div class="row mb-4 align-items-center g-2">
+                <div class="col">
+                    <input type="number" class="form-control" 
+                        name="pallets_2" id="pallets_2" placeholder="Pallets/Cajas" min="1" max="500">
+                </div>
+                <div class="col-auto">
+                    x
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" 
+                        name="unidades_2" id="unidades_2" placeholder="Unidades/Kgs, etc" min="1" max="500000">
+                </div>
+            </div>
+            <div class="row mb-4 align-items-center g-2">
+                <div class="col">
+                    <input type="number" class="form-control" 
+                        name="pallets_3" id="pallets_3" placeholder="Pallets/Cajas" min="1" max="500">
+                </div>
+                <div class="col-auto">
+                    x
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" 
+                        name="unidades_3" id="unidades_3" placeholder="Unidades/Kgs, etc" min="1" max="500000">
+                </div>
+            </div>
         </div>
     </div>
     <div class="row m-4 justify-content-center">
@@ -127,6 +168,13 @@
         <div class="col-sm-5">
             <input required type="datetime-local" class="form-control" 
             name="fecha_recepcion" id="fecha_recepcion">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+        <div class="col-sm-5">
+            <textarea class="form-control" id="observaciones" name="observaciones" 
+            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
         </div>
     </div>
     <div class="row m-4 justify-content-center">

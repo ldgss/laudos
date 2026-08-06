@@ -200,21 +200,60 @@ function insumoStickerForm(){
     if(document.getElementById("insumo_sticker_form")){
         document.getElementById("insumo_sticker_form").addEventListener('submit', function(e) {
 
-        const arb_insumo_codigo = document.getElementById('arb_insumo_codigo');
-        const arb_insumo_denominacion = document.getElementById('arb_insumo_denominacion');
-        const arb_proveedor_codigo = document.getElementById('arb_proveedor_codigo');
-        const arb_proveedor_clase = document.getElementById('arb_proveedor_clase');
-        const arb_proveedor_denominacion = document.getElementById('arb_insumo_denominacion');
-        
-        if (  !arb_insumo_codigo.value.trim() || 
-                !arb_insumo_denominacion.value.trim() || 
-                !arb_proveedor_codigo.value.trim() ||
-                !arb_proveedor_clase.value.trim() ||
-                !arb_proveedor_denominacion.value.trim()) {
-            e.preventDefault();
-            alert("Busque y seleccione el articulo y el proveedor por favor.");
-        }
+            // chequear insumo y proveedor
+            const arb_insumo_codigo = document.getElementById('arb_insumo_codigo');
+            const arb_insumo_denominacion = document.getElementById('arb_insumo_denominacion');
+            const arb_proveedor_codigo = document.getElementById('arb_proveedor_codigo');
+            const arb_proveedor_clase = document.getElementById('arb_proveedor_clase');
+            const arb_proveedor_denominacion = document.getElementById('arb_insumo_denominacion');
+            
+            if (  !arb_insumo_codigo.value.trim() || 
+                    !arb_insumo_denominacion.value.trim() || 
+                    !arb_proveedor_codigo.value.trim() ||
+                    !arb_proveedor_clase.value.trim() ||
+                    !arb_proveedor_denominacion.value.trim()) {
+                e.preventDefault();
+                alert("Busque y seleccione el articulo y el proveedor por favor.");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            
+            }
 
+            // chequear cantidades
+            const cantidad_total = parseInt(document.getElementById("cantidad_total").value);
+            let composicion;
+            let pallets_1 = document.getElementById("pallets_1");
+            let unidades_1 = document.getElementById("unidades_1");
+            composicion = pallets_1.value * unidades_1.value;
+
+            // chequear que composicion 2 este completa
+            let pallets_2 = document.getElementById("pallets_2");
+            let unidades_2 = document.getElementById("unidades_2");
+
+            if(pallets_2 && unidades_2 && pallets_2.value && unidades_2.value){
+                composicion += pallets_2.value * unidades_2.value;
+            } else if(!!pallets_2?.value !== !!unidades_2?.value){
+                e.preventDefault();
+                alert("La segunda línea de la composición no está completa");
+                pallets_2.focus()
+            }
+
+            // chequear que composicion 3 este completa
+            let pallets_3 = document.getElementById("pallets_3");
+            let unidades_3 = document.getElementById("unidades_3");
+
+            if(pallets_3 && unidades_3 && pallets_3.value && unidades_3.value){
+                composicion += pallets_3.value * unidades_3.value;
+            } else if(!!pallets_3?.value !== !!unidades_3?.value){
+                e.preventDefault();
+                alert("La tercera línea de la composición no está completa");
+                pallets_3.focus()
+            }
+            
+            if(cantidad_total !== composicion){
+                e.preventDefault();
+                alert("El total de unidades no coincide con la composición");
+                document.getElementById("cantidad_total").focus();
+            }
         });
     }
 }

@@ -355,6 +355,15 @@ def lote_previo_sticker():
         return None
 
 def generar_stickers():
+
+    pallets_1 = int(request.form.get("pallets_1")) if request.form.get("pallets_1") else 0
+    unidades_1 = int(request.form.get("unidades_1")) if request.form.get("unidades_1") else 0
+    pallets_2 = int(request.form.get("pallets_2")) if request.form.get("pallets_2") else 0
+    unidades_2 = int(request.form.get("unidades_2")) if request.form.get("unidades_2") else 0
+    pallets_3 = int(request.form.get("pallets_3")) if request.form.get("pallets_3") else 0
+    unidades_3 = int(request.form.get("unidades_3")) if request.form.get("unidades_3") else 0
+    composicion = f"{pallets_1}x{unidades_1}+{pallets_2}x{unidades_2}+{pallets_3}x{unidades_3}"
+
     try:
         reacondicionado = text("""
                     INSERT INTO 
@@ -364,7 +373,7 @@ def generar_stickers():
                             comprobante_tipo, comprobante_numero, 
                             arb_proveedor_codigo, arb_proveedor_denominacion, arb_proveedor_clase, 
                             cantidad_total, cantidad_a_imprimir, 
-                            responsable, fecha_registro, fecha_recepcion
+                            responsable, fecha_registro, fecha_recepcion, observaciones
                         )
                     VALUES
                         (
@@ -372,7 +381,7 @@ def generar_stickers():
                             :comprobante_tipo, :comprobante_numero, 
                             :arb_proveedor_codigo, :arb_proveedor_denominacion, :arb_proveedor_clase, 
                             :cantidad_total, :cantidad_a_imprimir, 
-                            :responsable, CURRENT_TIMESTAMP, :fecha_recepcion
+                            :responsable, CURRENT_TIMESTAMP, :fecha_recepcion, :observaciones
                         )
                 """
                 )
@@ -388,9 +397,10 @@ def generar_stickers():
                                                 "arb_proveedor_denominacion": request.form.get("arb_proveedor_denominacion"),
                                                 "arb_proveedor_clase": request.form.get("arb_proveedor_clase"),
                                                 "cantidad_total": request.form.get("cantidad_total"),
-                                                "cantidad_a_imprimir": request.form.get("cantidad_a_imprimir"),
+                                                "cantidad_a_imprimir": composicion,
                                                 "responsable": session["id"],
                                                 "fecha_recepcion": request.form.get("fecha_recepcion"),
+                                                "observaciones": request.form.get("observaciones"),
                                             })
         # todo: generar los detalles
         # 1 buscar el ultimo PR
