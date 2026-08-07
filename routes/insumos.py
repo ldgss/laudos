@@ -120,11 +120,11 @@ def insumos_generar():
 @insumos_bp.post("/insumos/generar")
 def insumos_generar_post():
     if helpers.session_on() and helpers.authorized_to("insumo"):
-        result = mod_insumos.generar_stickers()
-        if result:
+        id = mod_insumos.generar_stickers()
+        if id:
             flash("Stickers generados con éxito.")
             # redirigir a los stickers recien generados
-            return redirect(url_for("insumos.insumos_generar"))
+            return redirect(url_for("insumos.imprimir_sticker", id=id))
         else:
             flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
             return redirect(url_for("insumos.insumos_generar"))

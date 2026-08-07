@@ -251,7 +251,7 @@ function insumoStickerForm(){
             
             if(cantidad_total !== composicion){
                 e.preventDefault();
-                alert("El total de unidades no coincide con la composición");
+                alert(`El total: ${cantidad_total} no coincide con la composicion: ${composicion}`);
                 document.getElementById("cantidad_total").focus();
             }
         });
@@ -422,9 +422,29 @@ function printBarcodeSticker() {
     });
 }
 
+function generarBarCode(){
+    // Selecciona todos los inputs con la clase 'barcode_text'
+    const inputs = document.querySelectorAll('.barcode_text');
+
+    inputs.forEach((input, index) => {
+        const text = input.value;
+
+        // Busca el SVG/canvas correspondiente por posición o por data-attribute
+        const barcodeElement = document.querySelectorAll('.barcode')[index];
+
+        JsBarcode(barcodeElement, text, {
+            format: "CODE128",
+            width: 4,
+            height: 200,
+            displayValue: true
+        });
+    });
+}
+
 formInsumo();
 insumosTableBody();
 formProveedor();
 proveedorTableBody();
 insumoStickerForm();
 printBarcodeSticker();
+generarBarCode()

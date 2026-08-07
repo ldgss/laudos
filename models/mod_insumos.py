@@ -3,6 +3,7 @@ from db import db
 from datetime import datetime
 from flask import request
 from itertools import cycle
+from utils import helpers
 from flask import session
 import shlex
 import re
@@ -365,7 +366,7 @@ def generar_stickers():
     composicion = f"{pallets_1}x{unidades_1}+{pallets_2}x{unidades_2}+{pallets_3}x{unidades_3}"
 
     try:
-        reacondicionado = text("""
+        sticker = text("""
                     INSERT INTO 
                         public.sticker_insumo
                         (
@@ -383,35 +384,113 @@ def generar_stickers():
                             :cantidad_total, :cantidad_a_imprimir, 
                             :responsable, CURRENT_TIMESTAMP, :fecha_recepcion, :observaciones
                         )
+                        RETURNING id
+                """
+                )
+
+        # UNA SOLA TRANSACCIÓN
+        with db.db.session.begin():
+            sticker_id = db.db.session.execute(sticker,
+                {
+                    "arb_insumo_codigo": request.form.get("arb_insumo_codigo"),
+                    "arb_insumo_denominacion": request.form.get("arb_insumo_denominacion"),
+                    "lote": request.form.get("lote"),
+                    "comprobante_tipo": request.form.get("comprobante_tipo"),
+                    "comprobante_numero": request.form.get("comprobante_numero"),
+                    "arb_proveedor_codigo": request.form.get("arb_proveedor_codigo"),
+                    "arb_proveedor_denominacion": request.form.get("arb_proveedor_denominacion"),
+                    "arb_proveedor_clase": request.form.get("arb_proveedor_clase"),
+                    "cantidad_total": request.form.get("cantidad_total"),
+                    "cantidad_a_imprimir": composicion,
+                    "responsable": session["id"],
+                    "fecha_recepcion": request.form.get("fecha_recepcion"),
+                    "observaciones": request.form.get("observaciones"),
+                }).scalar()
+
+            for i in range(pallets_1):
+                numero_unico = ultimo_numero_unico()
+                db.db.session.execute(
+                        text("""
+                            INSERT INTO public.sticker_insumo_detalle
+                                (numero_unico, sticker_insumo_id, 
+                                cantidad_parcial, fecha_registro)
+                            VALUES
+                                (:numero_unico, :sticker_insumo_id, 
+                                :cantidad_parcial, CURRENT_TIMESTAMP);
+                            """),
+                        {
+                            "numero_unico" : numero_unico,
+                            "sticker_insumo_id" : sticker_id,
+                            "cantidad_parcial" : unidades_1
+                        }        
+                    )
+
+            if pallets_2:
+                for i in range(pallets_2):
+                    numero_unico = ultimo_numero_unico()
+                    db.db.session.execute(
+                            text("""
+                                INSERT INTO public.sticker_insumo_detalle
+                                    (numero_unico, sticker_insumo_id, 
+                                    cantidad_parcial, fecha_registro)
+                                VALUES
+                                    (:numero_unico, :sticker_insumo_id, 
+                                    :cantidad_parcial, CURRENT_TIMESTAMP);
+                                """),
+                            {
+                                "numero_unico" : numero_unico,
+                                "sticker_insumo_id" : sticker_id,
+                                "cantidad_parcial" : unidades_2
+                            }        
+                        )
+
+            if pallets_3:
+                for i in range(pallets_3):
+                    numero_unico = ultimo_numero_unico()
+                    db.db.session.execute(
+                            text("""
+                                INSERT INTO public.sticker_insumo_detalle
+                                    (numero_unico, sticker_insumo_id, 
+                                    cantidad_parcial, fecha_registro)
+                                VALUES
+                                    (:numero_unico, :sticker_insumo_id, 
+                                    :cantidad_parcial, CURRENT_TIMESTAMP);
+                                """),
+                            {
+                                "numero_unico" : numero_unico,
+                                "sticker_insumo_id" : sticker_id,
+                                "cantidad_parcial" : unidades_3
+                            }        
+                        )
+
+            
+
+        # si llego hasta aca el commit es automatico
+        # devolver el id para redirigir a impresion
+        return sticker_id
+    except Exception as e:
+        db.db.session.rollback()
+        print(f"Error: {e}")
+        return None
+
+def ultimo_numero_unico():
+    try:
+        sql = text("""
+                    SELECT numero_unico
+                    FROM sticker_insumo_detalle
+                    ORDER BY numero_unico DESC
+                    LIMIT 1
+                   ;
                 """
                 )
         
-        reacondicionado = db.db.session.execute(reacondicionado,
-                                            {
-                                                "arb_insumo_codigo": request.form.get("arb_insumo_codigo"),
-                                                "arb_insumo_denominacion": request.form.get("arb_insumo_denominacion"),
-                                                "lote": request.form.get("lote"),
-                                                "comprobante_tipo": request.form.get("comprobante_tipo"),
-                                                "comprobante_numero": request.form.get("comprobante_numero"),
-                                                "arb_proveedor_codigo": request.form.get("arb_proveedor_codigo"),
-                                                "arb_proveedor_denominacion": request.form.get("arb_proveedor_denominacion"),
-                                                "arb_proveedor_clase": request.form.get("arb_proveedor_clase"),
-                                                "cantidad_total": request.form.get("cantidad_total"),
-                                                "cantidad_a_imprimir": composicion,
-                                                "responsable": session["id"],
-                                                "fecha_recepcion": request.form.get("fecha_recepcion"),
-                                                "observaciones": request.form.get("observaciones"),
-                                            })
-        # todo: generar los detalles
-        # 1 buscar el ultimo PR
-        # 2 si no hay, empezar, si hay, incrementar
-        # 3 traer el id recien generado de sticker_insumo
-        # 4 loopear insertando y generando nuevos numeros unicos
+        result = db.db.session.execute(sql)
+        
+        ultimo_id = result.scalar()
+        year = datetime.now().year
 
-        db.db.session.commit()
-        return True
+        return helpers.next_id(ultimo_id, "PR", year)
     except Exception as e:
-        db.db.session.rollback()
         print(f"Error: {e}")
         return None
 
@@ -436,6 +515,7 @@ def get_listado_insumos_sticker(terminos_de_busqueda, resultados_por_pagina, off
             subcondicion.append(f"si.cantidad_a_imprimir::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"si.fecha_recepcion::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"si.fecha_registro::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.observaciones::TEXT ILIKE '%{termino}%'")
 
             # todo: falta el join a sticker_insumo_detalle por numero unico
             
