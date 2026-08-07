@@ -46,46 +46,89 @@ def buscar_insumo_con_laudo():
     numero_unico = request.form.get("numero_unico")
 
     try:
-        sql_consumido = text("""
-            SELECT 1
-            FROM hojalata h
-            JOIN insumo_envase ie ON h.numero_unico = ie.insumo
-            WHERE h.numero_unico = :numero_unico
-            LIMIT 1
-        """)
+        if 'H1' in numero_unico:
+            sql_consumido = text("""
+                SELECT 1
+                FROM hojalata h
+                JOIN insumo_envase ie ON h.numero_unico = ie.insumo
+                WHERE h.numero_unico = :numero_unico
+                LIMIT 1
+            """)
 
-        consumido = db.db.session.execute(
-            sql_consumido,
-            {"numero_unico": numero_unico}
-        ).first()
+            consumido = db.db.session.execute(
+                sql_consumido,
+                {"numero_unico": numero_unico}
+            ).first()
 
-        if consumido:
-            return {
-                "error": True,
-                "mensaje": "El pallet ya se consumió"
-            }
+            if consumido:
+                return {
+                    "error": True,
+                    "mensaje": "El pallet ya se consumió"
+                }
 
-        if 'T1' in numero_unico:
-            sql = text("SELECT * FROM mercaderia WHERE numero_unico = :numero_unico")
-        elif 'H1' in numero_unico:
-            sql = text("SELECT * FROM hojalata WHERE numero_unico = :numero_unico")
-        elif 'E1' in numero_unico:
-            sql = text("SELECT * FROM extracto WHERE numero_unico = :numero_unico")
-        elif 'T2' in numero_unico:
-            sql = text("SELECT * FROM reacondicionado WHERE numero_unico = :numero_unico")
+            sql = text("""
+                        SELECT 
+                            h.producto, 
+                            h.den AS insumo_den,
+                            h.lote,
+                            h.numero_unico,
+                            h.cantidad,
+                            h.fecha_elaboracion + make_interval(months => v.meses) AS vto
+                        FROM hojalata h 
+                        JOIN vencimiento v ON v.id = h.vto_meses 
+                        WHERE h.numero_unico = :numero_unico
+                """)
+            
+            result = db.db.session.execute(
+                        sql,
+                        {"numero_unico": numero_unico}
+                    )
+            
+            return result.mappings().first()
+        elif 'PR' in numero_unico:
+            sql_consumido = text("""
+                SELECT 1
+                FROM sticker_insumo_detalle sid
+                JOIN insumo_envase ie ON ie.insumo = sid.numero_unico
+                WHERE sid.numero_unico = :numero_unico
+                LIMIT 1
+            """)
+
+            consumido = db.db.session.execute(
+                sql_consumido,
+                {"numero_unico": numero_unico}
+            ).first()
+
+            if consumido:
+                return {
+                    "error": True,
+                    "mensaje": "El insumo ya se consumió"
+                }
+
+            sql = text("""
+                    SELECT
+                        si.arb_insumo_codigo AS producto,
+                        si.arb_insumo_denominacion AS insumo_den,
+                        si.lote,
+                        sid.numero_unico,
+                        sid.cantidad_parcial AS cantidad,
+                        si.vto
+                    FROM sticker_insumo si 
+                    JOIN sticker_insumo_detalle sid ON sid.sticker_insumo_id = si.id 
+                    WHERE sid.numero_unico = :numero_unico
+                """)
+
+            result = db.db.session.execute(
+                        sql,
+                        {"numero_unico": numero_unico}
+                    )
+            
+            return result.mappings().first()
         else:
             return {
                 "error": True,
                 "mensaje": "Tipo de pallet inválido"
             }
-
-        result = db.db.session.execute(
-            sql,
-            {"numero_unico": numero_unico}
-        )
-
-        return result.mappings().first()
-
     except Exception as e:
         print(f"Error: {e}")
         return {
@@ -374,7 +417,7 @@ def generar_stickers():
                             comprobante_tipo, comprobante_numero, 
                             arb_proveedor_codigo, arb_proveedor_denominacion, arb_proveedor_clase, 
                             cantidad_total, cantidad_a_imprimir, 
-                            responsable, fecha_registro, fecha_recepcion, observaciones
+                            responsable, fecha_registro, fecha_recepcion, observaciones, vto
                         )
                     VALUES
                         (
@@ -382,7 +425,7 @@ def generar_stickers():
                             :comprobante_tipo, :comprobante_numero, 
                             :arb_proveedor_codigo, :arb_proveedor_denominacion, :arb_proveedor_clase, 
                             :cantidad_total, :cantidad_a_imprimir, 
-                            :responsable, CURRENT_TIMESTAMP, :fecha_recepcion, :observaciones
+                            :responsable, CURRENT_TIMESTAMP, :fecha_recepcion, :observaciones, :vto
                         )
                         RETURNING id
                 """
@@ -405,6 +448,7 @@ def generar_stickers():
                     "responsable": session["id"],
                     "fecha_recepcion": request.form.get("fecha_recepcion"),
                     "observaciones": request.form.get("observaciones"),
+                    "vto": request.form.get("vto") or None,
                 }).scalar()
 
             for i in range(pallets_1):
@@ -516,6 +560,7 @@ def get_listado_insumos_sticker(terminos_de_busqueda, resultados_por_pagina, off
             subcondicion.append(f"si.fecha_recepcion::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"si.fecha_registro::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"si.observaciones::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"si.vto::TEXT ILIKE '%{termino}%'")
 
             # todo: falta el join a sticker_insumo_detalle por numero unico
             
@@ -535,7 +580,8 @@ def get_listado_insumos_sticker(terminos_de_busqueda, resultados_por_pagina, off
                 si.arb_proveedor_denominacion as proveedor,
                 si.comprobante_tipo as comprobante,
                 si.comprobante_numero as numero,
-                si.fecha_recepcion as recepcion
+                si.fecha_recepcion as recepcion,
+                si.vto
             FROM sticker_insumo si 
             JOIN usuario u ON u.id = si.responsable 
             WHERE {condicion_final_ilike}
@@ -586,6 +632,7 @@ def imprimir_sticker(id):
                         si.arb_proveedor_denominacion as proveedor,
                         si.comprobante_tipo as comprobante,
                         si.comprobante_numero as numero,
+                        si.vto,
                         si.fecha_recepcion as recepcion,
                         u.nombre as responsable
                     FROM sticker_insumo_detalle sid

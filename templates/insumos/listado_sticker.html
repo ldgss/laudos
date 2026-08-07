@@ -19,6 +19,7 @@
                     <th>Comprobante</th>
                     <th>Numero</th>
                     <th>Recepcion</th>
+                    <th>Vto</th>
                     <th>Accion</th>
                 </tr>
             </thead>
@@ -45,6 +46,13 @@
                     </td>
                     <td>
                         {{l.recepcion.strftime('%Y-%m-%d %H:%M')}}
+                    </td>
+                    <td>
+                        {% if l.vto %}
+                            {{l.vto.strftime('%Y-%m-%d %H:%M')}}
+                        {% else %}
+                            -
+                        {% endif %}
                     </td>
                     <td>
                         <a href="{{url_for('insumos.imprimir_sticker', id=l.id)}}" class="btn btn-outline-primary">Ver</a >

@@ -44,7 +44,7 @@
         <div class="col-sm-5">
             <input required type="text" class="form-control" 
             name="numero_unico" id="numero_unico"
-            title="(Ej: 2025-H1-000001)" pattern="^\d{4}-(H1)-\d{6}$">
+            title="(Ej: 2025-H1-000001, 2026-PR-000001)" pattern="^\d{4}-(H1|PR)-\d{6}$">
         </div>
     </div>    
 
@@ -68,6 +68,13 @@
         </div>
     </div>
     <div class="row m-4 justify-content-center">
+        <label for="insumo_den" class="col-sm-2 col-form-label">Denominacion</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="insumo_den" id="insumo_den" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
         <label for="cod_lot" class="col-sm-2 col-form-label">Lote Insumo</label>
         <div class="col-sm-5">
             <input required readonly type="text" class="form-control" 
@@ -86,6 +93,13 @@
         <div class="col-sm-5">
             <input required type="number" class="form-control" 
             name="can" id="can" min="1" max="100000">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="vto" class="col-sm-2 col-form-label">Vencimiento</label>
+        <div class="col-sm-5">
+            <input readonly type="datetime-local" class="form-control" 
+            name="vto" id="vto">
         </div>
     </div>
     <div class="row m-4 justify-content-center">

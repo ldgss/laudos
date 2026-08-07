@@ -96,12 +96,29 @@ document.getElementById("buscar_insumo").addEventListener("submit", function (e)
             console.log("Respuesta:", data);
             cta_alm = document.getElementById("cta_alm")
             cta_alm.value = data["producto"]
+            insumo_den = document.getElementById("insumo_den")
+            insumo_den.value = data["insumo_den"]
             cod_lot = document.getElementById("cod_lot")
             cod_lot.value = data["lote"]
             den_fac = document.getElementById("den_fac")
             den_fac.value = data["numero_unico"]
             can = document.getElementById("can")
             can.value = data["cantidad"]
+            // Chequeo de vencimiento
+            if(data["vto"] != null){    
+                vto = document.getElementById("vto")
+                vto.value = toDatetimeLocal(data["vto"])
+                const fechaVto = new Date(data["vto"]);
+                const ahora = new Date();
+
+                if (fechaVto < ahora) {
+                    vto.style.border = "2px solid red";
+                    vto.style.boxShadow = "1px 1px 11px 1px red";
+                } else {
+                    vto.style.border = "";
+                    vto.style.boxShadow = "";
+                }
+            }
         }else{
             alert("El pallet ya fue consumido como insumo")
         }
@@ -111,6 +128,20 @@ document.getElementById("buscar_insumo").addEventListener("submit", function (e)
         console.log(error)
     });
 });
+
+function toDatetimeLocal(fecha) {
+  const d = new Date(fecha); // por si viene como string
+  const pad = (n) => String(n).padStart(2, '0');
+
+  const yyyy = d.getFullYear();
+  const MM = pad(d.getMonth() + 1);
+  const dd = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const mm = pad(d.getMinutes());
+  const ss = pad(d.getSeconds());
+
+  return `${yyyy}-${MM}-${dd}T${hh}:${mm}:${ss}`;
+}
 
 insumos_form.addEventListener('submit', function(e) {
 
