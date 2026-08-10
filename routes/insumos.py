@@ -107,3 +107,90 @@ def insumos_anular_post():
             return redirect(referer)
     else:
         return redirect(url_for("login.login_get"))
+    
+@insumos_bp.get("/insumos/generar")
+def insumos_generar():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        section = "Generar stickers para insumos"
+        return render_template("insumos/generar.html", 
+                               title=title, section=section)
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.post("/insumos/generar")
+def insumos_generar_post():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        id = mod_insumos.generar_stickers()
+        if id:
+            flash("Stickers generados con éxito.")
+            # redirigir a los stickers recien generados
+            return redirect(url_for("insumos.imprimir_sticker", id=id))
+        else:
+            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
+            return redirect(url_for("insumos.insumos_generar"))
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.post("/insumos/buscar_insumo_para_sticker")
+def insumos_buscar_insumo_para_sticker():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        result = mod_insumos.get_buscar_insumo_para_guardar_sticker()
+        return jsonify(result)
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.post("/insumos/buscar_proveedor_para_sticker")
+def insumos_buscar_proveedor_para_sticker():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        result = mod_insumos.get_buscar_proveedor_para_guardar_sticker()
+        return jsonify(result)
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.post("/insumos/lote_previo_sticker")
+def insumos_lote_previo_sticker():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        result = mod_insumos.lote_previo_sticker()
+        return jsonify(result)
+    else:
+        return redirect(url_for("login.login_get"))
+
+    
+# todo listado principal /insumos/listado_stickers/<terminos de busqueda>
+
+@insumos_bp.post("/insumos/buscar_stickers")
+def insumos_buscar_sticker():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        return redirect(url_for("insumos.insumos_listado_sticker", terminos_de_busqueda=request.form["buscar_sticker"]))
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.get("/insumos/listado_sticker/<terminos_de_busqueda>")
+def insumos_listado_sticker(terminos_de_busqueda):
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        # paginacion
+        pagina = request.args.get('page', 1, type=int)
+        offset = (pagina - 1) * resultados_por_pagina
+        
+        resultado = mod_insumos.get_listado_insumos_sticker(terminos_de_busqueda, resultados_por_pagina, offset)
+        section = "Listado de stickers generados"
+        return render_template("insumos/listado_sticker.html", 
+                               max=max,
+                               min=min,
+                               offset=offset,
+                               title=title, section=section, 
+                               terminos_de_busqueda=terminos_de_busqueda,
+                               listado=resultado[0], pagina_actual=pagina, total_paginas=resultado[1])
+    else:
+        return redirect(url_for("login.login_get"))
+
+@insumos_bp.get("/insumos/imprimir_sticker/<id>")
+def imprimir_sticker(id):
+    if helpers.session_on() and helpers.authorized_to("mercaderia"):
+        stickers = mod_insumos.imprimir_sticker(id)
+        section = "Imprimir sticker de insumo"
+        return render_template("insumos/imprimir_sticker.html", 
+                               title=title, section=section, 
+                               stickers=stickers)
+    else:
+        return redirect(url_for("login.login_get"))

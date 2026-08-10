@@ -1,0 +1,256 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/insumos/sticker.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/mercaderia/utils.js")}}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<form id="form_insumo">
+    <div class="row m-4 justify-content-center">
+        <label for="insumo_buscar" class="col-sm-2 col-form-label">Insumo</label>
+        <div class="col-sm-5">
+            <input required type="search" class="form-control" 
+            name="insumo_buscar" id="insumo_buscar" minlength="5" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </div>
+</form>
+
+<form id="form_proveedor">
+    <div class="row m-4 justify-content-center">
+        <hr class="col-7">
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="proveedor_buscar" class="col-sm-2 col-form-label">Proveedor</label>
+        <div class="col-sm-5">
+            <input required type="search" class="form-control" 
+            name="proveedor_buscar" id="proveedor_buscar" minlength="5" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <hr class="col-7">
+    </div>
+</form>
+
+<form id="insumo_sticker_form" action="generar" method="post">
+    <div hidden class="row m-4 justify-content-center">
+        <label for="arb_insumo_codigo" class="col-sm-2 col-form-label">Codigo Insumo</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="arb_insumo_codigo" id="arb_insumo_codigo" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="arb_insumo_denominacion" class="col-sm-2 col-form-label">Insumo</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="arb_insumo_denominacion" id="arb_insumo_denominacion" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="lote" class="col-sm-2 col-form-label">Lote</label>
+        <div class="col-sm-5">
+            <input required type="text" class="form-control" 
+            name="lote" id="lote" maxlength="20">
+        </div>
+    </div>
+    <div hidden class="row m-4 justify-content-center">
+        <label for="arb_proveedor_codigo" class="col-sm-2 col-form-label">Codigo Proveedor</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="arb_proveedor_codigo" id="arb_proveedor_codigo" maxlength="20">
+        </div>
+    </div>
+    <div hidden class="row m-4 justify-content-center">
+        <label for="arb_proveedor_clase" class="col-sm-2 col-form-label">Clase Proveedor</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="arb_proveedor_clase" id="arb_proveedor_clase" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="arb_proveedor_denominacion" class="col-sm-2 col-form-label">Proveedor</label>
+        <div class="col-sm-5">
+            <input required readonly type="text" class="form-control" 
+            name="arb_proveedor_denominacion" id="arb_proveedor_denominacion" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="comprobante_tipo" class="col-sm-2 col-form-label">
+            Tipo de comprobante
+        </label>
+        <div class="col-sm-5">
+            <select class="form-select" name="comprobante_tipo" id="comprobante_tipo" required>
+                <option value="" selected disabled>Seleccione un tipo...</option>
+                <option value="factura">Factura</option>
+                <option value="remito">Remito</option>
+                <option value="recibo">Recibo</option>
+                <option value="otro">Otro tipo de comprobante</option>
+            </select>
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="comprobante_numero" class="col-sm-2 col-form-label">Numero de comprobante</label>
+        <div class="col-sm-5">
+            <input required type="text" class="form-control" pattern="\d{1,10}-\d{1,20}"
+            title="Ingrese un numero de comprobante válido; ej. 123-45678"
+            name="comprobante_numero" id="comprobante_numero" maxlength="20">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="cantidad_total" class="col-sm-2 col-form-label">Cantidad total recibida</label>
+        <div class="col-sm-5">
+            <input required type="number" class="form-control" 
+            name="cantidad_total" id="cantidad_total" min="1" max="500000">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        Composición del total
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="cantidad_a_imprimir" class="col-sm-2 col-md-2 col-lg-2 col-form-label">Pallets/Cajas x Unidades/Kgs</label>
+        <div class="col-sm-5" id="cantidad_a_imprimir">
+            <div class="row mb-4 align-items-center g-2">
+                <div class="col">
+                    <input required type="number" class="form-control" 
+                        name="pallets_1" id="pallets_1" placeholder="Pallets/Cajas" min="1" max="500">
+                </div>
+                <div class="col-auto">
+                    x
+                </div>
+                <div class="col">
+                    <input required type="number" class="form-control" 
+                        name="unidades_1" id="unidades_1" placeholder="Unidades/Kgs, etc" min="1" max="500000">
+                </div>
+            </div>
+            <div class="row mb-4 align-items-center g-2">
+                <div class="col">
+                    <input type="number" class="form-control" 
+                        name="pallets_2" id="pallets_2" placeholder="Pallets/Cajas" min="1" max="500">
+                </div>
+                <div class="col-auto">
+                    x
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" 
+                        name="unidades_2" id="unidades_2" placeholder="Unidades/Kgs, etc" min="1" max="500000">
+                </div>
+            </div>
+            <div class="row mb-4 align-items-center g-2">
+                <div class="col">
+                    <input type="number" class="form-control" 
+                        name="pallets_3" id="pallets_3" placeholder="Pallets/Cajas" min="1" max="500">
+                </div>
+                <div class="col-auto">
+                    x
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" 
+                        name="unidades_3" id="unidades_3" placeholder="Unidades/Kgs, etc" min="1" max="500000">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="vto" class="col-sm-2 col-form-label">Fecha de vencimiento</label>
+        <div class="col-sm-5">
+            <input type="datetime-local" class="form-control" 
+            name="vto" id="vto">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="fecha_recepcion" class="col-sm-2 col-form-label">Fecha de recepcion</label>
+        <div class="col-sm-5">
+            <input required type="datetime-local" class="form-control" 
+            name="fecha_recepcion" id="fecha_recepcion">
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones</label>
+        <div class="col-sm-5">
+            <textarea class="form-control" id="observaciones" name="observaciones" 
+            rows="4" maxlength="1000" placeholder="Ingrese observaciones"></textarea>
+        </div>
+    </div>
+    <div class="row m-4 justify-content-center">
+        <div class="m-2 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="javascript:void(0);" class="btn btn-secondary" onclick="boton_volver()">Volver</a>
+        </div>
+    </div>
+</form>
+
+<!-- modal para insumos -->
+
+<div class="modal fade" id="insumosModal" tabindex="-1" aria-labelledby="insumosModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="insumosModalLabel">Seleccionar Insumo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Codigo insumo</th>
+                <th>Insumo</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="insumosTableBody">
+              <!-- resultados -->
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal para proveedor -->
+
+<div class="modal fade" id="proveedorModal" tabindex="-1" aria-labelledby="proveedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="proveedorModalLabel">Seleccionar Insumo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Codigo</th>
+                <th>Denominacion</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="proveedorTableBody">
+              <!-- resultados -->
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+{% endblock %}
