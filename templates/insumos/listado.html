@@ -13,12 +13,12 @@
             <thead>
                 <tr>
                     <th>N°</th>
+                    <th>Den</th>
                     <th>Insumo</th>
+                    <th>Lote</th>
                     <th>Codigo</th>
                     <th>Fecha consumo</th>
                     <th>Responsable</th>
-                    <th>Fecha registro</th>
-                    <th>Lote</th>
                     <th>Cantidad</th>
                     <th>Accion</th>
                 </tr>
@@ -30,7 +30,17 @@
                         {{loop.index + offset}}
                     </td>
                     <td>
+                        {% if l.den %}
+                            {{l.den}}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
                         {{l.insumo}}
+                    </td>
+                    <td>
+                        {{l.lote_insumo}}
                     </td>
                     <td>
                         {{l.codigo_insumo}}
@@ -40,12 +50,6 @@
                     </td>
                     <td>
                         {{l.nombre}}
-                    </td>
-                    <td>
-                        {{l.fecha_registro.strftime('%Y-%m-%d %H:%M')}}
-                    </td>
-                    <td>
-                        {{l.lote_insumo}}
                     </td>
                     <td>
                         {{l.cantidad}}

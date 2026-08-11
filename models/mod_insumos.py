@@ -124,6 +124,46 @@ def buscar_insumo_con_laudo():
                     )
             
             return result.mappings().first()
+        elif 'T1' in numero_unico:
+                    sql_consumido = text("""
+                        SELECT 1
+                        FROM mercaderia m
+                        JOIN insumo_envase ie ON ie.insumo = m.numero_unico
+                        WHERE m.numero_unico = :numero_unico
+                        LIMIT 1
+                    """)
+        
+                    consumido = db.db.session.execute(
+                        sql_consumido,
+                        {"numero_unico": numero_unico}
+                    ).first()
+        
+                    if consumido:
+                        return {
+                            "error": True,
+                            "mensaje": "El insumo ya se consumió"
+                        }
+        
+                    sql = text("""
+                            SELECT
+                                m.producto AS producto,
+                                m.den AS insumo_den,
+                                m.lote,
+                                m.numero_unico,
+                                m.cantidad,
+                                m.vto,
+                                m.fecha_registro + make_interval(months => v.meses) AS vto
+                            FROM mercaderia m 
+                            JOIN vencimiento v ON v.id = m.vto
+                            WHERE m.numero_unico = :numero_unico
+                        """)
+        
+                    result = db.db.session.execute(
+                                sql,
+                                {"numero_unico": numero_unico}
+                            )
+                    
+                    return result.mappings().first()
         else:
             return {
                 "error": True,
@@ -142,10 +182,10 @@ def guardar_insumos():
                     INSERT INTO
                     insumo_envase
                     (insumo, codigo_insumo, fecha_consumo, responsable, fecha_registro, 
-                    lote_insumo, cantidad)
+                    lote_insumo, cantidad, den)
                     VALUES
                     (:insumo, :codigo_insumo, :fecha_consumo, :responsable, CURRENT_TIMESTAMP, 
-                    :lote_insumo, :cantidad)
+                    :lote_insumo, :cantidad, :den)
                 """
                 )
         
@@ -156,7 +196,8 @@ def guardar_insumos():
                                                 "fecha_consumo": request.form["fecha_hora"],
                                                 "responsable": session["id"],
                                                 "lote_insumo": request.form["cod_lot"],
-                                                "cantidad": request.form["can"]
+                                                "cantidad": request.form["can"],
+                                                "den": request.form["insumo_den"],
                                             })
         db.db.session.commit()
         return True
@@ -181,6 +222,7 @@ def get_listado_insumos(terminos_de_busqueda, resultados_por_pagina, offset):
             subcondicion.append(f"i_e.fecha_registro::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"i_e.lote_insumo::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"i_e.cantidad::TEXT ILIKE '%{termino}%'")
+            subcondicion.append(f"i_e.den::TEXT ILIKE '%{termino}%'")
             
             # chequear cada termino en nombre usuario
             subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
