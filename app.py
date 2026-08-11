@@ -27,8 +27,9 @@ from routes import bascula
 from routes import retiro
 from routes import hojalata
 from routes import hys
-from routes import vencimientos
 from routes import energia
+from routes import vencimientos
+from routes import motivosdebloqueo
 from routes import intervenciones
 from routes import etiquetasystickers
 from routes import ayuda
@@ -115,6 +116,7 @@ app.register_blueprint(retiro.retiro_bp)
 app.register_blueprint(hojalata.hojalata_bp)
 app.register_blueprint(hys.hys_bp)
 app.register_blueprint(vencimientos.vencimientos_bp)
+app.register_blueprint(motivosdebloqueo.motivosdebloqueo_bp)
 app.register_blueprint(energia.energia_bp)
 app.register_blueprint(intervenciones.intervenciones_bp)
 app.register_blueprint(etiquetasystickers.etiquetasystickers_bp)

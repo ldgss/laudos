@@ -1,0 +1,43 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <th>Motivo</th>
+                    <th class="text-center">Producto</th>
+                    <th class="text-center">Hojalata</th>
+                    <th class="text-center">Extracto</th>
+                    <th>Última modificación</th>
+                </thead>
+                <tbody>
+                    {% for mb in motivosdebloqueo %}
+                        <tr>
+                            <td>{{ mb.motivo | upper }}</td>
+                            <td class="text-center">
+                                <div class="form-check d-flex justify-content-center">
+                                    <input class="form-check-input" type="checkbox" disabled {% if mb.mercaderia %}checked{% endif %}>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-flex justify-content-center">
+                                    <input class="form-check-input" type="checkbox" disabled {% if mb.hojalata %}checked{% endif %}>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check d-flex justify-content-center">
+                                    <input class="form-check-input" type="checkbox" disabled {% if mb.extracto %}checked{% endif %}>
+                                </div>
+                            </td>
+                            <td>{{ mb.ultima_actualizacion.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
