@@ -30,10 +30,16 @@
                         {{loop.index + offset}}
                     </td>
                     <td>
-                        {% if l.den %}
-                            {{l.den}}
+                        {% if l.mden %}
+                            {{ l.mden }}
+                        {% elif l.eden %}
+                            {{ l.eden }}
+                        {% elif l.hden %}
+                            {{ l.hden }}
+                        {% elif l.pden %}
+                            {{ l.pden }}
                         {% else %}
-                            -
+                            Cargado sin laudo
                         {% endif %}
                     </td>
                     <td>

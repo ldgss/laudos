@@ -50,8 +50,9 @@ def buscar_insumo_con_laudo():
             sql_consumido = text("""
                 SELECT 1
                 FROM hojalata h
-                JOIN insumo_envase ie ON h.numero_unico = ie.insumo
-                WHERE h.numero_unico = :numero_unico
+                WHERE 
+                    (h.numero_unico = :numero_unico AND
+                    h.cantidad = 0)
                 LIMIT 1
             """)
 
@@ -128,8 +129,9 @@ def buscar_insumo_con_laudo():
                     sql_consumido = text("""
                         SELECT 1
                         FROM mercaderia m
-                        JOIN insumo_envase ie ON ie.insumo = m.numero_unico
-                        WHERE m.numero_unico = :numero_unico
+                        WHERE 
+                            (m.numero_unico = :numero_unico AND
+                            m.cantidad = 0)
                         LIMIT 1
                     """)
         
@@ -151,7 +153,6 @@ def buscar_insumo_con_laudo():
                                 m.lote,
                                 m.numero_unico,
                                 m.cantidad,
-                                m.vto,
                                 m.fecha_registro + make_interval(months => v.meses) AS vto
                             FROM mercaderia m 
                             JOIN vencimiento v ON v.id = m.vto
@@ -164,6 +165,45 @@ def buscar_insumo_con_laudo():
                             )
                     
                     return result.mappings().first()
+        elif 'E1' in numero_unico:
+                            sql_consumido = text("""
+                                SELECT 1
+                                FROM extracto e
+                                JOIN insumo_envase ie ON ie.insumo = e.numero_unico
+                                WHERE e.numero_unico = :numero_unico
+                                LIMIT 1
+                            """)
+                
+                            consumido = db.db.session.execute(
+                                sql_consumido,
+                                {"numero_unico": numero_unico}
+                            ).first()
+                
+                            if consumido:
+                                return {
+                                    "error": True,
+                                    "mensaje": "El insumo ya se consumió"
+                                }
+                
+                            sql = text("""
+                                    SELECT
+                                        e.producto AS producto,
+                                        e.den AS insumo_den,
+                                        e.lote,
+                                        e.numero_unico,
+                                        e.cantidad,
+                                        e.fecha_elaboracion + make_interval(months => v.meses) AS vto
+                                    FROM extracto e 
+                                    JOIN vencimiento v ON v.id = e.vto_meses
+                                    WHERE e.numero_unico = :numero_unico
+                                """)
+                
+                            result = db.db.session.execute(
+                                        sql,
+                                        {"numero_unico": numero_unico}
+                                    )
+                            
+                            return result.mappings().first()
         else:
             return {
                 "error": True,
@@ -182,10 +222,10 @@ def guardar_insumos():
                     INSERT INTO
                     insumo_envase
                     (insumo, codigo_insumo, fecha_consumo, responsable, fecha_registro, 
-                    lote_insumo, cantidad, den)
+                    lote_insumo, cantidad)
                     VALUES
                     (:insumo, :codigo_insumo, :fecha_consumo, :responsable, CURRENT_TIMESTAMP, 
-                    :lote_insumo, :cantidad, :den)
+                    :lote_insumo, :cantidad)
                 """
                 )
         
@@ -197,7 +237,6 @@ def guardar_insumos():
                                                 "responsable": session["id"],
                                                 "lote_insumo": request.form["cod_lot"],
                                                 "cantidad": request.form["can"],
-                                                "den": request.form["insumo_den"],
                                             })
         db.db.session.commit()
         return True
@@ -222,10 +261,18 @@ def get_listado_insumos(terminos_de_busqueda, resultados_por_pagina, offset):
             subcondicion.append(f"i_e.fecha_registro::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"i_e.lote_insumo::TEXT ILIKE '%{termino}%'")
             subcondicion.append(f"i_e.cantidad::TEXT ILIKE '%{termino}%'")
-            subcondicion.append(f"i_e.den::TEXT ILIKE '%{termino}%'")
             
             # chequear cada termino en nombre usuario
             subcondicion.append(f"u.nombre::TEXT ILIKE '%{termino}%'")
+
+            # chequear cada termino en den mercaderia
+            subcondicion.append(f"m.den::TEXT ILIKE '%{termino}%'")
+            # chequear cada termino en den extracto
+            subcondicion.append(f"e.den::TEXT ILIKE '%{termino}%'")
+            # chequear cada termino en den hojalata
+            subcondicion.append(f"h.den::TEXT ILIKE '%{termino}%'")
+            # chequear cada termino en den hojalata
+            subcondicion.append(f"si.arb_insumo_denominacion::TEXT ILIKE '%{termino}%'")
             
             condiciones_ilike.append(f"({' OR '.join(subcondicion)})")
 
@@ -233,10 +280,27 @@ def get_listado_insumos(terminos_de_busqueda, resultados_por_pagina, offset):
         condicion_final_ilike = ' AND '.join(condiciones_ilike)
 
         query_sql = f"""
-            SELECT i_e.*, u.*, i_e.id as insumo_envase_id
+            SELECT 
+                i_e.id AS insumo_envase_id, 
+                i_e.insumo AS insumo,
+                m.den AS mden,
+                e.den AS eden,
+                h.den AS hden,
+                si.arb_insumo_denominacion as pden,
+                i_e.codigo_insumo,
+                i_e.fecha_consumo,
+                i_e.fecha_registro,
+                i_e.lote_insumo,
+                i_e.cantidad,
+                u.nombre
             FROM insumo_envase i_e
-            JOIN usuario u ON i_e.responsable = u.id
-            WHERE {condicion_final_ilike}
+            JOIN usuario u ON u.id = i_e.responsable
+            LEFT JOIN mercaderia m ON m.numero_unico = i_e.insumo
+            LEFT JOIN extracto e ON e.numero_unico = i_e.insumo
+            LEFT JOIN hojalata h ON h.numero_unico = i_e.insumo
+            left join sticker_insumo_detalle sid on SID.numero_unico = i_e.insumo 
+            left join sticker_insumo si on SI.ID = SID.sticker_insumo_id 
+            where{condicion_final_ilike}
             ORDER BY i_e.fecha_registro DESC
             LIMIT :limit OFFSET :offset;
         """
@@ -247,10 +311,27 @@ def get_listado_insumos(terminos_de_busqueda, resultados_por_pagina, offset):
         total_resultados = f"""
                                 SELECT COUNT(*)
                                 FROM (
-                                    SELECT i_e.*, u.*
+                                    SELECT 
+                                        i_e.id AS insumo_envase_id, 
+                                        i_e.insumo AS insumo,
+                                        m.den AS mden,
+                                        e.den AS eden,
+                                        h.den AS hden,
+                                        si.arb_insumo_denominacion as pden,
+                                        i_e.codigo_insumo,
+                                        i_e.fecha_consumo,
+                                        i_e.fecha_registro,
+                                        i_e.lote_insumo,
+                                        i_e.cantidad,
+                                        u.nombre
                                     FROM insumo_envase i_e
-                                    JOIN usuario u ON i_e.responsable = u.id
-                                    WHERE {condicion_final_ilike}
+                                    JOIN usuario u ON u.id = i_e.responsable
+                                    LEFT JOIN mercaderia m ON m.numero_unico = i_e.insumo
+                                    LEFT JOIN extracto e ON e.numero_unico = i_e.insumo
+                                    LEFT JOIN hojalata h ON h.numero_unico = i_e.insumo
+                                    left join sticker_insumo_detalle sid on SID.numero_unico = i_e.insumo 
+                                    left join sticker_insumo si on SI.ID = SID.sticker_insumo_id 
+                                    where{condicion_final_ilike}
                                 ) AS total_count;
                             """
 
