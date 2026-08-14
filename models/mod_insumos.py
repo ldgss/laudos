@@ -411,6 +411,25 @@ def anular_insumos():
         print(f"Error: {e}")
         return None
 
+def anular_stricker_insumos():
+    # CUIDADO - DANGER - DELETE ZONE
+    try:
+        anulacion = text("""
+                    DELETE FROM sticker_insumo
+                    WHERE id=:id;
+                """
+                )
+        anulacion = db.db.session.execute(anulacion,
+                                            {
+                                                "id": request.form["insumo_envase_id"]                                                
+                                            })
+        db.db.session.commit()
+        return True
+    except Exception as e:
+        db.db.session.rollback()
+        print(f"Error: {e}")
+        return None
+
 def get_buscar_insumo_para_guardar_sticker():
     # cambiar a sqlserver para llamar a arballon
     try:

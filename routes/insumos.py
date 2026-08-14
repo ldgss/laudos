@@ -107,6 +107,19 @@ def insumos_anular_post():
             return redirect(referer)
     else:
         return redirect(url_for("login.login_get"))
+
+@insumos_bp.post("/insumos/anular_sticker")
+def insumos_anular_stricker_post():
+    if helpers.session_on() and helpers.authorized_to("insumo"):
+        referer = request.headers.get('Referer', '/')
+        result = mod_insumos.anular_stricker_insumos()
+        if result:
+            return redirect(referer)
+        else:
+            flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
+            return redirect(referer)
+    else:
+        return redirect(url_for("login.login_get"))
     
 @insumos_bp.get("/insumos/generar")
 def insumos_generar():
