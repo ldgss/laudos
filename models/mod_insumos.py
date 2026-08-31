@@ -441,7 +441,7 @@ def get_buscar_insumo_para_guardar_sticker():
                     gv.cod_mae as arb_insumo_codigo,
                     gv.den as arb_insumo_denominacion
                 FROM genmae_v2 gv
-                WHERE lower(gv.den) LIKE :insumo_buscar
+                WHERE gv.den COLLATE Latin1_General_CI_AI LIKE :insumo_buscar
             """)
 
             data = request.get_json()
@@ -478,19 +478,19 @@ def get_buscar_proveedor_para_guardar_sticker():
                 FROM proveedores p
                 WHERE
                     (
-                    lower(p.codigo_clase) LIKE '%agrico%' OR
-                    lower(p.codigo_clase) LIKE '%calida%' OR
-                    lower(p.codigo_clase) LIKE '%comerc%' OR
-                    lower(p.codigo_clase) LIKE '%deposi%' OR
-                    lower(p.codigo_clase) LIKE '%flete%' OR
-                    lower(p.codigo_clase) LIKE '%generi%' OR
-                    lower(p.codigo_clase) LIKE '%hojala%' OR
-                    lower(p.codigo_clase) LIKE '%logist%' OR
-                    lower(p.codigo_clase) LIKE '%manten%' OR
-                    lower(p.codigo_clase) LIKE '%produc%'
+                    p.codigo_clase COLLATE Latin1_General_CI_AI LIKE '%agrico%' OR
+                    p.codigo_clase COLLATE Latin1_General_CI_AI LIKE '%calida%' OR
+                    p.codigo_clase COLLATE Latin1_General_CI_AI LIKE '%comerc%' OR
+                    p.codigo_clase COLLATE Latin1_General_CI_AI LIKE '%deposi%' OR
+                    p.codigo_clase COLLATE Latin1_General_CI_AI LIKE '%flete%' OR
+                    p.codigo_clase COLLATE Latin1_General_CI_AI LIKE '%generi%' OR
+                    p.codigo_clase COLLATE Latin1_General_CI_AI LIKE '%hojala%' OR
+                    p.codigo_clase COLLATE Latin1_General_CI_AI LIKE '%logist%' OR
+                    p.codigo_clase COLLATE Latin1_General_CI_AI LIKE '%manten%' OR
+                    p.codigo_clase COLLATE Latin1_General_CI_AI LIKE '%produc%'
                     )
                 and
-                lower(p.denominacion) LIKE :proveedor_buscar
+                p.denominacion COLLATE Latin1_General_CI_AI LIKE :proveedor_buscar
             """)
 
             data = request.get_json()
