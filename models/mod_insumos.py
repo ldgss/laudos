@@ -543,11 +543,11 @@ def lote_previo_sticker():
 def generar_stickers():
 
     pallets_1 = int(request.form.get("pallets_1")) if request.form.get("pallets_1") else 0
-    unidades_1 = int(request.form.get("unidades_1")) if request.form.get("unidades_1") else 0
+    unidades_1 = float(request.form.get("unidades_1")) if request.form.get("unidades_1") else 0
     pallets_2 = int(request.form.get("pallets_2")) if request.form.get("pallets_2") else 0
-    unidades_2 = int(request.form.get("unidades_2")) if request.form.get("unidades_2") else 0
+    unidades_2 = float(request.form.get("unidades_2")) if request.form.get("unidades_2") else 0
     pallets_3 = int(request.form.get("pallets_3")) if request.form.get("pallets_3") else 0
-    unidades_3 = int(request.form.get("unidades_3")) if request.form.get("unidades_3") else 0
+    unidades_3 = float(request.form.get("unidades_3")) if request.form.get("unidades_3") else 0
     composicion = f"{pallets_1}x{unidades_1}+{pallets_2}x{unidades_2}+{pallets_3}x{unidades_3}"
 
     try:

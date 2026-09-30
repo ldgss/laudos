@@ -219,7 +219,7 @@ function insumoStickerForm(){
             }
 
             // chequear cantidades
-            const cantidad_total = parseInt(document.getElementById("cantidad_total").value);
+            const cantidad_total = parseFloat(document.getElementById("cantidad_total").value);
             let composicion;
             let pallets_1 = document.getElementById("pallets_1");
             let unidades_1 = document.getElementById("unidades_1");
