@@ -548,7 +548,23 @@ def generar_stickers():
     unidades_2 = float(request.form.get("unidades_2")) if request.form.get("unidades_2") else 0
     pallets_3 = int(request.form.get("pallets_3")) if request.form.get("pallets_3") else 0
     unidades_3 = float(request.form.get("unidades_3")) if request.form.get("unidades_3") else 0
-    composicion = f"{pallets_1}x{unidades_1}+{pallets_2}x{unidades_2}+{pallets_3}x{unidades_3}"
+    
+    pallets_4 = int(request.form.get("pallets_4")) if request.form.get("pallets_4") else 0
+    unidades_4 = float(request.form.get("unidades_4")) if request.form.get("unidades_4") else 0
+    pallets_5 = int(request.form.get("pallets_5")) if request.form.get("pallets_5") else 0
+    unidades_5 = float(request.form.get("unidades_5")) if request.form.get("unidades_5") else 0
+    pallets_6 = int(request.form.get("pallets_6")) if request.form.get("pallets_6") else 0
+    unidades_6 = float(request.form.get("unidades_6")) if request.form.get("unidades_6") else 0
+    pallets_7 = int(request.form.get("pallets_7")) if request.form.get("pallets_7") else 0
+    unidades_7 = float(request.form.get("unidades_7")) if request.form.get("unidades_7") else 0
+    pallets_8 = int(request.form.get("pallets_8")) if request.form.get("pallets_8") else 0
+    unidades_8 = float(request.form.get("unidades_8")) if request.form.get("unidades_8") else 0
+    pallets_9 = int(request.form.get("pallets_9")) if request.form.get("pallets_9") else 0
+    unidades_9 = float(request.form.get("unidades_9")) if request.form.get("unidades_9") else 0
+    pallets_10 = int(request.form.get("pallets_10")) if request.form.get("pallets_10") else 0
+    unidades_10 = float(request.form.get("unidades_10")) if request.form.get("unidades_10") else 0
+    
+    composicion = f"{pallets_1}x{unidades_1}+{pallets_2}x{unidades_2}+{pallets_3}x{unidades_3}+{pallets_4}x{unidades_4}+{pallets_5}x{unidades_5}+{pallets_6}x{unidades_6}+{pallets_7}x{unidades_7}+{pallets_8}x{unidades_8}+{pallets_9}x{unidades_9}+{pallets_10}x{unidades_10}"
 
     try:
         sticker = text("""
@@ -649,8 +665,138 @@ def generar_stickers():
                             }        
                         )
 
+            if pallets_4:
+                            for i in range(pallets_4):
+                                numero_unico = ultimo_numero_unico()
+                                db.db.session.execute(
+                                        text("""
+                                            INSERT INTO public.sticker_insumo_detalle
+                                                (numero_unico, sticker_insumo_id, 
+                                                cantidad_parcial, fecha_registro)
+                                            VALUES
+                                                (:numero_unico, :sticker_insumo_id, 
+                                                :cantidad_parcial, CURRENT_TIMESTAMP);
+                                            """),
+                                        {
+                                            "numero_unico" : numero_unico,
+                                            "sticker_insumo_id" : sticker_id,
+                                            "cantidad_parcial" : unidades_4
+                                        }        
+                                    )
             
+            if pallets_5:
+                            for i in range(pallets_5):
+                                numero_unico = ultimo_numero_unico()
+                                db.db.session.execute(
+                                        text("""
+                                            INSERT INTO public.sticker_insumo_detalle
+                                                (numero_unico, sticker_insumo_id, 
+                                                cantidad_parcial, fecha_registro)
+                                            VALUES
+                                                (:numero_unico, :sticker_insumo_id, 
+                                                :cantidad_parcial, CURRENT_TIMESTAMP);
+                                            """),
+                                        {
+                                            "numero_unico" : numero_unico,
+                                            "sticker_insumo_id" : sticker_id,
+                                            "cantidad_parcial" : unidades_5
+                                        }        
+                                    )
 
+            if pallets_6:
+                            for i in range(pallets_6):
+                                numero_unico = ultimo_numero_unico()
+                                db.db.session.execute(
+                                        text("""
+                                            INSERT INTO public.sticker_insumo_detalle
+                                                (numero_unico, sticker_insumo_id, 
+                                                cantidad_parcial, fecha_registro)
+                                            VALUES
+                                                (:numero_unico, :sticker_insumo_id, 
+                                                :cantidad_parcial, CURRENT_TIMESTAMP);
+                                            """),
+                                        {
+                                            "numero_unico" : numero_unico,
+                                            "sticker_insumo_id" : sticker_id,
+                                            "cantidad_parcial" : unidades_6
+                                        }        
+                                    )
+
+            if pallets_7:
+                            for i in range(pallets_7):
+                                numero_unico = ultimo_numero_unico()
+                                db.db.session.execute(
+                                        text("""
+                                            INSERT INTO public.sticker_insumo_detalle
+                                                (numero_unico, sticker_insumo_id, 
+                                                cantidad_parcial, fecha_registro)
+                                            VALUES
+                                                (:numero_unico, :sticker_insumo_id, 
+                                                :cantidad_parcial, CURRENT_TIMESTAMP);
+                                            """),
+                                        {
+                                            "numero_unico" : numero_unico,
+                                            "sticker_insumo_id" : sticker_id,
+                                            "cantidad_parcial" : unidades_7
+                                        }        
+                                    )
+
+            if pallets_8:
+                            for i in range(pallets_8):
+                                numero_unico = ultimo_numero_unico()
+                                db.db.session.execute(
+                                        text("""
+                                            INSERT INTO public.sticker_insumo_detalle
+                                                (numero_unico, sticker_insumo_id, 
+                                                cantidad_parcial, fecha_registro)
+                                            VALUES
+                                                (:numero_unico, :sticker_insumo_id, 
+                                                :cantidad_parcial, CURRENT_TIMESTAMP);
+                                            """),
+                                        {
+                                            "numero_unico" : numero_unico,
+                                            "sticker_insumo_id" : sticker_id,
+                                            "cantidad_parcial" : unidades_8
+                                        }        
+                                    )
+
+            if pallets_9:
+                            for i in range(pallets_9):
+                                numero_unico = ultimo_numero_unico()
+                                db.db.session.execute(
+                                        text("""
+                                            INSERT INTO public.sticker_insumo_detalle
+                                                (numero_unico, sticker_insumo_id, 
+                                                cantidad_parcial, fecha_registro)
+                                            VALUES
+                                                (:numero_unico, :sticker_insumo_id, 
+                                                :cantidad_parcial, CURRENT_TIMESTAMP);
+                                            """),
+                                        {
+                                            "numero_unico" : numero_unico,
+                                            "sticker_insumo_id" : sticker_id,
+                                            "cantidad_parcial" : unidades_9
+                                        }        
+                                    )
+
+            if pallets_10:
+                            for i in range(pallets_10):
+                                numero_unico = ultimo_numero_unico()
+                                db.db.session.execute(
+                                        text("""
+                                            INSERT INTO public.sticker_insumo_detalle
+                                                (numero_unico, sticker_insumo_id, 
+                                                cantidad_parcial, fecha_registro)
+                                            VALUES
+                                                (:numero_unico, :sticker_insumo_id, 
+                                                :cantidad_parcial, CURRENT_TIMESTAMP);
+                                            """),
+                                        {
+                                            "numero_unico" : numero_unico,
+                                            "sticker_insumo_id" : sticker_id,
+                                            "cantidad_parcial" : unidades_10
+                                        }        
+                                    )
         # si llego hasta aca el commit es automatico
         # devolver el id para redirigir a impresion
         return sticker_id

@@ -248,6 +248,89 @@ function insumoStickerForm(){
                 alert("La tercera línea de la composición no está completa");
                 pallets_3.focus()
             }
+            // chequear que composicion 4 este completa
+            let pallets_4 = document.getElementById("pallets_4");
+            let unidades_4 = document.getElementById("unidades_4");
+
+            if(pallets_4 && unidades_4 && pallets_4.value && unidades_4.value){
+                composicion += pallets_4.value * unidades_4.value;
+            } else if(!!pallets_4?.value !== !!unidades_4?.value){
+                e.preventDefault();
+                alert("La cuarta línea de la composición no está completa");
+                pallets_4.focus()
+            }
+
+            // chequear que composicion 5 este completa
+            let pallets_5 = document.getElementById("pallets_5");
+            let unidades_5 = document.getElementById("unidades_5");
+
+            if(pallets_5 && unidades_5 && pallets_5.value && unidades_5.value){
+                composicion += pallets_5.value * unidades_5.value;
+            } else if(!!pallets_5?.value !== !!unidades_5?.value){
+                e.preventDefault();
+                alert("La quinta línea de la composición no está completa");
+                pallets_5.focus()
+            }
+
+            // chequear que composicion 6 este completa
+            let pallets_6 = document.getElementById("pallets_6");
+            let unidades_6 = document.getElementById("unidades_6");
+
+            if(pallets_6 && unidades_6 && pallets_6.value && unidades_6.value){
+                composicion += pallets_6.value * unidades_6.value;
+            } else if(!!pallets_6?.value !== !!unidades_6?.value){
+                e.preventDefault();
+                alert("La sexta línea de la composición no está completa");
+                pallets_6.focus()
+            }
+
+            // chequear que composicion 7 este completa
+            let pallets_7 = document.getElementById("pallets_7");
+            let unidades_7 = document.getElementById("unidades_7");
+
+            if(pallets_7 && unidades_7 && pallets_7.value && unidades_7.value){
+                composicion += pallets_7.value * unidades_7.value;
+            } else if(!!pallets_7?.value !== !!unidades_7?.value){
+                e.preventDefault();
+                alert("La septima línea de la composición no está completa");
+                pallets_7.focus()
+            }
+
+            // chequear que composicion 8 este completa
+            let pallets_8 = document.getElementById("pallets_8");
+            let unidades_8 = document.getElementById("unidades_8");
+
+            if(pallets_8 && unidades_8 && pallets_8.value && unidades_8.value){
+                composicion += pallets_8.value * unidades_8.value;
+            } else if(!!pallets_8?.value !== !!unidades_8?.value){
+                e.preventDefault();
+                alert("La octava línea de la composición no está completa");
+                pallets_8.focus()
+            }
+
+            // chequear que composicion 9 este completa
+            let pallets_9 = document.getElementById("pallets_9");
+            let unidades_9 = document.getElementById("unidades_9");
+
+            if(pallets_9 && unidades_9 && pallets_9.value && unidades_9.value){
+                composicion += pallets_9.value * unidades_9.value;
+            } else if(!!pallets_9?.value !== !!unidades_9?.value){
+                e.preventDefault();
+                alert("La novena línea de la composición no está completa");
+                pallets_9.focus()
+            }
+
+            // chequear que composicion 10 este completa
+            let pallets_10 = document.getElementById("pallets_10");
+            let unidades_10 = document.getElementById("unidades_10");
+
+            if(pallets_10 && unidades_10 && pallets_10.value && unidades_10.value){
+                composicion += pallets_10.value * unidades_10.value;
+            } else if(!!pallets_10?.value !== !!unidades_10?.value){
+                e.preventDefault();
+                alert("La decima línea de la composición no está completa");
+                pallets_10.focus()
+            }
             
             if(cantidad_total !== composicion){
                 e.preventDefault();
