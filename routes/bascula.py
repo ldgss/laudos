@@ -8,10 +8,11 @@ from flask import jsonify
 from flask import flash
 from flask import request
 from utils import clasificador
+import time
+import json
+import cv2
 import ast
 import base64
-import os
-import cv2
 import numpy as np
 import socket
 from win32printing import Printer
@@ -185,60 +186,107 @@ def bascula_clasificacion():
     else:
         return redirect(url_for("login.login_get"))
 
-@bascula_bp.post("/bascula/clasificar")
-def bascula_clasificar():
+@bascula_bp.post("/bascula/clasificar_muestra")
+def bascula_clasificar_muestra():
     if helpers.session_on() and helpers.authorized_to("materia") and not helpers.authorized_to_action("limitado"):
+        
+        req_data = request.get_json()
+        if not req_data:
+            return jsonify({"error": "No se recibieron datos JSON válidos."}), 400
 
-        # 1. Recoger y decodificar la imagen Base64 enviada por el formulario
-        image_data_url = request.form.get("image_data")
-        roi_str = request.form.get("coordenadas")
-        ipm = request.form.get("ipm")
-        peso = request.form.get("peso")
+        image_data_url = req_data.get("image_data")
+        roi_str = req_data.get("coordenadas")
+        ipm = req_data.get("ipm")
         
         if not image_data_url or not roi_str:
-            flash("Faltan datos de la cámara o de la zona de recorte.")
-            return redirect(url_for("bascula.bascula"))
+            return jsonify({"error": "Faltan datos de la cámara o de la zona de recorte."}), 400
         
         try:
-            # Limpiar el encabezado data:image/jpeg;base64,
+            # Decodificar Base64 a matriz OpenCV EN MEMORIA (sin guardar archivo aún)
             header, encoded = image_data_url.split(",", 1)
             image_bytes = base64.b64decode(encoded)
-            
-            # Convertir bytes a matriz numpy para OpenCV
             np_arr = np.frombuffer(image_bytes, np.uint8)
             img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
             
-            # Parsear las coordenadas de string a lista de tuplas [(x,y), ...]
             roi = ast.literal_eval(roi_str)
         except Exception as e:
-            flash(f"Error procesando la imagen o las coordenadas: {str(e)}")
-            return redirect(url_for("bascula.bascula"))
+            return jsonify({"error": f"Error procesando la imagen o las coordenadas: {str(e)}"}), 400
 
         radio = 8
         
-        # Opcional: Si predict_tomato_maturity espera una RUTA de archivo, 
-        # puedes guardarla temporalmente, o modificar la función para que reciba la matriz `img` directamente.
-        # Asumiendo que la guardas temporalmente para que `os.path.exists` funcione:
-        image_path = f"static/img/clasificaciones/{ipm}.jpg"
-        cv2.imwrite(image_path, img)
+        # truco temporal: si predict_tomato_maturity estrictamente requiere una RUTA de archivo, 
+        # puedes usar un archivo temporal en memoria o escribirlo un segundo y borrarlo. 
+        # O idealmente actualizar predict_tomato_maturity para que acepte la matriz `img` directo.
+        # Asumiendo que aún necesita ruta temporal para el análisis en caliente:
+        temp_path = f"static/img/clasificaciones/temp_{ipm}.jpg"
+        cv2.imwrite(temp_path, img)
         
-        analisis = clasificador.predict_tomato_maturity(image_path, roi=roi, radio=radio)
+        analisis = clasificador.predict_tomato_maturity(temp_path, roi=roi, radio=radio)
+        
+        # Limpiamos inmediatamente el archivo temporal del análisis en caliente para no acumular basura
+        import os
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+
         if analisis:
-            data = {
-                    "ipm" : ipm,
-                    "peso" : peso,
-                    "imagen" : image_path,
-                    "coordenadas_mascara": roi_str,
-                    "analisis" : analisis,
-                }
+            return jsonify({"analisis": analisis})
+        else:
+            return jsonify({"error": "Error al intentar analizar la imagen con el clasificador."}), 500
+    else:
+        return jsonify({"error": "No autorizado o sesión expirada."}), 403
+
+
+@bascula_bp.post("/bascula/clasificacion_guardar")
+def bascula_clasificacion_guardar():
+    if helpers.session_on() and helpers.authorized_to("materia") and not helpers.authorized_to_action("limitado"):
+        
+        ipm = request.form.get("ipm")
+        muestras_json_str = request.form.get("muestras_json")
+        
+        if not muestras_json_str:
+            flash("No hay muestras para guardar.")
+            return redirect(url_for("bascula.bascula"))
+
+        clasificacion_detalle = []
+        try:
+            muestras = json.loads(muestras_json_str)
             
-            resultado = mod_bascula.guardar_bascula_clasificacion(data)
-            if resultado:
-                return redirect(url_for("bascula.bascula_imprimir_clasificacion", 
-                                        ipm=ipm))
-            else:
-                flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
-                return redirect(url_for("bascula.bascula"))
+            # AQUÍ ES DONDE SÍ GUARDAMOS EN DISCO LAS IMÁGENES DEFINITIVAS DE CADA MUESTRA ACEPTADA
+            for index, muestra in enumerate(muestras):
+                image_data_url = muestra.get("image_data")
+                header, encoded = image_data_url.split(",", 1)
+                image_bytes = base64.b64decode(encoded)
+                
+                np_arr = np.frombuffer(image_bytes, np.uint8)
+                img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+                
+                # Nombre de archivo único y definitivo para la BD
+                timestamp = int(time.time() * 1000)
+                image_path = f"static/img/clasificaciones/{ipm}_{index}_{timestamp}.jpg"
+                cv2.imwrite(image_path, img)
+                clasificacion_detalle.append(
+                    {
+                        "imagen" : image_path,
+                        "coordenadas_mascara" : muestra.get("coordenadas"),
+                        "analisis" : muestra.get("analisis")
+                    }
+                )
+                
+                # Reemplazamos el Base64 en el diccionario por la ruta física que se guardará en la BD
+                muestra["imagen"] = image_path
+            
+            # Actualizamos el valor que consumirá tu módulo de guardado con las rutas físicas ya listas
+            request.form = request.form.copy() # Hacemos mutable el form si fuera necesario
+            # (O asegúrate de pasar 'muestras' ya procesadas a tu función de guardado)
+
+        except Exception as e:
+            flash(f"Error procesando las imágenes del lote: {str(e)}")
+            return redirect(url_for("bascula.bascula"))
+
+        resultado = mod_bascula.guardar_bascula_clasificacion(clasificacion_detalle) # Asegúrate de que este módulo lea el JSON con las rutas corregidas
+        if resultado:
+            return redirect(url_for("bascula.bascula_imprimir_clasificacion", 
+                                    ipm=resultado.ipm))
         else:
             flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
             return redirect(url_for("bascula.bascula"))
@@ -249,15 +297,17 @@ def bascula_clasificar():
 def bascula_imprimir_clasificacion(ipm):
     if helpers.session_on() and helpers.authorized_to("materia"):
         clasificacion = mod_bascula.get_bascula_clasificacion(ipm)
-        # dict para poder modificarlo
         if clasificacion:
-            clasificacion = dict(clasificacion)
-            clasificacion['analisis'] = ast.literal_eval(clasificacion['analisis'])
-            title = "Bascula"
-            section = "Bascula"
+
+            print("="*50)
+            print(f"clasificacion: {clasificacion}")
+            print("="*50)
+
+            title = "Bascula - Clasificacion"
+            section = "Imprimir clasificacion"
             return render_template("bascula/imprimir_clasificacion.html", 
-                                title=title, section=section, 
-                                clasificacion=clasificacion)
+                                    title=title, section=section, 
+                                    clasificacion=clasificacion)
         else:
             flash("No se encontro la clasificacion buscada.")
             return redirect(url_for("bascula.bascula"))

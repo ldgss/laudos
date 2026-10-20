@@ -43,32 +43,46 @@ def guardar_bascula():
         print(f"Error: {error_message}")  # Imprime toda la información
         return None
 
-def guardar_bascula_clasificacion(data):
+def guardar_bascula_clasificacion(clasificacion_detalle):
     try:
-        sql = text("""
-                    INSERT INTO public.clasificacion
-                    (
-                        ipm, peso, imagen, 
-                        coordenadas_mascara, analisis, responsable, fecha_registro
-                    )
-                    VALUES(
-                        :ipm, :peso, :imagen, 
-                        :coordenadas_mascara, :analisis, :responsable, CURRENT_TIMESTAMP
-                    );
+        print("="*50)
+        print(clasificacion_detalle)
+        print("="*50)
+
+        sql_clasificacion = text("""
+                INSERT INTO clasificacion
+                (ipm, peso, responsable, fecha_registro)
+                VALUES
+                (:ipm, :peso, :responsable, CURRENT_TIMESTAMP)
+                RETURNING id;
                 """
                 )
         
-        result = db.db.session.execute(sql,
+        result = db.db.session.execute(sql_clasificacion,
                                         {
-                                            "ipm": data["ipm"],
-                                            "peso": data["peso"],
-                                            "imagen": data["imagen"],
-                                            "coordenadas_mascara": str(data["coordenadas_mascara"]),
-                                            "analisis": str(data["analisis"]),
+                                            "ipm": request.form.get("ipm"),
+                                            "peso": request.form.get("peso"),
                                             "responsable": session["id"],
                                         })
+        id_clasificacion = result.fetchone()[0]
+
+        sql_detalle = text("""
+            INSERT INTO clasificacion_detalle
+            (imagen, coordenadas_mascara, analisis, id_clasificacion)
+            VALUES
+            (:imagen, :coordenadas_mascara, :analisis, :id_clasificacion);
+        """)
+
+        for detalle in clasificacion_detalle:
+            db.db.session.execute(sql_detalle, {
+                "imagen": detalle["imagen"],
+                "coordenadas_mascara": detalle["coordenadas_mascara"],
+                "analisis": str(detalle["analisis"]),
+                "id_clasificacion": id_clasificacion
+            })
+
         db.db.session.commit()
-        return True
+        return False
     except Exception as e:
         db.db.session.rollback()
         error_message = traceback.format_exc()  # Obtiene la traza completa del error
@@ -99,25 +113,26 @@ def get_bascula(id):
 def get_bascula_clasificacion(ipm):
     try:
         sql = text("""
-                    SELECT 
-                        c.id as clasificacion_id,
-                        ipm, 
-                        peso, 
-                        imagen, 
-                        coordenadas_mascara, 
-                        analisis, 
-                        u.nombre as responsable, 
-                        fecha_registro
-                    FROM clasificacion c
-                    JOIN usuario u ON c.responsable = u.id
-                    WHERE c.ipm = :ipm
+                    select 
+                        c.id,
+                        c.ipm,
+                        c.peso,
+                        cd.imagen,
+                        cd.coordenadas_mascara,
+                        cd.analisis,
+                        u.nombre as responsable,
+                        c.fecha_registro
+                    from clasificacion c 
+                    join clasificacion_detalle cd on CD.id_clasificacion = C.id 
+                    join usuario u on U.id = C.responsable 
+                    where c.ipm = :ipm
                     ORDER BY c.fecha_registro DESC
                     ;
                 """
                 )
         
         materia = db.db.session.execute(sql,{"ipm": ipm})
-        return materia.mappings().first()
+        return materia.mappings().all()
     except Exception as e:
         print(f"Error: {e}")
         return None
