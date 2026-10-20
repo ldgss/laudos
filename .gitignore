@@ -168,3 +168,5 @@ static/img/intervenciones/*
 !static/img/intervenciones/.gitkeep
 static/img/etiquetasystickers/*
 !static/img/etiquetasystickers/.gitkeep
+static/img/clasificaciones/*
+!static/img/clasificaciones/.gitkeep

@@ -42,7 +42,39 @@ def guardar_bascula():
         error_message = traceback.format_exc()  # Obtiene la traza completa del error
         print(f"Error: {error_message}")  # Imprime toda la información
         return None
-    
+
+def guardar_bascula_clasificacion(data):
+    try:
+        sql = text("""
+                    INSERT INTO public.clasificacion
+                    (
+                        ipm, peso, imagen, 
+                        coordenadas_mascara, analisis, responsable, fecha_registro
+                    )
+                    VALUES(
+                        :ipm, :peso, :imagen, 
+                        :coordenadas_mascara, :analisis, :responsable, CURRENT_TIMESTAMP
+                    );
+                """
+                )
+        
+        result = db.db.session.execute(sql,
+                                        {
+                                            "ipm": data["ipm"],
+                                            "peso": data["peso"],
+                                            "imagen": data["imagen"],
+                                            "coordenadas_mascara": str(data["coordenadas_mascara"]),
+                                            "analisis": str(data["analisis"]),
+                                            "responsable": session["id"],
+                                        })
+        db.db.session.commit()
+        return True
+    except Exception as e:
+        db.db.session.rollback()
+        error_message = traceback.format_exc()  # Obtiene la traza completa del error
+        print(f"Error: {error_message}")  # Imprime toda la información
+        return None
+
 def get_bascula(id):
     try:
         sql = text("""
@@ -59,6 +91,32 @@ def get_bascula(id):
                 )
         
         materia = db.db.session.execute(sql,{"id": id})
+        return materia.mappings().first()
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+def get_bascula_clasificacion(ipm):
+    try:
+        sql = text("""
+                    SELECT 
+                        c.id as clasificacion_id,
+                        ipm, 
+                        peso, 
+                        imagen, 
+                        coordenadas_mascara, 
+                        analisis, 
+                        u.nombre as responsable, 
+                        fecha_registro
+                    FROM clasificacion c
+                    JOIN usuario u ON c.responsable = u.id
+                    WHERE c.ipm = :ipm
+                    ORDER BY c.fecha_registro DESC
+                    ;
+                """
+                )
+        
+        materia = db.db.session.execute(sql,{"ipm": ipm})
         return materia.mappings().first()
     except Exception as e:
         print(f"Error: {e}")

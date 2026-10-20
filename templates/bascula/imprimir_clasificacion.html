@@ -1,0 +1,182 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <script defer src="{{url_for("static", filename="js/bascula/utils.js")}}"></script>
+    <script defer src="{{url_for("static", filename="js/bascula/clasificacion.js")}}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container my-4">
+    
+    <!-- TÍTULO Y BOTÓN VOLVER -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-9 d-flex justify-content-between align-items-center">
+            <h2 class="h4 text-dark mb-0">
+                <i class="bi bi-clipboard-data"></i> Detalle de Clasificación #{{ clasificacion.clasificacion_id }}
+            </h2>
+            <a href="javascript:void(0);" class="btn btn-secondary btn-sm" onclick="boton_volver()">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- TARJETA PRINCIPAL DE RESULTADOS -->
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    
+                    <!-- INFORMACIÓN GENERAL (IPM, PESO, RESPONSABLE, FECHA) -->
+                    <div class="row g-3 mb-4 border-bottom pb-3">
+                        <div class="col-sm-6 col-md-3">
+                            <span class="text-muted d-block small">IPM</span>
+                            <strong class="fs-5 text-dark">{{ clasificacion.ipm }}</strong>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <span class="text-muted d-block small">Peso</span>
+                            <strong class="fs-5 text-dark">{{ clasificacion.peso }} g</strong>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <span class="text-muted d-block small">Responsable</span>
+                            <strong class="text-dark">{{ clasificacion.responsable }}</strong>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <span class="text-muted d-block small">Fecha de Registro</span>
+                            <span class="text-dark small">{{ clasificacion.fecha_registro.strftime('%d/%m/%Y %H:%M') }}</span>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN VISUAL: IMAGEN Y DATOS DEL ANÁLISIS -->
+                    <div class="row g-4 align-items-center">
+                        
+                        <!-- IMAGEN CAPTURADA -->
+                        <div class="col-md-5 text-center">
+                            <span class="text-muted d-block small mb-2"></span>
+                            {% if clasificacion.imagen %}
+                                <div class="position-relative bg-dark rounded overflow-hidden shadow-sm mx-auto" style="aspect-ratio: 1 / 1; max-width: 100%;">
+                                    <img src="{{ url_for('static', filename=clasificacion.imagen.replace('static/', '')) if 'static/' in clasificacion.imagen else url_for('static', filename=clasificacion.imagen) }}" 
+                                         alt="Tomates analizados" 
+                                         class="w-100 h-100 object-fit-cover">
+                                </div>
+                            {% else %}
+                                <div class="bg-light rounded p-5 text-muted">Sin imagen disponible</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- RESULTADOS DEL ANÁLISIS DE TOMATES -->
+                        <div class="col-md-7">
+                            <span class="text-muted d-block small mb-2">Resultado del Análisis</span>
+
+                            <ul class="list-group list-group-flush mb-3">
+                               
+                                <li class="list-group-item px-0">
+                                    <span class="text-muted d-block mb-1">Decision:</span>
+                                    <p>
+                                        {{ clasificacion.analisis.decision}}
+                                    </p
+                                </li>
+                                <li class="list-group-item px-0">
+                                    <span class="text-muted d-block mb-1">Descripción:</span>
+                                    <p>
+                                        {{ clasificacion.analisis.descripcion}}
+                                    </p
+                                </li>
+
+                            </ul>
+
+                            <!-- MÉTRICAS / DESGLOSE POR ETAPAS -->
+                            <div>
+                                <span class="text-muted d-block small mb-3">Métricas por Etapa</span>
+                                
+                                <div class="d-flex flex-column gap-2">
+                                    <!-- Etapa 1 -->
+                                    <div>
+                                        <div class="d-flex justify-content-between small fw-bold mb-1">
+                                            <span>Etapa 1</span>
+                                            <span>{{ clasificacion.analisis.metricas['etapa 1'] }}</span>
+                                        </div>
+                                        <div class="progress" style="height: 16px;">
+                                            <div class="progress-bar bg-success text-dark fw-bold" role="progressbar" style="width: {{ clasificacion.analisis.metricas['etapa 1'] }};"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Etapa 2 -->
+                                    <div>
+                                        <div class="d-flex justify-content-between small fw-bold mb-1">
+                                            <span>Etapa 2</span>
+                                            <span>{{ clasificacion.analisis.metricas['etapa 2'] }}</span>
+                                        </div>
+                                        <div class="progress" style="height: 16px;">
+                                            <div class="progress-bar bg-success text-dark fw-bold" role="progressbar" style="width: {{ clasificacion.analisis.metricas['etapa 2'] }};"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Etapa 3 -->
+                                    <div>
+                                        <div class="d-flex justify-content-between small fw-bold mb-1">
+                                            <span>Etapa 3</span>
+                                            <span>{{ clasificacion.analisis.metricas['etapa 3'] }}</span>
+                                        </div>
+                                        <div class="progress" style="height: 16px;">
+                                            <div class="progress-bar bg-danger-subtle text-dark fw-bold" role="progressbar" style="width: {{ clasificacion.analisis.metricas['etapa 3'] }};"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Etapa 4 -->
+                                    <div>
+                                        <div class="d-flex justify-content-between small fw-bold mb-1">
+                                            <span>Etapa 4</span>
+                                            <span>{{ clasificacion.analisis.metricas['etapa 4'] }}</span>
+                                        </div>
+                                        <div class="progress" style="height: 16px;">
+                                            <div class="progress-bar bg-danger-subtle text-dark fw-bold" role="progressbar" style="width: {{ clasificacion.analisis.metricas['etapa 4'] }};"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Etapa 5 -->
+                                    <div>
+                                        <div class="d-flex justify-content-between small fw-bold mb-1">
+                                            <span>Etapa 5</span>
+                                            <span>{{ clasificacion.analisis.metricas['etapa 5'] }}</span>
+                                        </div>
+                                        <div class="progress" style="height: 16px;">
+                                            <div class="progress-bar bg-danger text-dark fw-bold" role="progressbar" style="width: {{ clasificacion.analisis.metricas['etapa 5'] }};"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Etapa 6 -->
+                                    <div>
+                                        <div class="d-flex justify-content-between small fw-bold mb-1">
+                                            <span>Etapa 6</span>
+                                            <span>{{ clasificacion.analisis.metricas['etapa 6'] }}</span>
+                                        </div>
+                                        <div class="progress" style="height: 16px;">
+                                            <div class="progress-bar bg-danger text-dark fw-bold" role="progressbar" style="width: {{ clasificacion.analisis.metricas['etapa 6'] }};"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Inapto -->
+                                    <div>
+                                        <div class="d-flex justify-content-between small fw-bold mb-1">
+                                            <span>Inapto</span>
+                                            <span>{{ clasificacion.analisis.inapto_pct }}</span>
+                                        </div>
+                                        <div class="progress" style="height: 16px;">
+                                            <div class="progress-bar bg-dark text-light fw-bold" role="progressbar" style="width: {{ clasificacion.analisis.inapto_pct }};"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
