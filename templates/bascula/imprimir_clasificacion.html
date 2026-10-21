@@ -9,20 +9,27 @@
 {% block content %}
 <div class="container py-4">
     {% if clasificacion and clasificacion|length > 0 %}
+
+    {% set data_js = [] %}
+    {% for c in clasificacion %}
+        {% set _ = data_js.append({'coordenadas_mascara': c['coordenadas_mascara'], 'analisis': c['analisis']}) %}
+    {% endfor %}
+    <script id="clasificacion-data" type="application/json">{{ data_js | tojson }}</script>
+
         <!-- Tarjeta Header con Información General -->
         <div class="card shadow-sm mb-4 border-0">
-            <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="bi bi-card-checklist"></i> Detalle de Clasificación #{{ clasificacion[0]["id"] }}</h5>
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-card-checklist"></i> Detalle de Clasificación</h5>
             </div>
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-3">
                         <small class="text-muted d-block">IPM</small>
-                        <strong class="fs-5">{{ clasificacion[0]["ipm"] }} kg</strong>
+                        <strong class="fs-5"># {{ clasificacion[0]["ipm"] }}</strong>
                     </div>
                     <div class="col-md-3">
                         <small class="text-muted d-block">Peso Carga</small>
-                        <strong class="fs-5">{{ clasificacion[0]["peso"] }} kg</strong>
+                        <strong class="fs-5">{{ clasificacion[0]["peso"] }} KG</strong>
                     </div>
                     <div class="col-md-3">
                         <small class="text-muted d-block">Responsable</small>
@@ -47,18 +54,19 @@
                         </div>
                         <div class="card-body">
                             
-                            <!-- Contenedor con la Imagen y el Canvas Superpuesto (mismo aspecto que al capturar) -->
                             <div class="position-relative w-100 bg-dark rounded overflow-hidden shadow-sm mb-3">
-                                <img src="{{ url_for('static', filename=c['imagen'].replace('static/', '', 1)) }}" 
-                                     id="img-{{ loop.index }}"
-                                     class="w-100 h-100 d-block" 
-                                     style="object-fit: contain;"
-                                     alt="Imagen Muestra {{ loop.index }}">
-                                
-                                <!-- Canvas superpuesto exactamente sobre la imagen -->
-                                <canvas id="canvas-{{ loop.index }}" 
-                                        class="position-absolute top-0 start-0 w-100 h-100" 
+                                <img src="{{ url_for('static', filename=c['imagen'].replace('static/', '', 1)) }}"
+                                    id="img-{{ loop.index }}"
+                                    class="w-100 d-block"
+                                    alt="Imagen Muestra {{ loop.index }}">
+
+                                <canvas id="canvas-{{ loop.index }}"
+                                        class="position-absolute top-0 start-0 w-100 h-100"
                                         style="pointer-events: none;"></canvas>
+
+                                <div id="overlay-{{ loop.index }}"
+                                    class="position-absolute bottom-0 start-0 w-100 p-2 text-white small"
+                                    style="background: rgba(0,0,0,.6); pointer-events: none;"></div>
                             </div>
 
                             <!-- Contenedor del Análisis -->

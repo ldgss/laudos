@@ -286,7 +286,8 @@ def bascula_clasificacion_guardar():
         resultado = mod_bascula.guardar_bascula_clasificacion(clasificacion_detalle) # Asegúrate de que este módulo lea el JSON con las rutas corregidas
         if resultado:
             return redirect(url_for("bascula.bascula_imprimir_clasificacion", 
-                                    ipm=resultado.ipm))
+                                    ipm=resultado)
+                            )
         else:
             flash("Se ha producido un error al intentar guardar los cambios. Intente de nuevo por favor.")
             return redirect(url_for("bascula.bascula"))

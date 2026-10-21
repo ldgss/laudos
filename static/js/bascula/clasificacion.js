@@ -2,7 +2,7 @@ let video = document.getElementById('webcam');
 let canvas = document.getElementById('canvas-dibujo');
 let ctx = canvas.getContext('2d');
 let puntos = [];
-let nativeWidth = 640; 
+let nativeWidth = 480; 
 let nativeHeight = 480;
 
 let muestrasAcumuladas = [];
@@ -112,12 +112,20 @@ async function analizarMuestra() {
         }
 
         let resultadoAnalisis = data.analisis || "Análisis completado exitosamente";
+        let aceptado;
+        
         console.log(resultadoAnalisis)
-        let aceptado = confirm(`Resultado del Análisis:
-            \n\nDecision: ${resultadoAnalisis.decision}
-            \n\nDescripción: ${resultadoAnalisis.descripcion}
-            \n\nEtapa predominante: ${resultadoAnalisis.decision}
-            \n\n¿Deseas aceptar esta muestra e incluirla en el lote?`);
+        
+        if(resultadoAnalisis.error){
+            alert("La muestra no es suficiente. Intente nuevamente.")
+        }else{
+            aceptado = confirm(`Resultado del Análisis:
+                \n\nDecision: ${resultadoAnalisis.decision}
+                \nDescripción: ${resultadoAnalisis.descripcion}
+                \nEtapa predominante: ${resultadoAnalisis.decision}
+                \n¿Deseas aceptar esta muestra e incluirla en el lote?`);
+        }
+
 
         if (aceptado) {
             // Guardamos todo en memoria, incluyendo la imagen en Base64 para enviarla al guardar el lote

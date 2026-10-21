@@ -82,7 +82,7 @@ def guardar_bascula_clasificacion(clasificacion_detalle):
             })
 
         db.db.session.commit()
-        return False
+        return request.form.get("ipm")
     except Exception as e:
         db.db.session.rollback()
         error_message = traceback.format_exc()  # Obtiene la traza completa del error
