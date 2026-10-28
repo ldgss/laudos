@@ -8,6 +8,10 @@ from flask import jsonify
 from flask import flash
 from flask import request
 from utils import clasificador
+from flask import Response
+import os
+import requests
+from requests.auth import HTTPDigestAuth
 import time
 import json
 import cv2
@@ -314,3 +318,42 @@ def bascula_imprimir_clasificacion(ipm):
             return redirect(url_for("bascula.bascula"))
     else:
         return redirect(url_for("login.login_get"))
+
+@bascula_bp.route('/bascula/captura_dahua')
+def captura_dahua():
+    url = (
+        'http://192.168.22.2/cgi-bin/snapshot.cgi'
+        '?channel=2'
+    )
+
+    usuario = os.environ.get('user_clasificador')
+    password = os.environ.get('password_clasificador')
+
+    if not usuario or not password:
+        return jsonify({
+            'error': 'Credenciales de cámara no configuradas'
+        }), 500
+
+    try:
+        r = requests.get(
+            url,
+            auth=HTTPDigestAuth(usuario, password),
+            timeout=5
+        )
+        r.raise_for_status()
+
+        if not r.headers.get('Content-Type', '').startswith('image/'):
+            return jsonify({
+                'error': 'El NVR no devolvió una imagen'
+            }), 502
+
+        return Response(
+            r.content,
+            mimetype=r.headers['Content-Type'],
+            headers={'Cache-Control': 'no-store'}
+        )
+
+    except requests.RequestException:
+        return jsonify({
+            'error': 'No se pudo obtener la captura del NVR'
+        }), 502

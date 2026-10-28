@@ -7,6 +7,8 @@ let imagenEstatica = null;
 let streamActual = null;
 let animacionId = null;
 let areaImagen = null;
+let temporizadorDahua = null;
+let dahuaActivo = false;
 
 async function iniciarCamara() {
     detenerStreamActual();
@@ -44,30 +46,79 @@ async function iniciarCamara() {
 
 async function iniciarCamaraDahua() {
     detenerStreamActual();
-    imagenEstatica = null;
-    video.style.display = 'block';
 
-    let urlDahuaMJPEG = "http://admin:tu_password@192.168.1.108/cgi-bin/mjpg/video.cgi?channel=1&subtype=0";
+    dahuaActivo = true;
+    imagenEstatica = null;
+    puntos = [];
+
+    video.style.display = 'none';
+
+    canvas.width = 640;
+    canvas.height = 480;
+
+    await actualizarCapturaDahua();
+}
+
+async function actualizarCapturaDahua() {
+    if (!dahuaActivo) return;
 
     try {
-        video.src = urlDahuaMJPEG;
-        video.load();
-        await video.play().catch(e => console.warn("Stream Dahua advertencia:", e));
+        const response = await fetch(
+            '/bascula/captura_dahua',
+            { cache: 'no-store' }
+        );
 
-        video.onloadedmetadata = () => {
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-            if (!animacionId) {
-                dibujarLoop();
-            }
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const imageUrl = URL.createObjectURL(blob);
+        const img = new Image();
+
+        img.onload = () => {
+            URL.revokeObjectURL(imageUrl);
+
+            if (!dahuaActivo) return;
+
+            imagenEstatica = img;
+            redibujarEscenario();
+
+            temporizadorDahua = setTimeout(
+                actualizarCapturaDahua,
+                1000
+            );
         };
-    } catch (err) {
-        console.error("Error al conectar con la cámara Dahua:", err);
-        alert("No se pudo conectar con la cámara Dahua. Verifica la IP o credenciales.");
+
+        img.onerror = () => {
+            URL.revokeObjectURL(imageUrl);
+            console.error('No se pudo decodificar la imagen Dahua.');
+            temporizadorDahua = setTimeout(
+                actualizarCapturaDahua,
+                2000
+            );
+        };
+
+        img.src = imageUrl;
+
+    } catch (error) {
+        console.error('Error obteniendo captura Dahua:', error);
+
+        temporizadorDahua = setTimeout(
+            actualizarCapturaDahua,
+            2000
+        );
     }
 }
 
 function detenerStreamActual() {
+    dahuaActivo = false;
+
+    if (temporizadorDahua) {
+        clearTimeout(temporizadorDahua);
+        temporizadorDahua = null;
+    }
+    
     if (animacionId) {
         cancelAnimationFrame(animacionId);
         video.onloadedmetadata = null;
