@@ -121,10 +121,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         const apta = data.decision == 'CARGA APTA'
                         overlay.innerHTML = `
         <div class="d-flex justify-content-between align-items-center">
-            <strong>${data.etapa_predominante || 'Sin Etapa'}</strong>
-            <span class="badge ${apta ? 'bg-success' : 'bg-danger'}"></span>
+            <span>Zona muestreada</span>
         </div>
-        <div>${data.descripcion || ''}</div>
+        
         <div>Inapto: ${data.inapto_pct || '0%'}</div>`;
                     }
                     container.innerHTML = html;
