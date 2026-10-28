@@ -2,40 +2,173 @@ let video = document.getElementById('webcam');
 let canvas = document.getElementById('canvas-dibujo');
 let ctx = canvas.getContext('2d');
 let puntos = [];
-let nativeWidth = 480; 
-let nativeHeight = 480;
-
 let muestrasAcumuladas = [];
+let imagenEstatica = null; 
+let streamActual = null;
+let animacionId = null;
+let areaImagen = null;
 
 async function iniciarCamara() {
+    detenerStreamActual();
+
+    imagenEstatica = null;
+    puntos = [];
+
+    video.style.display = 'none';
+
     try {
-        let stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { width: { ideal: nativeWidth }, height: { ideal: nativeHeight } } 
+        let stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                width: { ideal: 640 },
+                height: { ideal: 480 }
+            }
         });
+
+        streamActual = stream;
         video.srcObject = stream;
-        
-        video.onloadedmetadata = () => {
-            nativeWidth = video.videoWidth;
-            nativeHeight = video.videoHeight;
-            canvas.width = nativeWidth;
-            canvas.height = nativeHeight;
-            requestAnimationFrame(dibujarLoop);
-        };
+
+        await video.play();
+
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
+
+        console.log("Webcam iniciada:", canvas.width, canvas.height);
+
+        dibujarLoop();
+
     } catch (err) {
-        console.error("No se pudo acceder a la cámara: ", err);
-        alert("Asegúrate de dar permisos de cámara o usar HTTPS/localhost.");
+        console.error("No se pudo acceder a la cámara:", err);
+        alert("No se pudo iniciar la webcam.");
     }
 }
 
-function dibujarLoop() {
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
+async function iniciarCamaraDahua() {
+    detenerStreamActual();
+    imagenEstatica = null;
+    video.style.display = 'block';
+
+    let urlDahuaMJPEG = "http://admin:tu_password@192.168.1.108/cgi-bin/mjpg/video.cgi?channel=1&subtype=0";
+
+    try {
+        video.src = urlDahuaMJPEG;
+        video.load();
+        await video.play().catch(e => console.warn("Stream Dahua advertencia:", e));
+
+        video.onloadedmetadata = () => {
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            if (!animacionId) {
+                dibujarLoop();
+            }
+        };
+    } catch (err) {
+        console.error("Error al conectar con la cámara Dahua:", err);
+        alert("No se pudo conectar con la cámara Dahua. Verifica la IP o credenciales.");
+    }
+}
+
+function detenerStreamActual() {
+    if (animacionId) {
+        cancelAnimationFrame(animacionId);
+        video.onloadedmetadata = null;
+        animacionId = null;
+    }
+    if (streamActual) {
+        streamActual.getTracks().forEach(track => track.stop());
+        streamActual = null;
+    }
+    video.pause();
+    video.srcObject = null;
+    video.src = "";
+}
+
+function cambiarFuenteImagen() {
+    let fuente = document.getElementById('fuente-imagen').value;
+    let inputArchivo = document.getElementById('input-archivo');
+
+    puntos = [];
+
+    if (fuente === 'webcam') {
+        inputArchivo.style.display = 'none';
+        iniciarCamara();
+    } else if (fuente === 'dahua') {
+        inputArchivo.style.display = 'none';
+        iniciarCamaraDahua();
+    } else if (fuente === 'archivo') {
+        imagenEstatica = null;
+        detenerStreamActual();
+        video.style.display = 'none';
+        inputArchivo.style.display = 'block';
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+function cargarImagenArchivo(event) {
+    let archivo = event.target.files[0];
+    if (!archivo) return;
+
+    let reader = new FileReader();
+
+    reader.onload = function(e) {
+        let img = new Image();
+
+        img.onload = function() {
+            imagenEstatica = img;
+            puntos = [];
+
+            canvas.width = 640;
+            canvas.height = 480;
+
+            redibujarEscenario();
+        };
+
+        img.src = e.target.result;
+    };
+
+    reader.readAsDataURL(archivo);
+}
+
+// Función centralizada para redibujar el canvas (imagen + puntos/líneas)
+function redibujarEscenario() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (imagenEstatica) {
+        areaImagen = calcularAreaImagen(
+            imagenEstatica.width,
+            imagenEstatica.height
+        );
+
+        ctx.drawImage(
+            imagenEstatica,
+            areaImagen.x,
+            areaImagen.y,
+            areaImagen.ancho,
+            areaImagen.alto
+        );
+
+    } else if (video.readyState >= 2) {
+        areaImagen = {
+            x: 0,
+            y: 0,
+            ancho: canvas.width,
+            alto: canvas.height
+        };
+
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    }
+
     if (puntos.length > 0) {
         ctx.beginPath();
         ctx.moveTo(puntos[0].x, puntos[0].y);
+
         for (let i = 1; i < puntos.length; i++) {
             ctx.lineTo(puntos[i].x, puntos[i].y);
         }
+
+        if (puntos.length >= 3) {
+            ctx.closePath();
+        }
+
         ctx.strokeStyle = '#00ff00';
         ctx.lineWidth = 4;
         ctx.stroke();
@@ -47,22 +180,50 @@ function dibujarLoop() {
             ctx.fill();
         });
     }
-    requestAnimationFrame(dibujarLoop);
+}
+
+function dibujarLoop() {
+    if (imagenEstatica) {
+        animacionId = null;
+        return;
+    }
+
+    redibujarEscenario();
+
+    animacionId = requestAnimationFrame(dibujarLoop);
 }
 
 canvas.addEventListener('click', (e) => {
-    let rect = canvas.getBoundingClientRect();
-    let scaleX = canvas.width / rect.width;
-    let scaleY = canvas.height / rect.height;
-    
-    let x = Math.round((e.clientX - rect.left) * scaleX);
-    let y = Math.round((e.clientY - rect.top) * scaleY);
-    
-    puntos.push({x, y});
+    const rect = canvas.getBoundingClientRect();
+
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+
+    if (imagenEstatica && areaImagen) {
+        if (
+            x < areaImagen.x ||
+            x > areaImagen.x + areaImagen.ancho ||
+            y < areaImagen.y ||
+            y > areaImagen.y + areaImagen.alto
+        ) {
+            return;
+        }
+    }
+
+    puntos.push({
+        x: Math.round(x),
+        y: Math.round(y)
+    });
+
+    redibujarEscenario();
 });
 
 function reiniciarPuntos() {
     puntos = [];
+    redibujarEscenario();
 }
 
 async function analizarMuestra() {
@@ -80,13 +241,48 @@ async function analizarMuestra() {
     }
 
     let tempCanvas = document.createElement('canvas');
-    tempCanvas.width = video.videoWidth || 640;
-    tempCanvas.height = video.videoHeight || 480;
-    let tempCtx = tempCanvas.getContext('2d');
-    tempCtx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-    let imageData = tempCanvas.toDataURL('image/jpeg', 0.9);
 
-    let coordenadasStr = "[" + puntos.map(p => `(${p.x},${p.y})`).join(",") + "]";
+if (imagenEstatica) {
+    tempCanvas.width = imagenEstatica.naturalWidth;
+    tempCanvas.height = imagenEstatica.naturalHeight;
+} else {
+    tempCanvas.width = video.videoWidth;
+    tempCanvas.height = video.videoHeight;
+}
+
+let tempCtx = tempCanvas.getContext('2d');
+
+if (imagenEstatica) {
+    tempCtx.drawImage(imagenEstatica, 0, 0);
+} else {
+    tempCtx.drawImage(
+        video,
+        0, 0,
+        tempCanvas.width,
+        tempCanvas.height
+    );
+}
+
+let imageData = tempCanvas.toDataURL('image/jpeg', 0.9);
+    
+    let puntosOriginales = puntos;
+
+if (imagenEstatica && areaImagen) {
+    puntosOriginales = puntos.map(p => ({
+        x: Math.round(
+            (p.x - areaImagen.x) *
+            imagenEstatica.width / areaImagen.ancho
+        ),
+        y: Math.round(
+            (p.y - areaImagen.y) *
+            imagenEstatica.height / areaImagen.alto
+        )
+    }));
+}
+
+let coordenadasStr = "[" +
+    puntosOriginales.map(p => `(${p.x},${p.y})`).join(",") +
+    "]";
 
     try {
         let response = await fetch('clasificar_muestra', {
@@ -114,11 +310,9 @@ async function analizarMuestra() {
         let resultadoAnalisis = data.analisis || "Análisis completado exitosamente";
         let aceptado;
         
-        console.log(resultadoAnalisis)
-        
-        if(resultadoAnalisis.error){
-            alert("La muestra no es suficiente. Intente nuevamente.")
-        }else{
+        if (resultadoAnalisis.error) {
+            alert("La muestra no es suficiente. Intente nuevamente.");
+        } else {
             aceptado = confirm(`Resultado del Análisis:
                 \n\nDecision: ${resultadoAnalisis.decision}
                 \nDescripción: ${resultadoAnalisis.descripcion}
@@ -126,9 +320,7 @@ async function analizarMuestra() {
                 \n¿Deseas aceptar esta muestra e incluirla en el lote?`);
         }
 
-
         if (aceptado) {
-            // Guardamos todo en memoria, incluyendo la imagen en Base64 para enviarla al guardar el lote
             muestrasAcumuladas.push({
                 image_data: imageData,
                 coordenadas: coordenadasStr,
@@ -165,6 +357,23 @@ function actualizarInterfazMuestras() {
 function eliminarMuestra(index) {
     muestrasAcumuladas.splice(index, 1);
     actualizarInterfazMuestras();
+}
+
+function calcularAreaImagen(anchoImagen, altoImagen) {
+    const escala = Math.min(
+        canvas.width / anchoImagen,
+        canvas.height / altoImagen
+    );
+
+    const ancho = anchoImagen * escala;
+    const alto = altoImagen * escala;
+
+    return {
+        x: (canvas.width - ancho) / 2,
+        y: (canvas.height - alto) / 2,
+        ancho: ancho,
+        alto: alto
+    };
 }
 
 document.getElementById('form_agregar').addEventListener('submit', function(e) {
